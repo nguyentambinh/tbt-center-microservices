@@ -36,3 +36,14 @@ __pycache__/
 .idea/
 .vscode/
 *.iml
+
+# File Word, Excel, PowerPoint tự soạn: chỉ để trên máy
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.xlsm
+*.ppt
+*.pptx
+~$*
+BaoCao/
