@@ -1586,4 +1586,40 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get graphTypePattern => 'Mẫu kiến trúc';
+
+  @override
+  String get todoTitle => 'Việc cần xử lý';
+
+  @override
+  String todoLeaves(int count) {
+    return '$count đơn nghỉ chờ duyệt';
+  }
+
+  @override
+  String todoOvertime(int count) {
+    return '$count đơn tăng ca chờ duyệt';
+  }
+
+  @override
+  String todoCandidates(int count) {
+    return '$count hồ sơ ứng viên mới';
+  }
+
+  @override
+  String get todoNone => 'Không có việc nào đang chờ';
+
+  @override
+  String get signOutConfirm => 'Đăng xuất khỏi TBT Center?';
+
+  @override
+  String get stepErrorTimeout =>
+      'Ngân hàng không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại';
+
+  @override
+  String get stepErrorGeneric =>
+      'Bước này không chạy được; bấm Chạy lại hoặc báo bộ phận kỹ thuật';
+
+  @override
+  String get errSparqlSyntax =>
+      'Câu truy vấn chưa đúng cú pháp. Kiểm tra lại dấu ngoặc, dấu chấm cuối mỗi điều kiện và tên tiền tố (kg:, kgo:).';
 }

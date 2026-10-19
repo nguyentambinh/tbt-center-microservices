@@ -22,6 +22,9 @@ for svc in hr attendance payroll project_contract finance recruitment currency; 
   psql_db "${svc}_db" < "$DIR/deploy/seed/$REGION/$svc.sql" > /dev/null
   echo "  $svc: xong"
 done
+# Chuỗi thu chi theo tháng (tools/seed_data/finance_series.py)
+psql_db finance_db < "$DIR/deploy/seed/$REGION/finance_series.sql" > /dev/null
+echo "  finance_series: xong"
 # notification không có dữ liệu mẫu: chỉ tạo bảng, thông báo tự sinh từ sổ sự kiện ở Hub.
 for f in "$DIR"/services/notification/migrations/*.sql; do
   psql_db notification_db < "$f"

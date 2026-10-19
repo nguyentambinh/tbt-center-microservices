@@ -1021,5 +1021,35 @@
   "graphPathNone": "Không nối được trong 6 bước",
   "graphPathPick": "Chọn khái niệm cần nối tới",
   "graphTypeTechnology": "Công nghệ",
-  "graphTypePattern": "Mẫu kiến trúc"
+  "graphTypePattern": "Mẫu kiến trúc",
+  "todoTitle": "Việc cần xử lý",
+  "todoLeaves": "{count} đơn nghỉ chờ duyệt",
+  "@todoLeaves": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todoOvertime": "{count} đơn tăng ca chờ duyệt",
+  "@todoOvertime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todoCandidates": "{count} hồ sơ ứng viên mới",
+  "@todoCandidates": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todoNone": "Không có việc nào đang chờ",
+  "signOutConfirm": "Đăng xuất khỏi TBT Center?",
+  "stepErrorTimeout": "Ngân hàng không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại",
+  "stepErrorGeneric": "Bước này không chạy được; bấm Chạy lại hoặc báo bộ phận kỹ thuật",
+  "errSparqlSyntax": "Câu truy vấn chưa đúng cú pháp. Kiểm tra lại dấu ngoặc, dấu chấm cuối mỗi điều kiện và tên tiền tố (kg:, kgo:)."
 }

@@ -1589,4 +1589,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get graphTypePattern => 'Architecture pattern';
+
+  @override
+  String get todoTitle => 'Needs your attention';
+
+  @override
+  String todoLeaves(int count) {
+    return '$count leave requests awaiting approval';
+  }
+
+  @override
+  String todoOvertime(int count) {
+    return '$count overtime requests awaiting approval';
+  }
+
+  @override
+  String todoCandidates(int count) {
+    return '$count new applications';
+  }
+
+  @override
+  String get todoNone => 'Nothing is waiting for you';
+
+  @override
+  String get signOutConfirm => 'Sign out of TBT Center?';
+
+  @override
+  String get stepErrorTimeout =>
+      'The bank did not respond in time; the system reconciles by reference before paying again';
+
+  @override
+  String get stepErrorGeneric =>
+      'This step could not run; tap Retry or contact IT';
+
+  @override
+  String get errSparqlSyntax =>
+      'The query has a syntax error. Check the brackets, the dot after each pattern and the prefixes (kg:, kgo:).';
 }

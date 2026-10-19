@@ -470,5 +470,14 @@
   "graphPathNone": "Sem ligação em 6 passos",
   "graphPathPick": "Escolha o conceito de destino",
   "graphTypeTechnology": "Tecnologia",
-  "graphTypePattern": "Padrão de arquitetura"
+  "graphTypePattern": "Padrão de arquitetura",
+  "todoTitle": "Pendências",
+  "todoLeaves": "{count} pedidos de folga aguardando aprovação",
+  "todoOvertime": "{count} pedidos de hora extra aguardando aprovação",
+  "todoCandidates": "{count} novas candidaturas",
+  "todoNone": "Nada aguardando você",
+  "signOutConfirm": "Sair do TBT Center?",
+  "stepErrorTimeout": "O banco não respondeu a tempo; o sistema concilia pela referência antes de pagar novamente",
+  "stepErrorGeneric": "Esta etapa não pôde ser executada; toque em Tentar novamente ou fale com a TI",
+  "errSparqlSyntax": "A consulta tem um erro de sintaxe. Verifique os parênteses, o ponto após cada padrão e os prefixos (kg:, kgo:)."
 }

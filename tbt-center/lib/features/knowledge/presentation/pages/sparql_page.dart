@@ -67,7 +67,7 @@ class _SparqlPageState extends ConsumerState<SparqlPage> {
     } on AppFailure catch (e) {
       // Câu sai cú pháp thì báo ngay dưới ô nhập; lỗi mạng để thanh kết nối lo
       if (e.serverCode == 'bad_query') {
-        if (mounted) setState(() => _error = e.serverMessage);
+        if (mounted) setState(() => _error = AppLocalizations.of(context).errSparqlSyntax);
       } else {
         reportFailure(e);
       }

@@ -470,5 +470,14 @@
   "graphPathNone": "No connection within 6 steps",
   "graphPathPick": "Pick the concept to connect to",
   "graphTypeTechnology": "Technology",
-  "graphTypePattern": "Architecture pattern"
+  "graphTypePattern": "Architecture pattern",
+  "todoTitle": "Needs your attention",
+  "todoLeaves": "{count} leave requests awaiting approval",
+  "todoOvertime": "{count} overtime requests awaiting approval",
+  "todoCandidates": "{count} new applications",
+  "todoNone": "Nothing is waiting for you",
+  "signOutConfirm": "Sign out of TBT Center?",
+  "stepErrorTimeout": "The bank did not respond in time; the system reconciles by reference before paying again",
+  "stepErrorGeneric": "This step could not run; tap Retry or contact IT",
+  "errSparqlSyntax": "The query has a syntax error. Check the brackets, the dot after each pattern and the prefixes (kg:, kgo:)."
 }

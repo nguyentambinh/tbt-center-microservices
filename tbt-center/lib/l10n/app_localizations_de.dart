@@ -1599,4 +1599,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get graphTypePattern => 'Architekturmuster';
+
+  @override
+  String get todoTitle => 'Zu erledigen';
+
+  @override
+  String todoLeaves(int count) {
+    return '$count Urlaubsanträge warten auf Freigabe';
+  }
+
+  @override
+  String todoOvertime(int count) {
+    return '$count Überstundenanträge warten auf Freigabe';
+  }
+
+  @override
+  String todoCandidates(int count) {
+    return '$count neue Bewerbungen';
+  }
+
+  @override
+  String get todoNone => 'Nichts wartet auf Sie';
+
+  @override
+  String get signOutConfirm => 'Von TBT Center abmelden?';
+
+  @override
+  String get stepErrorTimeout =>
+      'Die Bank hat nicht rechtzeitig geantwortet; das System gleicht per Referenz ab, bevor erneut gezahlt wird';
+
+  @override
+  String get stepErrorGeneric =>
+      'Dieser Schritt konnte nicht ausgeführt werden; tippen Sie auf Wiederholen oder wenden Sie sich an die IT';
+
+  @override
+  String get errSparqlSyntax =>
+      'Die Abfrage enthält einen Syntaxfehler. Prüfen Sie Klammern, den Punkt nach jedem Muster und die Präfixe (kg:, kgo:).';
 }

@@ -1593,4 +1593,40 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get graphTypePattern => 'Padrão de arquitetura';
+
+  @override
+  String get todoTitle => 'Pendências';
+
+  @override
+  String todoLeaves(int count) {
+    return '$count pedidos de folga aguardando aprovação';
+  }
+
+  @override
+  String todoOvertime(int count) {
+    return '$count pedidos de hora extra aguardando aprovação';
+  }
+
+  @override
+  String todoCandidates(int count) {
+    return '$count novas candidaturas';
+  }
+
+  @override
+  String get todoNone => 'Nada aguardando você';
+
+  @override
+  String get signOutConfirm => 'Sair do TBT Center?';
+
+  @override
+  String get stepErrorTimeout =>
+      'O banco não respondeu a tempo; o sistema concilia pela referência antes de pagar novamente';
+
+  @override
+  String get stepErrorGeneric =>
+      'Esta etapa não pôde ser executada; toque em Tentar novamente ou fale com a TI';
+
+  @override
+  String get errSparqlSyntax =>
+      'A consulta tem um erro de sintaxe. Verifique os parênteses, o ponto após cada padrão e os prefixos (kg:, kgo:).';
 }

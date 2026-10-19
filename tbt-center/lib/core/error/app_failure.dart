@@ -83,7 +83,7 @@ class AppFailure implements Exception {
         FailureKind.unauthorized => l10n.errorUnauthorized,
         FailureKind.forbidden => l10n.errorForbidden,
         FailureKind.notFound => l10n.errorNotFound,
-        FailureKind.validation => serverMessage ?? l10n.errorValidation,
+        FailureKind.validation => l10n.errorValidation,
         FailureKind.offlineWrite => l10n.errorOfflineWrite,
         FailureKind.unknown => l10n.errorUnknown,
       };

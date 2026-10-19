@@ -470,5 +470,14 @@
   "graphPathNone": "Keine Verbindung in 6 Schritten",
   "graphPathPick": "Ziel-Begriff wählen",
   "graphTypeTechnology": "Technologie",
-  "graphTypePattern": "Architekturmuster"
+  "graphTypePattern": "Architekturmuster",
+  "todoTitle": "Zu erledigen",
+  "todoLeaves": "{count} Urlaubsanträge warten auf Freigabe",
+  "todoOvertime": "{count} Überstundenanträge warten auf Freigabe",
+  "todoCandidates": "{count} neue Bewerbungen",
+  "todoNone": "Nichts wartet auf Sie",
+  "signOutConfirm": "Von TBT Center abmelden?",
+  "stepErrorTimeout": "Die Bank hat nicht rechtzeitig geantwortet; das System gleicht per Referenz ab, bevor erneut gezahlt wird",
+  "stepErrorGeneric": "Dieser Schritt konnte nicht ausgeführt werden; tippen Sie auf Wiederholen oder wenden Sie sich an die IT",
+  "errSparqlSyntax": "Die Abfrage enthält einen Syntaxfehler. Prüfen Sie Klammern, den Punkt nach jedem Muster und die Präfixe (kg:, kgo:)."
 }

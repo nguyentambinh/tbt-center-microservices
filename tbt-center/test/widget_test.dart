@@ -52,11 +52,14 @@ void main() {
     // Trang đăng nhập Keycloak mở cùng ngôn ngữ với app.
     expect(gateway.lastLocale, 'vi');
     expect(find.text('Xin chào, Nhan'), findsOneWidget);
-    expect(find.text('Nhân sự'), findsOneWidget);
-    expect(find.text('Việt Nam'), findsOneWidget);
+    expect(find.textContaining('Nhân sự'), findsOneWidget);
+    expect(find.textContaining('Việt Nam'), findsOneWidget);
     expect(store.session, isNotNull);
 
     await tester.tap(find.byTooltip('Đăng xuất'));
+    await tester.pumpAndSettle();
+    expect(find.text('Đăng xuất khỏi TBT Center?'), findsOneWidget);
+    await tester.tap(find.text('Đăng xuất').last);
     await tester.pumpAndSettle();
     expect(find.text('Đăng nhập'), findsOneWidget);
     expect(store.session, isNull);

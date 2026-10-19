@@ -2927,6 +2927,60 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Mẫu kiến trúc'**
   String get graphTypePattern;
+
+  /// No description provided for @todoTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Việc cần xử lý'**
+  String get todoTitle;
+
+  /// No description provided for @todoLeaves.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} đơn nghỉ chờ duyệt'**
+  String todoLeaves(int count);
+
+  /// No description provided for @todoOvertime.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} đơn tăng ca chờ duyệt'**
+  String todoOvertime(int count);
+
+  /// No description provided for @todoCandidates.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} hồ sơ ứng viên mới'**
+  String todoCandidates(int count);
+
+  /// No description provided for @todoNone.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có việc nào đang chờ'**
+  String get todoNone;
+
+  /// No description provided for @signOutConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đăng xuất khỏi TBT Center?'**
+  String get signOutConfirm;
+
+  /// No description provided for @stepErrorTimeout.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ngân hàng không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại'**
+  String get stepErrorTimeout;
+
+  /// No description provided for @stepErrorGeneric.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bước này không chạy được; bấm Chạy lại hoặc báo bộ phận kỹ thuật'**
+  String get stepErrorGeneric;
+
+  /// No description provided for @errSparqlSyntax.
+  ///
+  /// In vi, this message translates to:
+  /// **'Câu truy vấn chưa đúng cú pháp. Kiểm tra lại dấu ngoặc, dấu chấm cuối mỗi điều kiện và tên tiền tố (kg:, kgo:).'**
+  String get errSparqlSyntax;
 }
 
 class _AppLocalizationsDelegate

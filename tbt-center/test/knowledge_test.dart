@@ -388,7 +388,7 @@ void main() {
     await tester.enterText(find.byType(TextField), 'SELECT lỗi');
     await tester.tap(find.text('Chạy'));
     await tester.pumpAndSettle();
-    expect(find.text('Câu truy vấn lỗi: expected "}"'), findsOneWidget);
+    expect(find.textContaining('Câu truy vấn chưa đúng cú pháp'), findsOneWidget);
   });
 
   testWidgets('đề xuất AI: HR thấy câu trích và duyệt; nhân viên không có mục này', (tester) async {

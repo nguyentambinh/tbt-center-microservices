@@ -10,10 +10,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/locale/locale_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../home/presentation/pages/home_page.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -71,6 +73,10 @@ class SettingsPage extends ConsumerWidget {
           if (kDebugMode) ...[
             const SizedBox(height: 24),
             const _SimulationCard(),
+            if (ref.watch(authControllerProvider).value case final session?) ...[
+              const SizedBox(height: 16),
+              RegionCheckCard(session: session),
+            ],
           ],
         ],
       ),

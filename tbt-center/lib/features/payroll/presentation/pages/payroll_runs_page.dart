@@ -238,9 +238,21 @@ class _RunDetail extends StatelessWidget {
               },
             ),
             title: Text(_stepName(l10n, s.step)),
-            subtitle: s.detail == null ? null : Text(s.detail!, maxLines: 2, overflow: TextOverflow.ellipsis),
+            subtitle: switch (_stepDetail(l10n, s)) {
+              final detail? => Text(detail, maxLines: 2, overflow: TextOverflow.ellipsis),
+              null => null,
+            },
           ),
       ],
     );
   }
+}
+
+/// Lỗi kỹ thuật của bước (tên exception) thành câu người dùng hiểu
+String? _stepDetail(AppLocalizations l10n, SagaStep step) {
+  final detail = step.detail;
+  if (detail == null || step.status != 'failed') return detail;
+  if (detail.contains('Timeout')) return l10n.stepErrorTimeout;
+  if (RegExp(r'(Exception|Error)\b').hasMatch(detail)) return l10n.stepErrorGeneric;
+  return detail;
 }

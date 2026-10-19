@@ -25,10 +25,14 @@ import '../../../../core/widgets/gem_heading.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../core/widgets/tbt_logo.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../attendance/presentation/providers/attendance_providers.dart';
 import '../../../audit/presentation/providers/audit_providers.dart';
 import '../../../notification/presentation/providers/notification_providers.dart';
+import '../../../recruitment/presentation/providers/candidate_providers.dart';
 
 typedef _Feature = ({IconData icon, String title, String hint, String route});
+
+const managerRoles = {'hr', 'admin', 'executive', 'finance'};
 
 /// Màn chính: chức năng theo role
 class HomePage extends ConsumerWidget {
@@ -144,10 +148,27 @@ class HomePage extends ConsumerWidget {
         ],
       ),
     ];
+    // Vai trò quản lý: nhóm Quản lý, Tài chính lên trước việc cá nhân
+    final ordered = any(managerRoles) ? [sections[1], sections[2], sections[0], ...sections.skip(3)] : sections;
     return [
-      for (final s in sections)
+      for (final s in ordered)
         if (s.$2.isNotEmpty) s,
     ];
+  }
+
+  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.signOutConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.signOut)),
+        ],
+      ),
+    );
+    if (ok == true) await ref.read(authControllerProvider.notifier).signOut();
   }
 
   @override
@@ -166,21 +187,15 @@ class HomePage extends ConsumerWidget {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 170,
+            expandedHeight: 128,
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Tooltip(
-                  message: l10n.signOut,
-                  child: FilledButton(
-                    onPressed: () =>
-                        ref.read(authControllerProvider.notifier).signOut(),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      minimumSize: const Size(0, 38),
-                    ),
-                    child: const Icon(Icons.logout, size: 20),
-                  ),
+                padding: const EdgeInsets.only(right: 8),
+                child: IconButton.outlined(
+                  tooltip: l10n.signOut,
+                  onPressed: () => _confirmSignOut(context, ref),
+                  style: IconButton.styleFrom(side: const BorderSide(color: AppColors.glassBorder)),
+                  icon: const Icon(Icons.logout, size: 20),
                 ),
               ),
             ],
@@ -188,15 +203,15 @@ class HomePage extends ConsumerWidget {
             flexibleSpace: LayoutBuilder(
               builder: (context, box) {
                 final top = MediaQuery.paddingOf(context).top;
-                final expanded = ((box.maxHeight - top - kToolbarHeight) / 106).clamp(0.0, 1.0);
+                final expanded = ((box.maxHeight - top - kToolbarHeight) / (128 - kToolbarHeight)).clamp(0.0, 1.0);
                 return Stack(
                   fit: StackFit.expand,
                   children: [
                     FlexibleSpaceBar(
                       collapseMode: CollapseMode.parallax,
                       background: Padding(
-                        padding: EdgeInsets.only(top: top + 40),
-                        child: Center(child: Opacity(opacity: expanded, child: TbtLogo(gem: gem, height: 92))),
+                        padding: EdgeInsets.only(top: top + 8),
+                        child: Center(child: Opacity(opacity: expanded, child: TbtLogo(gem: gem, height: 64))),
                       ),
                     ),
                     Positioned(
@@ -226,32 +241,33 @@ class HomePage extends ConsumerWidget {
                       style: text.headlineMedium,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final role in session.roles)
-                        Chip(label: Text(l10n.roleName(role))),
-                      Chip(
-                        avatar: Icon(Icons.public, size: 18, color: gem.color),
-                        label: Text(l10n.regionName(session.region)),
-                      ),
-                    ],
+                  const SizedBox(height: 6),
+                  Text(
+                    [for (final role in session.roles) l10n.roleName(role), l10n.regionName(session.region)].join(' · '),
+                    style: text.bodyMedium?.copyWith(color: AppColors.textSecondary),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
+                  if (session.roles.any(leaveApproverRoles.contains)) ...[
+                    const _TodoPanel(),
+                    const SizedBox(height: 20),
+                  ],
                   for (final (title, features) in _sections(l10n, session)) ...[
                     SectionLabel(title),
-                    for (final feature in features) ...[
-                      FadeSlideIn(
-                        index: ++index,
-                        child: _FeatureCard(feature: feature),
+                    FadeSlideIn(
+                      index: ++index,
+                      child: Card(
+                        child: Column(
+                          children: [
+                            for (final (i, feature) in features.indexed) ...[
+                              if (i > 0) const Divider(height: 1, indent: 76),
+                              _FeatureTile(feature: feature),
+                            ],
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                    ],
-                    const SizedBox(height: 8),
+                    ),
+                    const SizedBox(height: 18),
                   ],
-                  _RegionCheckCard(session: session),
                 ],
               ),
             ),
@@ -262,40 +278,83 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-class _FeatureCard extends StatelessWidget {
-  const _FeatureCard({required this.feature});
+/// Việc đang chờ HR, quản lý: đơn chờ duyệt, hồ sơ ứng viên mới
+class _TodoPanel extends ConsumerWidget {
+  const _TodoPanel();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final text = Theme.of(context).textTheme;
+    final leaves = ref.watch(pendingLeavesProvider);
+    final overtime = ref.watch(pendingOvertimeProvider);
+    final candidates = ref.watch(candidateListProvider(null));
+    final loading = leaves.isLoading || overtime.isLoading || candidates.isLoading;
+    final newCandidates =
+        candidates.value?.where((c) => c.status == 'submitted' || c.status == 'analyzed').length ?? 0;
+    const approvals = '${Routes.attendance}?tab=approvals';
+    final rows = [
+      (count: leaves.value?.length ?? 0, label: l10n.todoLeaves, icon: Icons.event_busy_outlined, route: approvals),
+      (count: overtime.value?.length ?? 0, label: l10n.todoOvertime, icon: Icons.more_time_outlined, route: approvals),
+      (count: newCandidates, label: l10n.todoCandidates, icon: Icons.person_search_outlined, route: Routes.candidates),
+    ].where((row) => row.count > 0).toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(4, 14, 4, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(child: Text(l10n.todoTitle, style: text.titleLarge)),
+                  if (loading)
+                    const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            if (rows.isEmpty && !loading)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                child: Text(l10n.todoNone, style: text.bodyMedium?.copyWith(color: AppColors.textSecondary)),
+              ),
+            for (final row in rows)
+              ListTile(
+                leading: Icon(row.icon),
+                title: Text(row.label(row.count)),
+                trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                onTap: () => context.push(row.route),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FeatureTile extends StatelessWidget {
+  const _FeatureTile({required this.feature});
 
   final _Feature feature;
 
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.primary;
-    return PressableScale(
-      child: Card(
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          leading: Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Icon(feature.icon, color: AppColors.background, size: 24),
-          ),
-          title: Text(feature.title),
-          subtitle: Text(
-            feature.hint,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: const Icon(
-            Icons.chevron_right,
-            color: AppColors.textSecondary,
-          ),
-          onTap: () => context.push(feature.route),
-        ),
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.16), shape: BoxShape.circle),
+        child: Icon(feature.icon, color: color, size: 22),
       ),
+      title: Text(feature.title),
+      subtitle: Text(feature.hint, maxLines: 2, overflow: TextOverflow.ellipsis),
+      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      onTap: () => context.push(feature.route),
     );
   }
 }
@@ -437,16 +496,17 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _RegionCheckCard extends ConsumerStatefulWidget {
-  const _RegionCheckCard({required this.session});
+/// Công cụ debug: gọi thử máy chủ khu vực qua Kong kèm token
+class RegionCheckCard extends ConsumerStatefulWidget {
+  const RegionCheckCard({super.key, required this.session});
 
   final Session session;
 
   @override
-  ConsumerState<_RegionCheckCard> createState() => _RegionCheckCardState();
+  ConsumerState<RegionCheckCard> createState() => _RegionCheckCardState();
 }
 
-class _RegionCheckCardState extends ConsumerState<_RegionCheckCard> {
+class _RegionCheckCardState extends ConsumerState<RegionCheckCard> {
   bool _loading = false;
   Response<Map<String, dynamic>>? _result;
 

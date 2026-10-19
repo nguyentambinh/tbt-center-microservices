@@ -115,7 +115,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.login, builder: (_, _) => const LoginPage()),
       GoRoute(path: Routes.home, builder: (_, _) => const HomePage()),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsPage()),
-      GoRoute(path: Routes.attendance, builder: (_, _) => const AttendancePage()),
+      GoRoute(
+        path: Routes.attendance,
+        builder: (_, state) => AttendancePage(openApprovals: state.uri.queryParameters['tab'] == 'approvals'),
+      ),
       GoRoute(path: Routes.myApplication, builder: (_, _) => const MyApplicationPage()),
       GoRoute(
         path: Routes.candidates,

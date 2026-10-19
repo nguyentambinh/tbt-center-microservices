@@ -31,7 +31,9 @@ abstract final class LeaveStatusLabel {
 }
 
 class AttendancePage extends ConsumerWidget {
-  const AttendancePage({super.key});
+  const AttendancePage({super.key, this.openApprovals = false});
+
+  final bool openApprovals;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,6 +43,7 @@ class AttendancePage extends ConsumerWidget {
 
     return DefaultTabController(
       length: canApprove ? 4 : 3,
+      initialIndex: canApprove && openApprovals ? 3 : 0,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.attendance),
