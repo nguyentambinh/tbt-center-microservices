@@ -654,7 +654,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get stepCalculate => 'Tính phiếu lương';
 
   @override
-  String get stepPay => 'Chi lương qua ngân hàng';
+  String get stepPay => 'Chi lương qua kênh thanh toán';
 
   @override
   String get stepComplete => 'Hoàn tất';
@@ -1613,7 +1613,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get stepErrorTimeout =>
-      'Ngân hàng không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại';
+      'Kênh thanh toán không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại';
 
   @override
   String get stepErrorGeneric =>

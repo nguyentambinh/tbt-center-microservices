@@ -656,7 +656,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get stepCalculate => 'Calcular holerites';
 
   @override
-  String get stepPay => 'Pagar pelo banco';
+  String get stepPay => 'Pagamento pelo canal de pagamento';
 
   @override
   String get stepComplete => 'Concluir';
@@ -1620,7 +1620,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get stepErrorTimeout =>
-      'O banco não respondeu a tempo; o sistema concilia pela referência antes de pagar novamente';
+      'O canal de pagamento não respondeu a tempo; o sistema concilia pela referência antes de pagar de novo';
 
   @override
   String get stepErrorGeneric =>

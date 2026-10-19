@@ -661,7 +661,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get stepCalculate => 'Abrechnungen berechnen';
 
   @override
-  String get stepPay => 'Über die Bank auszahlen';
+  String get stepPay => 'Auszahlung über den Zahlungskanal';
 
   @override
   String get stepComplete => 'Abschließen';
@@ -1626,7 +1626,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get stepErrorTimeout =>
-      'Die Bank hat nicht rechtzeitig geantwortet; das System gleicht per Referenz ab, bevor erneut gezahlt wird';
+      'Der Zahlungskanal hat nicht rechtzeitig geantwortet; das System gleicht per Referenz ab, bevor erneut gezahlt wird';
 
   @override
   String get stepErrorGeneric =>

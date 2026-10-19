@@ -1311,7 +1311,7 @@ abstract class AppLocalizations {
   /// No description provided for @stepPay.
   ///
   /// In vi, this message translates to:
-  /// **'Chi lương qua ngân hàng'**
+  /// **'Chi lương qua kênh thanh toán'**
   String get stepPay;
 
   /// No description provided for @stepComplete.
@@ -2967,7 +2967,7 @@ abstract class AppLocalizations {
   /// No description provided for @stepErrorTimeout.
   ///
   /// In vi, this message translates to:
-  /// **'Ngân hàng không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại'**
+  /// **'Kênh thanh toán không phản hồi kịp; hệ thống đối soát theo mã tham chiếu trước khi chi lại'**
   String get stepErrorTimeout;
 
   /// No description provided for @stepErrorGeneric.

@@ -655,7 +655,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stepCalculate => 'Calculate payslips';
 
   @override
-  String get stepPay => 'Pay through the bank';
+  String get stepPay => 'Pay through the payout channel';
 
   @override
   String get stepComplete => 'Complete';
@@ -1616,7 +1616,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stepErrorTimeout =>
-      'The bank did not respond in time; the system reconciles by reference before paying again';
+      'The payout channel did not respond in time; the system reconciles by reference before paying again';
 
   @override
   String get stepErrorGeneric =>

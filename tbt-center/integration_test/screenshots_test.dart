@@ -182,6 +182,43 @@ void main() {
     });
   });
 
+  testWidgets('chuyển lương: chọn người, cảnh báo đã nhận, nhật ký, các bước', (tester) async {
+    await pumpAs(tester, 'finance.vn');
+    await openHomeCard(tester, 'Chốt lương');
+    await step('chon nguoi', () async {
+      for (var i = 0; i < 2; i++) {
+        await tester.tap(find.byType(CheckboxListTile).at(i));
+        await tester.pump(const Duration(milliseconds: 300));
+      }
+      await shot(tester, '24_chot_luong');
+    });
+    await step('canh bao', () async {
+      await tester.tap(find.text('Chuyển cho 2 người'));
+      await tester.pump(const Duration(milliseconds: 600));
+      // Chỉ chụp hộp cảnh báo rồi bấm Hủy: không chuyển tiền
+      await tester.tap(find.widgetWithText(FilledButton, 'Chuyển'));
+      for (var i = 0; i < 100 && find.text('Có người đã nhận lương kỳ này').evaluate().isEmpty; i++) {
+        await tester.pump(const Duration(milliseconds: 200));
+      }
+      await tester.pump(const Duration(milliseconds: 500));
+      debugPrint('SHOT:24_chot_luong_canh_bao');
+      await Future<void>.delayed(const Duration(milliseconds: 3500));
+      await tester.tap(find.text('Hủy').last);
+      await waitLoaded(tester);
+    });
+    await step('nhat ky', () async {
+      await tester.tap(find.text('Nhật ký'));
+      await waitLoaded(tester);
+      await shot(tester, '24_chot_luong_nhat_ky');
+    });
+    await step('cac buoc', () async {
+      await tester.tap(find.text('Các đợt'));
+      await waitLoaded(tester);
+      await tapRow(tester, 0);
+      await shot(tester, '25_chot_luong_cac_buoc');
+    });
+  });
+
   testWidgets('kho tri thức: hỏi AI, tìm bài, đồ thị, bản thể học, SPARQL, đề xuất', (tester) async {
     await pumpAs(tester, 'hr.vn');
     await openHomeCard(tester, 'Kho tri thức');
