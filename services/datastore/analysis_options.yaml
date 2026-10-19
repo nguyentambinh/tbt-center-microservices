@@ -1,0 +1,6 @@
+include: package:dart_frog_lint/recommended.yaml
+
+linter:
+  rules:
+    # Không bắt chú thích cho từng trường public; chỉ chú thích chỗ khó hiểu.
+    public_member_api_docs: false

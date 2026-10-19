@@ -1,0 +1,21 @@
+name: payroll_service
+description: Service payroll của TBT Center
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+
+dependencies:
+  dart_frog: ^1.1.0
+  postgres: ^3.5.20
+  tbt_common:
+    path: ../../packages/common
+  tbt_contracts:
+    path: ../../packages/contracts
+
+dev_dependencies:
+  dart_frog_lint: ^0.1.0
+  mocktail: ^1.0.0
+  test: ^1.25.0

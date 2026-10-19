@@ -1,0 +1,10 @@
+rules_version = '2';
+// Kho dữ liệu tổng: app và trình duyệt không được đọc ghi trực tiếp.
+// Chỉ máy chủ dùng tài khoản dịch vụ (Hub ghi, khu vực đọc) truy cập, quyền do IAM quyết định.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "596873783395",
+    "project_id": "tbt-center-nhom16",
+    "storage_bucket": "tbt-center-nhom16.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596873783395:android:7130b7c558b3f11fb53056",
+        "android_client_info": {
+          "package_name": "com.tbtcenter.tbtcenter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiO7lK-j2ggjyPqoOZYKjMzeMsH5cPFkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

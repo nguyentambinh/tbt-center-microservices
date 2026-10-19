@@ -1,0 +1,34 @@
+# Alertmanager ở Hub: nhận cảnh báo từ Prometheus Hub và 6 khu vực, gửi email (R70)
+# Mật khẩu ứng dụng Gmail đọc từ file trong secrets, không ghi ở đây
+global:
+  smtp_smarthost: smtp.gmail.com:587
+  smtp_from: "TBT Center Monitoring <binhtam16062005@gmail.com>"
+  smtp_auth_username: binhtam16062005@gmail.com
+  smtp_auth_password_file: /etc/alertmanager/gmail_password
+  smtp_require_tls: true
+
+templates:
+  - /etc/alertmanager/email.tmpl
+
+route:
+  receiver: gmail
+  # Gom cảnh báo cùng loại, cùng khu vực vào một email
+  group_by: [alertname, region]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: gmail
+    email_configs:
+      - to: binhtam16062005@gmail.com
+        send_resolved: true
+        headers:
+          Subject: '{{ template "tbt.subject" . }}'
+        html: '{{ template "tbt.html" . }}'
+
+# Service đã chết thì không gửi thêm email "chậm", "lỗi 5xx" của chính nó
+inhibit_rules:
+  - source_matchers: [alertname = ServiceDown]
+    target_matchers: [severity = warning]
+    equal: [instance]

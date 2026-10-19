@@ -1,0 +1,21 @@
+name: knowledge_service
+description: Kho tri thức nội bộ (quy định, chính sách, quy trình) có tìm kiếm toàn văn
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+
+dependencies:
+  crypto: ^3.0.7
+  dart_frog: ^1.1.0
+  meta: ^1.16.0
+  postgres: ^3.5.20
+  tbt_common:
+    path: ../../packages/common
+
+dev_dependencies:
+  dart_frog_lint: ^0.1.0
+  mocktail: ^1.0.0
+  test: ^1.25.0

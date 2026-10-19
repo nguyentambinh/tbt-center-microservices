@@ -1,0 +1,1025 @@
+{
+  "@@locale": "vi",
+  "appTitle": "TBT Center",
+  "tagline": "TẬP ĐOÀN ĐA QUỐC GIA",
+  "gemPalette": "Bộ màu {gem}",
+  "@gemPalette": {
+    "placeholders": {
+      "gem": {
+        "type": "String"
+      }
+    }
+  },
+  "gemGold": "Vàng kim",
+  "gemPlatinum": "Bạch kim",
+  "gemEmerald": "Lục bảo",
+  "gemRuby": "Hồng ngọc",
+  "gemSapphire": "Lam ngọc",
+  "gemDiamond": "Kim cương",
+  "samplePayslipTitle": "Bảng lương tháng 10",
+  "viewDetails": "Xem chi tiết",
+  "downloadPdf": "Tải PDF",
+  "settings": "Cài đặt",
+  "language": "Ngôn ngữ",
+  "languageAuto": "Tự động theo vị trí",
+  "dataRegion": "Khu vực lưu dữ liệu",
+  "detecting": "Đang xác định vị trí…",
+  "locationUnknown": "Chưa xác định được vị trí, dùng khu vực mặc định",
+  "detectedCountry": "Quốc gia: {country}",
+  "@detectedCountry": {
+    "placeholders": {
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "refreshLocation": "Xác định lại",
+  "simulateLocation": "Giả lập vị trí",
+  "simulateHint": "Chỉ có ở bản debug, dùng để test như đang ở nước khác",
+  "simulateIp": "Địa chỉ IP",
+  "simulateCountry": "Hoặc mã nước (VD: DE)",
+  "apply": "Áp dụng",
+  "clearSimulation": "Bỏ giả lập",
+  "regionVn": "Việt Nam",
+  "regionDe": "Đức",
+  "regionUs": "Hoa Kỳ",
+  "regionBr": "Brazil",
+  "regionZa": "Nam Phi",
+  "regionAu": "Úc",
+  "bannerOffline": "Không có kết nối mạng · đang xem dữ liệu đã lưu",
+  "bannerServerDown": "Không kết nối được máy chủ · đang xem dữ liệu đã lưu",
+  "bannerUnstable": "Kết nối mạng không ổn định",
+  "bannerRecovered": "Đã kết nối lại",
+  "reconnect": "Kết nối lại",
+  "errorNetwork": "Không có kết nối mạng. Kiểm tra Wi-Fi hoặc dữ liệu di động.",
+  "errorTimeout": "Máy chủ phản hồi quá lâu, vui lòng thử lại.",
+  "errorServer": "Máy chủ đang gặp sự cố, vui lòng thử lại sau.",
+  "errorUnauthorized": "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
+  "errorForbidden": "Bạn không có quyền thực hiện thao tác này.",
+  "errorNotFound": "Không tìm thấy dữ liệu yêu cầu.",
+  "errorValidation": "Dữ liệu chưa hợp lệ, vui lòng kiểm tra lại.",
+  "errorOfflineWrite": "Cần có mạng để lưu thay đổi. Dữ liệu bạn nhập vẫn được giữ lại.",
+  "errorUnknown": "Đã xảy ra lỗi không mong muốn, vui lòng thử lại.",
+  "signIn": "Đăng nhập",
+  "applyAsCandidate": "Ứng tuyển · tạo tài khoản",
+  "signOut": "Đăng xuất",
+  "welcome": "Xin chào, {name}",
+  "@welcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dataStoredIn": "Dữ liệu của bạn được lưu tại khu vực {region}",
+  "@dataStoredIn": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "signInFailed": "Không mở được trang đăng nhập. Kiểm tra kết nối tới máy chủ rồi thử lại.",
+  "roleExecutive": "Văn phòng quản lý",
+  "roleAdmin": "Quản trị hệ thống",
+  "roleHr": "Nhân sự",
+  "roleFinance": "Tài chính",
+  "roleEmployee": "Nhân viên",
+  "roleCandidate": "Ứng viên",
+  "regionCheckTitle": "Kết nối khu vực",
+  "regionCheckHint": "Gọi thử máy chủ của khu vực bạn qua Kong, có kèm token đăng nhập.",
+  "regionCheckButton": "Kiểm tra",
+  "regionCheckOk": "Máy chủ {service} trả lời bình thường",
+  "@regionCheckOk": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "savedDataNote": "Đang hiển thị dữ liệu đã lưu",
+  "themePreview": "Xem các bộ màu đá quý",
+  "employees": "Hồ sơ nhân viên",
+  "employeesHint": "Danh sách và hồ sơ nhân viên trong khu vực của bạn",
+  "open": "Mở",
+  "searchEmployees": "Tìm theo tên, mã hoặc email",
+  "employeeCount": "{count} nhân viên",
+  "@employeeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noEmployees": "Không tìm thấy nhân viên nào",
+  "loadMore": "Tải thêm",
+  "retry": "Thử lại",
+  "sectionWork": "Công việc",
+  "sectionContact": "Liên hệ",
+  "sectionRelatives": "Người thân",
+  "sectionHealth": "Sức khỏe",
+  "sectionInsurance": "Bảo hiểm",
+  "fieldId": "Mã nhân viên",
+  "fieldCompany": "Đơn vị",
+  "fieldDepartment": "Phòng ban",
+  "fieldPosition": "Chức vụ",
+  "fieldBirthYear": "Năm sinh",
+  "fieldGender": "Giới tính",
+  "genderMale": "Nam",
+  "genderFemale": "Nữ",
+  "fieldHiredOn": "Ngày vào làm",
+  "fieldLaborContract": "Hợp đồng lao động",
+  "fieldEmail": "Email",
+  "fieldPhone": "Điện thoại",
+  "fieldAddress": "Địa chỉ",
+  "fieldHometown": "Quê quán",
+  "fieldHeight": "Chiều cao",
+  "fieldWeight": "Cân nặng",
+  "fieldVision": "Thị lực",
+  "fieldMedicalHistory": "Tiền sử bệnh",
+  "fieldUpdatedOn": "Cập nhật",
+  "fieldInsuranceType": "Loại bảo hiểm",
+  "fieldInsuranceNumber": "Số bảo hiểm",
+  "fieldExpiresOn": "Hết hạn",
+  "noData": "Chưa có dữ liệu",
+  "attendance": "Chấm công & nghỉ phép",
+  "attendanceHint": "Giờ làm của bạn, đơn nghỉ và duyệt đơn",
+  "tabTimesheet": "Chấm công",
+  "tabLeave": "Nghỉ phép",
+  "tabApprovals": "Duyệt đơn",
+  "totalHours": "Tổng {hours} giờ trong {days} ngày",
+  "@totalHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "checkInOut": "Vào {checkIn} · Ra {checkOut}",
+  "@checkInOut": {
+    "placeholders": {
+      "checkIn": {
+        "type": "String"
+      },
+      "checkOut": {
+        "type": "String"
+      }
+    }
+  },
+  "overtimeHours": "Tăng ca {hours} giờ",
+  "@overtimeHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "newLeave": "Xin nghỉ",
+  "leaveType": "Loại nghỉ",
+  "leaveAnnual": "Nghỉ phép năm",
+  "leaveSick": "Nghỉ ốm",
+  "leaveUnpaid": "Nghỉ không lương",
+  "leavePersonal": "Việc riêng",
+  "leaveDates": "Thời gian nghỉ",
+  "pickDates": "Chọn ngày",
+  "reason": "Lý do",
+  "submitLeave": "Gửi đơn",
+  "leaveSubmitted": "Đã gửi đơn nghỉ",
+  "statusPending": "Chờ duyệt",
+  "statusApproved": "Đã duyệt",
+  "statusRejected": "Từ chối",
+  "approve": "Duyệt",
+  "reject": "Từ chối",
+  "leaveDays": "{days} ngày",
+  "@leaveDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "noLeaves": "Chưa có đơn nghỉ nào",
+  "noPending": "Không có đơn nào chờ duyệt",
+  "noTimesheets": "Chưa có dữ liệu chấm công",
+  "leaveDecided": "Đã cập nhật đơn",
+  "errOverlap": "Khoảng thời gian này trùng với một đơn nghỉ khác",
+  "errTooLong": "Mỗi đơn nghỉ tối đa 30 ngày",
+  "errInvalidDates": "Ngày kết thúc phải sau ngày bắt đầu",
+  "errAlreadyDecided": "Đơn này đã được xử lý trước đó",
+  "errSelfApproval": "Bạn không thể tự duyệt đơn của mình",
+  "errRegionMismatch": "Dữ liệu thuộc khu vực khác, bạn không có quyền xem",
+  "errNoEmployee": "Tài khoản chưa được gắn với hồ sơ nhân viên",
+  "myApplication": "Hồ sơ ứng tuyển của tôi",
+  "myApplicationHint": "Nộp hồ sơ, xem tiến trình tuyển dụng",
+  "candidates": "Ứng viên",
+  "candidatesHint": "Danh sách hồ sơ ứng tuyển và chuyển bước",
+  "applyNow": "Nộp hồ sơ",
+  "editProfile": "Sửa hồ sơ",
+  "saveProfile": "Lưu hồ sơ",
+  "fullName": "Họ và tên",
+  "appliedPosition": "Vị trí ứng tuyển",
+  "consentAi": "Đồng ý cho AI đọc và tóm tắt CV của tôi",
+  "notAppliedYet": "Bạn chưa nộp hồ sơ nào",
+  "progress": "Tiến trình",
+  "profileSaved": "Đã lưu hồ sơ",
+  "profileLockedHint": "Hồ sơ đã vào vòng phỏng vấn nên không sửa được nữa",
+  "moveTo": "Chuyển sang",
+  "statusChanged": "Đã chuyển bước",
+  "noCandidates": "Chưa có ứng viên",
+  "allStatuses": "Tất cả",
+  "note": "Ghi chú",
+  "stageSubmitted": "Đã nộp",
+  "stageAnalyzed": "AI đã tóm tắt",
+  "stageScreening": "Đang sàng lọc",
+  "stageInterview": "Phỏng vấn",
+  "stageOffered": "Mời nhận việc",
+  "stageRejected": "Chưa phù hợp",
+  "errProfileLocked": "Hồ sơ đã vào vòng phỏng vấn nên không sửa được nữa",
+  "cvSection": "CV",
+  "cvNone": "Chưa có CV",
+  "cvAttached": "Đã có CV",
+  "uploadCv": "Tải CV lên (PDF)",
+  "replaceCv": "Thay CV khác",
+  "cvUploaded": "Đã tải CV lên",
+  "cvWaitingAi": "AI đang đọc CV, kết quả sẽ có sau ít phút",
+  "openCv": "Mở CV",
+  "aiSummary": "Tóm tắt của AI",
+  "aiDisclaimer": "Bản tóm tắt do AI tạo, hãy đối chiếu với CV gốc trước khi quyết định.",
+  "yearsExperience": "{years} năm kinh nghiệm",
+  "@yearsExperience": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "skills": "Kỹ năng",
+  "suitablePositions": "Vị trí phù hợp",
+  "strengths": "Điểm mạnh",
+  "interviewQuestions": "Nên hỏi thêm khi phỏng vấn",
+  "errCvNotPdf": "File CV phải là PDF",
+  "errCvTooLarge": "CV tối đa 10 MB",
+  "payslips": "Phiếu lương",
+  "payslipsHint": "Lương từng kỳ, thưởng và phạt",
+  "baseSalary": "Lương cơ bản",
+  "grossPay": "Tổng thu nhập",
+  "netPay": "Thực nhận",
+  "netUsd": "≈ {amount} quy đổi theo tỷ giá ngày trả",
+  "@netUsd": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "paidOn": "Trả ngày {date}",
+  "@paidOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "bonusesPenalties": "Thưởng / phạt",
+  "bonus": "Thưởng",
+  "penalty": "Phạt",
+  "noPayslips": "Chưa có phiếu lương",
+  "payrollRuns": "Chốt lương",
+  "payrollRunsHint": "Tính và chi lương cả khu vực theo kỳ",
+  "startPayrollRun": "Chốt lương kỳ {period}",
+  "@startPayrollRun": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "runRunning": "Đang chạy",
+  "runCompleted": "Hoàn tất",
+  "runFailed": "Lỗi, đã hoàn tác",
+  "retryRun": "Chạy lại",
+  "sagaSteps": "Các bước",
+  "stepCollectHours": "Lấy giờ công",
+  "stepFetchRate": "Lấy tỷ giá",
+  "stepCalculate": "Tính phiếu lương",
+  "stepPay": "Chi lương qua ngân hàng",
+  "stepComplete": "Hoàn tất",
+  "stepCompensate": "Hoàn tác phần chưa chi",
+  "stepRetry": "Chạy lại",
+  "stepResume": "Chạy tiếp sau khi khởi động lại",
+  "paidSummary": "{count} phiếu đã chi · {amount}",
+  "@paidSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "noRuns": "Chưa chốt kỳ nào",
+  "errRunExists": "Kỳ này đã chốt rồi",
+  "errRunFailed": "Kỳ này đã chốt nhưng lỗi, hãy chạy lại",
+  "groupReport": "Báo cáo tập đoàn",
+  "groupReportHint": "Số liệu hợp nhất mọi khu vực, quy về USD",
+  "payrollCostByRegion": "Chi phí lương theo khu vực",
+  "leavesByRegion": "Đơn nghỉ theo khu vực",
+  "candidatesByRegion": "Ứng viên theo khu vực",
+  "groupTotal": "Toàn tập đoàn",
+  "dataAsOf": "Số liệu tới sự kiện #{id}",
+  "@dataAsOf": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "noReportData": "Chưa có số liệu",
+  "employeesCount": "{count} người",
+  "@employeesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "projects": "Dự án và hợp đồng",
+  "projectsHint": "Dự án, khách hàng, nhân sự tham gia",
+  "searchProjects": "Tìm mã dự án, hợp đồng, khách hàng",
+  "noProjects": "Không có dự án",
+  "projectMoney": "Giá trị dự án",
+  "deposit": "Tiền cọc",
+  "expectedAcceptance": "Nghiệm thu dự kiến",
+  "customer": "Khách hàng",
+  "customerContactHidden": "Liên hệ của khách hàng chỉ bộ phận tài chính xem được",
+  "contracts": "Hợp đồng",
+  "projectMembers": "Nhân sự tham gia",
+  "myProjects": "Dự án của tôi",
+  "myProjectsHint": "Dự án đang tham gia và số giờ đã làm",
+  "noMyProjects": "Bạn chưa tham gia dự án nào",
+  "finance": "Tài chính",
+  "financeHint": "Thu chi theo tháng, nhà cung cấp, chốt sổ",
+  "incomeExpense": "Thu chi",
+  "suppliers": "Nhà cung cấp",
+  "revenue": "Doanh thu",
+  "cost": "Chi phí",
+  "profit": "Lợi nhuận",
+  "periodClosed": "Đã chốt sổ",
+  "closePeriod": "Chốt sổ",
+  "noFinanceData": "Năm này chưa có số liệu",
+  "purchased": "Đã mua",
+  "paid": "Đã trả",
+  "balance": "Còn nợ",
+  "recordPurchase": "Ghi mua",
+  "recordPayment": "Trả tiền",
+  "materialName": "Tên vật liệu",
+  "amount": "Số tiền",
+  "purchaseHistory": "Lịch sử mua",
+  "paymentHistory": "Lịch sử trả",
+  "financeByRegion": "Doanh thu, chi phí đã chốt sổ",
+  "cancel": "Hủy",
+  "save": "Lưu",
+  "errPeriodClosed": "Tháng này đã chốt sổ, không ghi thêm được",
+  "errPeriodNotEnded": "Tháng này chưa kết thúc, chưa chốt sổ được",
+  "errOverpaid": "Số tiền trả lớn hơn số còn nợ",
+  "errInvalidAmount": "Số tiền không hợp lệ",
+  "closePeriodConfirm": "Chốt sổ tháng {period}? Sau khi chốt không ghi thêm chứng từ vào tháng này.",
+  "@closePeriodConfirm": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursValue": "{hours} giờ",
+  "@hoursValue": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "clockToday": "Chấm công hôm nay",
+  "noShiftToday": "Hôm nay bạn không có ca làm việc, không chấm công được",
+  "clockIn": "Vào ca",
+  "clockOut": "Ra ca",
+  "shiftDone": "Đã xong ca hôm nay",
+  "holidayShift": "Ngày lễ",
+  "sundayShift": "Chủ nhật",
+  "tabOvertime": "Tăng ca",
+  "newOvertime": "Xin tăng ca",
+  "noOvertime": "Chưa có đơn tăng ca",
+  "submitOvertime": "Gửi đơn",
+  "errNoShift": "Hôm nay bạn không có ca làm việc",
+  "errAlreadyClockedOut": "Bạn đã ra ca hôm nay rồi",
+  "errTooSoon": "Vừa vào ca, chờ ít nhất 5 phút mới ra ca được",
+  "errInvalidHours": "Số giờ tăng ca phải từ 0,5 đến 12",
+  "clockedIn": "Đã vào ca lúc {time}",
+  "@clockedIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "clockedOut": "Đã ra ca lúc {time}, làm {hours} giờ",
+  "@clockedOut": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "totalHoursToday": "Hôm nay làm {hours} giờ",
+  "@totalHoursToday": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "notifications": "Thông báo",
+  "noNotifications": "Chưa có thông báo",
+  "markAllRead": "Đọc hết",
+  "nGeneric": "Bạn có thông báo mới",
+  "nLeaveRequested": "{employee} xin nghỉ {days} ngày từ {date}",
+  "@nLeaveRequested": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nLeaveApproved": "Đơn nghỉ từ {date} đã được duyệt",
+  "@nLeaveApproved": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nLeaveRejected": "Đơn nghỉ từ {date} bị từ chối",
+  "@nLeaveRejected": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nOvertimeRequested": "{employee} xin tăng ca {hours} giờ ngày {date}",
+  "@nOvertimeRequested": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nOvertimeApproved": "Đơn tăng ca ngày {date} đã được duyệt",
+  "@nOvertimeApproved": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nOvertimeRejected": "Đơn tăng ca ngày {date} bị từ chối",
+  "@nOvertimeRejected": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nCandidateApplied": "Có hồ sơ ứng tuyển mới: {position}",
+  "@nCandidateApplied": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "nCandidateStatus": "Hồ sơ của bạn đã chuyển sang bước: {stage}",
+  "@nCandidateStatus": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "nPayrollPaid": "Lương kỳ {period} đã được chi",
+  "@nPayrollPaid": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nPayrollFailed": "Chốt lương kỳ {period} bị lỗi, cần chạy lại",
+  "@nPayrollFailed": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nFinanceClosed": "Đã chốt sổ tài chính tháng {period}",
+  "@nFinanceClosed": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "importCandidates": "Nhập ứng viên từ tệp",
+  "confirmAll": "Xác nhận tất cả",
+  "importRowNew": "Thêm mới",
+  "importRowUpdate": "Cập nhật",
+  "importRowAccepted": "Đã ghi",
+  "importErrMissingName": "Thiếu họ tên",
+  "importErrMissingContact": "Thiếu email và số điện thoại",
+  "importErrInvalidEmail": "Email sai định dạng",
+  "errUnsupportedFile": "Chỉ nhận tệp .csv hoặc .xlsx",
+  "errMissingNameColumn": "Tệp không có cột họ tên ở dòng đầu",
+  "errEmptyFile": "Tệp không có dòng ứng viên nào",
+  "errFileTooLarge": "Tệp lớn hơn 2 MB",
+  "confirmSelected": "Xác nhận đã chọn ({count})",
+  "@confirmSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importAccepted": "Đã ghi {count} hồ sơ",
+  "@importAccepted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importSummary": "{total} dòng, còn {pending} dòng chờ xác nhận",
+  "@importSummary": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "pending": {
+        "type": "int"
+      }
+    }
+  },
+  "importRowNumber": "Dòng {n}",
+  "@importRowNumber": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "roleAuditor": "Kiểm toán",
+  "gemAmethyst": "Thạch anh tím",
+  "auditLog": "Sổ kiểm toán",
+  "auditLogHint": "Sự kiện mọi khu vực, kiểm chuỗi băm, xuất cho kiểm toán",
+  "auditEvents": "Sự kiện",
+  "accessLog": "Ai đã truy cập",
+  "verifyChain": "Kiểm chuỗi băm",
+  "exportAudit": "Xuất cho kiểm toán",
+  "auditSearch": "Tra cứu",
+  "chainIntact": "Sổ còn nguyên vẹn, không dòng nào bị sửa",
+  "exportChecksumHint": "Mã SHA-256 của tệp xuất. Bên kiểm toán tính lại mã của tệp nhận được, khác mã này là tệp đã bị sửa.",
+  "copyChecksum": "Chép mã",
+  "close": "Đóng",
+  "allRegions": "Mọi khu vực",
+  "errAccessExpired": "Quyền kiểm toán của bạn đã hết hạn",
+  "chainBroken": "Chuỗi băm sai từ dòng #{id}",
+  "@chainBroken": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "chainChecked": "Đã kiểm {count} dòng",
+  "@chainChecked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportDone": "Đã xuất {count} dòng",
+  "@exportDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rowsCount": "{count} dòng",
+  "@rowsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPurchases": "{count} lần mua",
+  "@supplierPurchases": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supplierPaidPercent": "đã trả {percent}%",
+  "@supplierPaidPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "acceptProject": "Nghiệm thu",
+  "projectInProgress": "Đang thi công",
+  "errAlreadyAccepted": "Dự án này đã nghiệm thu rồi",
+  "errFinanceUnavailable": "Chưa ghi được doanh thu ở tài chính, dự án chưa đổi trạng thái. Thử lại sau.",
+  "acceptProjectConfirm": "Nghiệm thu dự án và ghi doanh thu {amount} vào tài chính?",
+  "@acceptProjectConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "projectAcceptedOn": "Đã nghiệm thu {date}",
+  "@projectAcceptedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nProjectAccepted": "Dự án {project} đã nghiệm thu, doanh thu đã ghi vào tài chính",
+  "@nProjectAccepted": {
+    "placeholders": {
+      "project": {
+        "type": "String"
+      }
+    }
+  },
+  "workConditions": "Điều kiện làm việc",
+  "workHoursSummary": "{hours} giờ · tăng ca {overtime} giờ",
+  "@workHoursSummary": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "overtime": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeQueued": "đang chờ gửi",
+  "noticeSent": "đã gửi",
+  "customerNotice": "Xác nhận cho khách hàng qua {channel}: {status}",
+  "@customerNotice": {
+    "placeholders": {
+      "channel": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attachCv": "Đính kèm CV (PDF, tối đa 10 MB)",
+  "cvSelected": "CV: {name}",
+  "@cvSelected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stageHired": "Đã nhận vào làm",
+  "hireCandidate": "Nhận vào làm",
+  "hiredKeepPassword": "Mật khẩu: giữ nguyên mật khẩu người này đang dùng.",
+  "hiredRelogin": "Người này đăng xuất rồi đăng nhập lại để vào với vai trò Nhân viên.",
+  "hireConfirm": "Nhận {name} vào làm? Email {email} sẽ là tên đăng nhập của nhân viên mới.",
+  "@hireConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "hiredTitle": "Đã tạo nhân viên {id}",
+  "@hiredTitle": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "hiredLogin": "Tên đăng nhập: {login}",
+  "@hiredLogin": {
+    "placeholders": {
+      "login": {
+        "type": "String"
+      }
+    }
+  },
+  "hiredTempPassword": "Mật khẩu tạm: {password} (chỉ hiện một lần, đổi ở lần đăng nhập đầu)",
+  "@hiredTempPassword": {
+    "placeholders": {
+      "password": {
+        "type": "String"
+      }
+    }
+  },
+  "home": "Trang chủ",
+  "sectionMyWork": "Công việc của tôi",
+  "sectionManage": "Quản lý",
+  "sectionFinance": "Tài chính",
+  "sectionAudit": "Kiểm toán",
+  "nPayslipIssued": "Phiếu lương kỳ {period} của bạn đã có",
+  "@nPayslipIssued": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nPayrollNeedsAttention": "Chốt lương kỳ {period} cần xử lý tay",
+  "@nPayrollNeedsAttention": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "errPeriodLocked": "Kỳ này đang chốt lương, tạm chưa duyệt được. Thử lại sau ít phút",
+  "runNeedsAttention": "Cần xử lý tay",
+  "stepLockPeriod": "Khóa kỳ ở chấm công",
+  "stepReserveBudget": "Giữ ngân sách lương",
+  "stepReleaseBudget": "Nhả ngân sách (bù trừ)",
+  "stepRecordExpense": "Ghi chi phí lương sang tài chính",
+  "stepIssuePayslips": "Gửi phiếu lương cho nhân viên",
+  "stepUnlockPeriod": "Mở khóa kỳ",
+  "stepNeedsAttention": "Chờ xử lý tay",
+  "knowledge": "Kho tri thức",
+  "knowledgeHint": "Quy định lương, nghỉ phép, tăng ca, quy trình",
+  "knowledgeSearchHint": "Tìm, ví dụ: tăng ca, chốt lương",
+  "knowledgeEmpty": "Không tìm thấy bài phù hợp",
+  "sectionKnowledge": "Tri thức",
+  "knowledgeTabAsk": "Hỏi AI",
+  "knowledgeTabSearch": "Tìm bài",
+  "knowledgeTabGraph": "Đồ thị",
+  "askHint": "Hỏi về lương, nghỉ phép, chấm công…",
+  "askIntro": "Trợ lý trả lời dựa trên kho tri thức và đồ thị tri thức của công ty, kèm nguồn để bạn tự kiểm tra.",
+  "askExample1": "Làm thêm giờ được trả bao nhiêu?",
+  "askExample2": "Ai duyệt đơn nghỉ phép của tôi?",
+  "askExample3": "Vì sao không duyệt được đơn khi đang chốt lương?",
+  "askExample4": "Dữ liệu cá nhân của tôi được bảo vệ thế nào?",
+  "askThinking": "Đang tìm trong kho tri thức…",
+  "askSources": "Nguồn",
+  "askGraphFacts": "Dựa trên đồ thị tri thức",
+  "askAnsweredBy": "Trả lời bởi {model}",
+  "@askAnsweredBy": {
+    "placeholders": {
+      "model": {
+        "type": "String"
+      }
+    }
+  },
+  "askNoAi": "Không dùng AI, trích trực tiếp từ kho",
+  "askCached": "đã lưu sẵn",
+  "askHelpful": "Hữu ích",
+  "askNotHelpful": "Chưa đúng",
+  "askThanks": "Cảm ơn góp ý của bạn",
+  "askFailed": "Chưa gửi được câu hỏi",
+  "askNewChat": "Cuộc trò chuyện mới",
+  "askSend": "Gửi",
+  "askViaKeyword": "từ khóa",
+  "askViaSemantic": "theo nghĩa",
+  "askViaGraph": "đồ thị",
+  "graphSearchHint": "Tìm khái niệm, ví dụ: tăng ca",
+  "graphRelated": "Liên kết",
+  "graphReadArticle": "Đọc bài",
+  "graphAskAbout": "Hỏi AI về mục này",
+  "graphAskTemplate": "Giải thích giúp tôi về {topic}",
+  "@graphAskTemplate": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "graphTypeConcept": "Khái niệm",
+  "graphTypeProcess": "Quy trình",
+  "graphTypeStep": "Bước",
+  "graphTypeRule": "Quy tắc",
+  "graphTypeRole": "Vai trò",
+  "graphTypeService": "Service",
+  "graphTypeRegion": "Quốc gia",
+  "graphTypeDocument": "Bài viết",
+  "knowledgeMore": "Thêm",
+  "ontologyTitle": "Bản thể học",
+  "ontologyClasses": "Cây lớp",
+  "ontologyRelations": "Quan hệ",
+  "ontologyRules": "Luật suy luận",
+  "ontologyTotals": "{nodes} nút · {asserted} cạnh có sẵn · {extracted} cạnh AI trích · {inferred} cạnh suy ra",
+  "@ontologyTotals": {
+    "placeholders": {
+      "nodes": {
+        "type": "int"
+      },
+      "asserted": {
+        "type": "int"
+      },
+      "extracted": {
+        "type": "int"
+      },
+      "inferred": {
+        "type": "int"
+      }
+    }
+  },
+  "ontologyReasoning": "Lần suy luận gần nhất: {count} cạnh mới trong {ms} ms",
+  "@ontologyReasoning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "ontologyRerun": "Chạy lại suy luận",
+  "ontologyTransitive": "bắc cầu",
+  "ontologySymmetric": "đối xứng",
+  "ontologyInverse": "ngược của {name}",
+  "@ontologyInverse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ontologySubProperty": "kéo theo {name}",
+  "@ontologySubProperty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ontologyDerived": "chỉ do suy luận",
+  "ontologyEdgeCount": "{count} cạnh",
+  "@ontologyEdgeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ontologyExport": "Xuất RDF/OWL dạng Turtle tại /knowledge/ontology?format=turtle, mở được bằng Protégé.",
+  "sparqlTitle": "Truy vấn SPARQL",
+  "sparqlHint": "Viết câu SELECT hoặc chọn câu mẫu",
+  "sparqlRun": "Chạy",
+  "sparqlIncludeInferred": "Tính cả cạnh suy luận",
+  "sparqlNoRows": "Không có kết quả",
+  "sparqlRows": "{count} dòng · {ms} ms",
+  "@sparqlRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "sparqlError": "Câu truy vấn lỗi: {message}",
+  "@sparqlError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "sparqlSampleInvolves": "Chốt lương cần service nào",
+  "sparqlSampleViewers": "Ai được xem lương thực nhận",
+  "sparqlSampleBefore": "Bước nào trước bước chi ngân hàng",
+  "sparqlSampleRabbit": "Service nào dùng RabbitMQ",
+  "sparqlSampleCount": "Đếm service mỗi nơi",
+  "proposalsTitle": "Đề xuất từ AI",
+  "proposalsRun": "Cho AI đọc bài mới",
+  "proposalsRunning": "AI đang đọc bài viết…",
+  "proposalsQueued": "AI sẽ đọc {count} bài",
+  "@proposalsQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "proposalsNoAi": "Chưa cấu hình AI cho việc trích xuất",
+  "proposalsPending": "Chờ duyệt",
+  "proposalsInvalid": "Không hợp lệ",
+  "proposalsApproved": "Đã duyệt",
+  "proposalsRejected": "Đã bỏ",
+  "proposalsEmpty": "Không có đề xuất",
+  "proposalNewNode": "Nút mới",
+  "proposalFrom": "Trích từ bài {article}",
+  "@proposalFrom": {
+    "placeholders": {
+      "article": {
+        "type": "String"
+      }
+    }
+  },
+  "proposalApprove": "Duyệt",
+  "proposalReject": "Bỏ",
+  "proposalApproved": "Đã thêm vào đồ thị, máy đang suy luận lại",
+  "proposalRejected": "Đã bỏ đề xuất",
+  "proposalConfidence": "Độ tin cậy {percent}%",
+  "@proposalConfidence": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "proposalReasonEvidence": "Câu trích không có trong bài",
+  "proposalReasonConfidence": "AI không chắc chắn",
+  "proposalReasonOntology": "Sai miền hoặc phạm vi của quan hệ ({code})",
+  "@proposalReasonOntology": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "proposalReasonUnused": "Nút không dùng trong cạnh hợp lệ nào",
+  "proposalReasonOther": "Lý do: {code}",
+  "@proposalReasonOther": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "graphInferred": "Suy ra",
+  "graphInferredBy": "Máy suy ra bằng luật: {rule}",
+  "@graphInferredBy": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      }
+    }
+  },
+  "graphBecause": "Vì",
+  "graphEvidence": "AI trích từ bài viết, HR đã duyệt:",
+  "graphGoTo": "Mở nút này",
+  "graphPathTo": "Nối tới…",
+  "graphPathTitle": "Từ {from} tới {to}",
+  "@graphPathTitle": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "graphPathNone": "Không nối được trong 6 bước",
+  "graphPathPick": "Chọn khái niệm cần nối tới",
+  "graphTypeTechnology": "Công nghệ",
+  "graphTypePattern": "Mẫu kiến trúc"
+}

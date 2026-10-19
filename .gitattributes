@@ -1,0 +1,10 @@
+# Giữ xuống dòng LF cho mọi tệp văn bản: script .sh, SQL, cấu hình chạy trong
+# container Linux sẽ lỗi nếu bị đổi sang CRLF khi clone về Windows.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.jar binary
+*.gz binary
+*.pdf binary
+*.xlsx binary

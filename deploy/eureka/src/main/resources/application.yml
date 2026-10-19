@@ -1,0 +1,17 @@
+# Eureka của TBT Center: sổ đăng ký service cho Hub và các khu vực (ADR 0029)
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # Môi trường dev bật tắt container liên tục: tắt tự bảo vệ để gỡ bản chết nhanh
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 10000
+    response-cache-update-interval-ms: 5000

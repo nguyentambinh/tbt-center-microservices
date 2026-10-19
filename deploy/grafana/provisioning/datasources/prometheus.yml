@@ -1,0 +1,34 @@
+# Grafana ở Hub đọc Prometheus của Hub và của từng khu vực (qua cổng trên máy).
+# Khu vực chưa bật thì nguồn đó báo lỗi kết nối, các nguồn khác vẫn chạy.
+apiVersion: 1
+
+datasources:
+  - name: Hub
+    uid: prom-hub
+    type: prometheus
+    url: http://prometheus:9090
+    isDefault: true
+  - name: VN
+    uid: prom-vn
+    type: prometheus
+    url: http://host.docker.internal:9090
+  - name: DE
+    uid: prom-de
+    type: prometheus
+    url: http://host.docker.internal:9190
+  - name: US
+    uid: prom-us
+    type: prometheus
+    url: http://host.docker.internal:9290
+  - name: BR
+    uid: prom-br
+    type: prometheus
+    url: http://host.docker.internal:9390
+  - name: ZA
+    uid: prom-za
+    type: prometheus
+    url: http://host.docker.internal:9490
+  - name: AU
+    uid: prom-au
+    type: prometheus
+    url: http://host.docker.internal:9590

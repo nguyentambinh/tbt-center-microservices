@@ -1,0 +1,47 @@
+name: tbt_center_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.1
+
+workspace:
+  - tbt-center
+  - packages/common
+  - packages/contracts
+  - services/hr
+  - services/attendance
+  - services/payroll
+  - services/finance
+  - services/project_contract
+  - services/recruitment
+  - services/currency
+  - services/notification
+  - services/integration
+  - services/bank_mock
+  - services/report
+  - services/audit
+  - services/geo
+  - services/sync_worker
+  - services/datastore
+  - services/knowledge
+  - tools/legacy_import
+
+dev_dependencies:
+  melos: ^8.9.0
+
+melos:
+  scripts:
+    analyze:
+      run: dart analyze .
+      description: Phân tích tĩnh toàn bộ workspace
+    test:
+      run: melos exec -- dart test
+      description: Chạy test các package Dart (không gồm app Flutter)
+      packageFilters:
+        flutter: false
+        dirExists: test
+    test:app:
+      run: melos exec -- flutter test
+      description: Chạy test app Flutter
+      packageFilters:
+        flutter: true

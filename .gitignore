@@ -1,0 +1,38 @@
+# Secret: chỉ commit file *.env.example
+deploy/secrets/*.env
+deploy/secrets/*.json
+deploy/secrets/*.txt
+
+# Sinh ra từ kong.template.yml bằng deploy/scripts/sync-kong-jwt.sh
+deploy/kong/kong.yml
+
+# Dart / Flutter
+.dart_tool/
+build/
+.dart_frog/
+pubspec_overrides.yaml
+
+# File phục vụ trợ lý AI, chỉ để trên máy
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.claude/
+/memory.md
+/PROJECT_TREE.md
+/docs/KIEN_TRUC_CHOT.md
+/docs/DU_LIEU_CU_QLNSVATC.md
+/docs/setup_report.md
+/docs/references/
+/learn.md
+
+# Bảng IP DB-IP Lite, tải bằng deploy/scripts/geo-download.sh
+deploy/geo/data/
+
+# Bản sao lưu database, tạo bằng deploy/scripts/backup.sh
+deploy/backups/
+
+# Python, IDE
+__pycache__/
+.idea/
+.vscode/
+*.iml

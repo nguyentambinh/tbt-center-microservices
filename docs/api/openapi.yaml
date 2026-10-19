@@ -1,0 +1,497 @@
+# Họ tên: Nguyễn Tâm Bình | MSSV: 2324801030003
+# Môn: Kiến trúc và thiết kế phần mềm | Bài: Đồ án TBT Center đa quốc gia | Ngày: 2026-10-15
+#
+# Tài liệu API cho app và đối tác tích hợp (R92, R95). Mọi đường đi qua Kong của
+# khu vực; mỗi khu vực một địa chỉ, cùng một bộ API.
+openapi: 3.1.0
+info:
+  title: TBT Center API
+  version: 1.0.0
+  description: |
+    Hệ thống quản lý nhân sự và tài chính đa quốc gia (Nhóm 16).
+
+    - Xác thực: token OAuth2/OIDC do Keycloak ở Hub cấp (realm `tbt`), gửi ở
+      header `Authorization: Bearer <token>`. Kong kiểm chữ ký, service kiểm lại
+      lần hai (ADR 0014).
+    - Mỗi khu vực chỉ trả dữ liệu của nó: token của khu vực khác nhận 403
+      `region_mismatch`.
+    - Mọi request ghi (POST, PUT) nên kèm `Idempotency-Key` (UUID): gửi lại cùng
+      khóa thì nhận lại kết quả cũ, không ghi trùng.
+    - Lỗi trả dạng chung `{"code": "...", "message": "..."}`; mỗi câu trả lời có
+      `X-Correlation-Id` để lần vết.
+    - Giới hạn 300 request mỗi phút cho mỗi client.
+servers:
+  - url: http://localhost:8000
+    description: Khu vực VN (VND)
+  - url: http://localhost:8100
+    description: Khu vực DE (EUR)
+  - url: http://localhost:8200
+    description: Khu vực US (USD)
+  - url: http://localhost:8300
+    description: Khu vực BR (BRL)
+  - url: http://localhost:8400
+    description: Khu vực ZA (ZAR)
+  - url: http://localhost:8500
+    description: Khu vực AU (AUD)
+security:
+  - keycloak: []
+
+components:
+  securitySchemes:
+    keycloak:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8180/realms/tbt/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8180/realms/tbt/protocol/openid-connect/token
+          scopes: {}
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: {type: string, format: uuid}
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: {type: string}
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: {type: string, examples: [forbidden, region_mismatch, overlap, period_closed]}
+        message: {type: string}
+    Money:
+      type: string
+      description: Số tiền dạng chuỗi để không mất số lẻ, ví dụ "5200000.00".
+  responses:
+    Error:
+      description: Lỗi nghiệp vụ hoặc quyền
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+
+paths:
+  # --- Nhân sự (hr) ---
+  /hr/employees:
+    get:
+      tags: [hr]
+      summary: Danh sách nhân viên trong khu vực (executive, admin, hr, finance)
+      parameters:
+        - {name: q, in: query, schema: {type: string}}
+        - {name: page, in: query, schema: {type: integer, minimum: 1}}
+      responses:
+        '200': {description: Trang nhân viên và tổng số}
+        '403': {$ref: '#/components/responses/Error'}
+  /hr/employees/{id}:
+    get:
+      tags: [hr]
+      summary: Hồ sơ nhân viên (công việc, liên hệ, người thân, sức khỏe, bảo hiểm)
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Hồ sơ}
+        '404': {$ref: '#/components/responses/Error'}
+
+  # --- Chấm công (attendance) ---
+  /attendance/clock:
+    get:
+      tags: [attendance]
+      summary: Ca hôm nay theo giờ khu vực và tình trạng vào/ra ca
+      responses:
+        '200': {description: Ca, hệ số, giờ vào, giờ ra}
+    post:
+      tags: [attendance]
+      summary: Chấm công một lượt (lần đầu vào ca, lần hai ra ca) (R31–R33)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      responses:
+        '201': {description: 'action: checkIn | checkOut, kèm tổng giờ khi ra ca'}
+        '409': {description: 'no_shift, too_soon, already_clocked_out', content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}}
+  /attendance/timesheets:
+    get:
+      tags: [attendance]
+      summary: Bảng công theo khoảng ngày (mặc định 31 ngày gần nhất)
+      parameters:
+        - {name: employee, in: query, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string, format: date}}
+        - {name: to, in: query, schema: {type: string, format: date}}
+      responses:
+        '200': {description: Các ngày công và tổng giờ}
+  /attendance/holidays:
+    get:
+      tags: [attendance]
+      summary: Ngày lễ của nước sở tại
+      parameters: [{name: year, in: query, schema: {type: integer}}]
+      responses:
+        '200': {description: Danh sách ngày lễ}
+  /attendance/leave-requests:
+    get:
+      tags: [attendance]
+      summary: Đơn nghỉ của mình; quản lý không truyền employee thì xem mọi đơn
+      parameters: [{name: status, in: query, schema: {type: string, enum: [pending, approved, rejected]}}]
+      responses:
+        '200': {description: Danh sách đơn}
+    post:
+      tags: [attendance]
+      summary: Gửi đơn nghỉ (tối đa 30 ngày, không trùng đơn khác)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromDate, toDate, leaveType]
+              properties:
+                fromDate: {type: string, format: date}
+                toDate: {type: string, format: date}
+                leaveType: {type: string}
+                reason: {type: string}
+      responses:
+        '201': {description: Đơn đã tạo}
+        '409': {$ref: '#/components/responses/Error'}
+  /attendance/leave-requests/{id}/decision:
+    post:
+      tags: [attendance]
+      summary: Duyệt hoặc từ chối đơn nghỉ (hr, admin, executive; không tự duyệt)
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content: {application/json: {schema: {type: object, required: [approve], properties: {approve: {type: boolean}}}}}
+      responses:
+        '200': {description: Đơn sau khi duyệt}
+        '403': {$ref: '#/components/responses/Error'}
+        '409': {$ref: '#/components/responses/Error'}
+  /attendance/overtime-requests:
+    get:
+      tags: [attendance]
+      summary: Đơn tăng ca (R36)
+      responses:
+        '200': {description: Danh sách đơn}
+    post:
+      tags: [attendance]
+      summary: Xin tăng ca (0 < hours ≤ 12, mỗi ngày một đơn)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workDate, hours]
+              properties:
+                workDate: {type: string, format: date}
+                hours: {type: number}
+                reason: {type: string}
+      responses:
+        '201': {description: Đơn đã tạo}
+  /attendance/overtime-requests/{id}/decision:
+    post:
+      tags: [attendance]
+      summary: Duyệt đơn tăng ca
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Đơn sau khi duyệt}
+
+  # --- Lương (payroll) ---
+  /payroll/payslips:
+    get:
+      tags: [payroll]
+      summary: Phiếu lương, lương cơ bản, thưởng phạt (R37)
+      parameters: [{name: employee, in: query, schema: {type: string}}]
+      responses:
+        '200': {description: Phiếu lương các kỳ}
+  /payroll/payroll-runs:
+    get:
+      tags: [payroll]
+      summary: Các đợt chốt lương (Saga)
+      responses:
+        '200': {description: Danh sách đợt}
+    post:
+      tags: [payroll]
+      summary: Bắt đầu Saga chốt lương một kỳ (finance, admin, executive)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content: {application/json: {schema: {type: object, required: [period], properties: {period: {type: string, examples: ['2026-10']}}}}}
+      responses:
+        '202': {description: 'Đợt đang chạy; xem tiến trình qua GET /payroll/payroll-runs/{id}'}
+        '409': {description: 'run_exists, run_failed'}
+  /payroll/payroll-runs/{id}:
+    get:
+      tags: [payroll]
+      summary: Trạng thái và các bước của một đợt
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Đợt và các bước}
+  /payroll/payroll-runs/{id}/retry:
+    post:
+      tags: [payroll]
+      summary: Chạy lại đợt lỗi (không chi trùng nhờ mã tham chiếu cố định)
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '202': {description: Đang chạy lại}
+
+  # --- Tài chính (finance) ---
+  /finance/summary:
+    get:
+      tags: [finance]
+      summary: Doanh thu, chi phí theo tháng, tiền khu vực và USD (finance, admin, executive)
+      parameters: [{name: year, in: query, schema: {type: integer}}]
+      responses:
+        '200': {description: Các tháng và trạng thái chốt sổ}
+  /finance/suppliers:
+    get:
+      tags: [finance]
+      summary: Nhà cung cấp xếp theo tổng mua, kèm đã trả, còn nợ, số lần mua (R103–R105)
+      responses:
+        '200': {description: Danh sách nhà cung cấp}
+  /finance/suppliers/{id}:
+    get:
+      tags: [finance]
+      summary: Lịch sử mua và trả của một nhà cung cấp
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Công nợ chi tiết}
+  /finance/suppliers/{id}/payments:
+    post:
+      tags: [finance]
+      summary: Ghi một lần trả nhà cung cấp (không vượt số nợ)
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, paidOn]
+              properties:
+                amount: {$ref: '#/components/schemas/Money'}
+                paidOn: {type: string, format: date}
+                note: {type: string}
+      responses:
+        '201': {description: Đã ghi}
+        '409': {description: 'overpaid, period_closed'}
+  /finance/material-imports:
+    post:
+      tags: [finance]
+      summary: Ghi chứng từ mua vật liệu (tỷ giá theo ngày nhập)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [supplierId, materialName, importedOn, amount]
+              properties:
+                supplierId: {type: string}
+                materialName: {type: string}
+                importedOn: {type: string, format: date}
+                amount: {$ref: '#/components/schemas/Money'}
+      responses:
+        '201': {description: Đã ghi}
+  /finance/periods/{period}/close:
+    post:
+      tags: [finance]
+      summary: Chốt sổ một tháng đã kết thúc (R62); số tổng gửi lên báo cáo hợp nhất
+      parameters: [{name: period, in: path, required: true, schema: {type: string, examples: ['2025-05']}}]
+      responses:
+        '201': {description: Số liệu đã chốt}
+        '409': {description: period_closed}
+
+  # --- Dự án, hợp đồng (project_contract) ---
+  /project-contract/projects:
+    get:
+      tags: [project_contract]
+      summary: Dự án, khách hàng, giá trị nghiệm thu dự kiến (R100)
+      parameters: [{name: q, in: query, schema: {type: string}}]
+      responses:
+        '200': {description: Danh sách dự án}
+  /project-contract/projects/{id}:
+    get:
+      tags: [project_contract]
+      summary: Chi tiết dự án; liên hệ khách hàng chỉ trả cho finance, admin, executive (R101)
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Dự án, hợp đồng, nhân sự}
+  /project-contract/acceptances/{id}:
+    post:
+      tags: [project_contract]
+      summary: Nghiệm thu dự án, ghi doanh thu sang tài chính (ADR 0017)
+      parameters: [{$ref: '#/components/parameters/Id'}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      responses:
+        '200': {description: Dự án đã nghiệm thu}
+        '409': {description: 'already_accepted, period_closed'}
+        '503': {description: finance_unavailable}
+  /project-contract/me/projects:
+    get:
+      tags: [project_contract]
+      summary: Dự án mình tham gia và số giờ (R38)
+      responses:
+        '200': {description: Danh sách}
+
+  # --- Tuyển dụng (recruitment) ---
+  /recruitment/me:
+    get:
+      tags: [recruitment]
+      summary: Hồ sơ ứng tuyển của chính ứng viên và tiến trình
+      responses:
+        '200': {description: Hồ sơ}
+    put:
+      tags: [recruitment]
+      summary: Nộp hoặc sửa hồ sơ (khóa khi tới bước phỏng vấn)
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      responses:
+        '200': {description: Hồ sơ sau khi lưu}
+        '409': {description: profile_locked}
+  /recruitment/me/cv/upload-url:
+    post:
+      tags: [recruitment]
+      summary: URL ký sẵn (10 phút) để tải CV PDF thẳng lên kho S3 của khu vực
+      responses:
+        '200': {description: URL và khóa tệp}
+  /recruitment/me/cv:
+    post:
+      tags: [recruitment]
+      summary: Báo đã tải CV; server kiểm PDF ≤ 10 MB, lưu SHA-256
+      responses:
+        '200': {description: Đã gắn CV}
+  /recruitment/candidates:
+    get:
+      tags: [recruitment]
+      summary: Danh sách ứng viên (hr, admin, executive)
+      responses:
+        '200': {description: Danh sách}
+  /recruitment/candidates/{id}:
+    get:
+      tags: [recruitment]
+      summary: Hồ sơ ứng viên kèm tóm tắt AI
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Hồ sơ}
+  /recruitment/candidates/{id}/status:
+    post:
+      tags: [recruitment]
+      summary: Chuyển bước tuyển dụng; ứng viên nhận thông báo (R97)
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Hồ sơ sau khi chuyển}
+  /recruitment/candidates/{id}/hire:
+    post:
+      tags: [recruitment]
+      summary: Nhận ứng viên bước offered vào làm; tạo nhân viên ở hr, cấp tài khoản Keycloak (email là tên đăng nhập)
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200':
+          description: 'candidate, employeeId, login; temporaryPassword chỉ có khi vừa tạo tài khoản'
+        '409': {description: 'not_offered: chưa tới bước Mời nhận việc'}
+        '422': {description: 'email_required: hồ sơ chưa có email'}
+        '502': {description: 'hr_unavailable hoặc identity_unavailable; bấm lại an toàn'}
+  /recruitment/candidates/{id}/cv:
+    get:
+      tags: [recruitment]
+      summary: URL ký sẵn chỉ đọc (5 phút) để HR mở CV
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: URL}
+  /recruitment/candidate-imports:
+    post:
+      tags: [recruitment]
+      summary: Nhập ứng viên từ CSV/XLSX thành danh sách nháp (R84)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fileName, content]
+              properties:
+                fileName: {type: string, examples: [ung-vien.xlsx]}
+                content: {type: string, contentEncoding: base64}
+      responses:
+        '201': {description: Danh sách nháp}
+        '400': {description: 'unsupported_file, missing_name_column, empty_file'}
+  /recruitment/candidate-imports/{id}/confirm:
+    post:
+      tags: [recruitment]
+      summary: Xác nhận tất cả ({"all":true}) hoặc các dòng đã tick ({"rowIds":[...]})
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {description: Số dòng đã ghi}
+
+  # --- Thông báo (notification) ---
+  /notification/notifications:
+    get:
+      tags: [notification]
+      summary: Hộp thông báo của mình, kèm số chưa đọc (R18, R97)
+      responses:
+        '200': {description: 'Loại thông báo + tham số; app tự ghép câu theo ngôn ngữ'}
+  /notification/notifications/read:
+    post:
+      tags: [notification]
+      summary: 'Đánh dấu đã đọc: {"ids":[...]} hoặc {} để đọc hết'
+      responses:
+        '200': {description: Đã đánh dấu}
+  /notification/devices:
+    post:
+      tags: [notification]
+      summary: Lưu mã FCM của máy kèm ngôn ngữ để gửi thông báo đẩy (R18, R97)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token: {type: string}
+                language: {type: string, enum: [vi, en, de, pt]}
+      responses:
+        '201': {description: Đã lưu}
+    delete:
+      tags: [notification]
+      summary: Gỡ mã FCM của máy (đăng xuất)
+      responses:
+        '200': {description: Đã gỡ}
+
+  # --- Hub: báo cáo hợp nhất (report), sổ kiểm toán (audit) ---
+  /report/overview:
+    get:
+      tags: [report]
+      summary: Số liệu hợp nhất 6 khu vực quy USD (executive, admin, finance) (R01, R02, R60)
+      responses:
+        '200': {description: 'Lương, tài chính đã chốt, điều kiện làm việc, đơn nghỉ, ứng viên; kèm mốc sự kiện đã chiếu'}
+  /report/rebuild:
+    post:
+      tags: [report]
+      summary: Dựng lại mô hình đọc bằng cách phát lại sổ sự kiện (admin)
+      responses:
+        '202': {description: Đang dựng lại}
+  /audit/audit-log:
+    get:
+      tags: [audit]
+      summary: Tra cứu sổ kiểm toán chỉ đọc (executive, admin, auditor còn hạn) (R54, R88)
+      parameters:
+        - {name: region, in: query, schema: {type: string}}
+        - {name: type, in: query, schema: {type: string}}
+        - {name: from, in: query, schema: {type: string, format: date}}
+        - {name: to, in: query, schema: {type: string, format: date}}
+      responses:
+        '200': {description: Sự kiện, mới nhất trước}
+        '403': {description: 'access_expired, forbidden'}
+  /audit/audit-log/verify:
+    get:
+      tags: [audit]
+      summary: Tính lại chuỗi băm SHA-256 của sổ (R89)
+      responses:
+        '200': {description: '{"checked": n, "intact": true, "brokenAt": null}'}
+  /audit/audit-log/export:
+    get:
+      tags: [audit]
+      summary: Xuất CSV cho kiểm toán; mã SHA-256 ở header X-Checksum-SHA256 (R89)
+      responses:
+        '200':
+          description: Tệp CSV
+          headers:
+            X-Checksum-SHA256: {schema: {type: string}}
+            X-Row-Count: {schema: {type: integer}}
+  /audit/audit-log/access:
+    get:
+      tags: [audit]
+      summary: Ai đã tra cứu, kiểm, xuất sổ (executive, admin) (R90)
+      responses:
+        '200': {description: Nhật ký truy cập}

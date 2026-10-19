@@ -1,0 +1,10 @@
+name: tbt_contracts
+description: DTO và sự kiện dùng chung giữa các service
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+
+dev_dependencies:
+  test: ^1.25.0

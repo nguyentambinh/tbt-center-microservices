@@ -1,0 +1,335 @@
+{
+  "uid": "tbt-requests",
+  "title": "TBT Center: tra cứu request (Elasticsearch)",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "tags": [
+    "tbt",
+    "elasticsearch"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "cid",
+        "label": "Correlation id",
+        "type": "textbox",
+        "query": "*",
+        "current": {
+          "text": "*",
+          "value": "*"
+        }
+      },
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "query",
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "es-requests"
+        },
+        "query": "{\"find\": \"terms\", \"field\": \"service\"}",
+        "includeAll": true,
+        "multi": true,
+        "allValue": "*",
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "refresh": 2
+      },
+      {
+        "name": "region",
+        "label": "Khu vực",
+        "type": "query",
+        "datasource": {
+          "type": "elasticsearch",
+          "uid": "es-requests"
+        },
+        "query": "{\"find\": \"terms\", \"field\": \"region\"}",
+        "includeAll": true,
+        "multi": true,
+        "allValue": "*",
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "refresh": 2
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "table",
+      "title": "Một thao tác đi qua những service nào (nhập correlation id ở trên)",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "es-requests"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "es-requests"
+          },
+          "query": "correlation_id:${cid:raw} AND service:${service:lucene} AND region:${region:lucene}",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "raw_data",
+              "settings": {
+                "size": "200"
+              }
+            }
+          ],
+          "bucketAggs": [],
+          "timeField": "@timestamp"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "@timestamp",
+            "desc": false
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_id": true,
+              "_index": true,
+              "_type": true,
+              "highlight": true,
+              "sort": true
+            },
+            "indexByName": {
+              "@timestamp": 0,
+              "region": 1,
+              "service": 2,
+              "host": 3,
+              "method": 4,
+              "path": 5,
+              "status": 6,
+              "ms": 7,
+              "user": 8,
+              "correlation_id": 9
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Số request theo service",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "es-requests"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 10,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "es-requests"
+          },
+          "query": "service:${service:lucene} AND region:${region:lucene}",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "id": "2",
+              "type": "terms",
+              "field": "service",
+              "settings": {
+                "size": "15",
+                "order": "desc",
+                "orderBy": "_count",
+                "min_doc_count": "1"
+              }
+            },
+            {
+              "id": "3",
+              "type": "date_histogram",
+              "field": "@timestamp",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ],
+          "timeField": "@timestamp"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "stacking": {
+              "mode": "normal"
+            },
+            "fillOpacity": 70
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Request lỗi (mã 5xx)",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "es-requests"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 10,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "es-requests"
+          },
+          "query": "service:${service:lucene} AND region:${region:lucene} AND status:[500 TO 599]",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "id": "2",
+              "type": "terms",
+              "field": "service",
+              "settings": {
+                "size": "15",
+                "order": "desc",
+                "orderBy": "_count",
+                "min_doc_count": "1"
+              }
+            },
+            {
+              "id": "3",
+              "type": "date_histogram",
+              "field": "@timestamp",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ],
+          "timeField": "@timestamp"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Request chậm nhất",
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "es-requests"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "es-requests"
+          },
+          "query": "service:${service:lucene} AND region:${region:lucene} AND ms:>300",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "raw_data",
+              "settings": {
+                "size": "50"
+              }
+            }
+          ],
+          "bucketAggs": [],
+          "timeField": "@timestamp"
+        }
+      ],
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "ms",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_id": true,
+              "_index": true,
+              "_type": true,
+              "highlight": true,
+              "sort": true
+            },
+            "indexByName": {
+              "ms": 0,
+              "service": 1,
+              "path": 2,
+              "status": 3,
+              "region": 4,
+              "@timestamp": 5,
+              "correlation_id": 6
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+name: legacy_import
+description: Đọc tệp SQLite nguồn, sinh dữ liệu mẫu cho các service
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1

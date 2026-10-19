@@ -1,0 +1,320 @@
+# Template một khu vực. Chạy từ thư mục gốc dự án, ví dụ khu vực VN:
+#   docker compose -p tbt-vn --env-file deploy/regions/vn.env -f deploy/compose.region.yml up -d --build
+
+x-service: &service
+  restart: unless-stopped
+  env_file: [secrets/postgres.env, secrets/internal.env]
+  # Để service tải khóa công khai của Keycloak ở Hub (kiểm token lần hai).
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  depends_on:
+    postgres-primary:
+      condition: service_healthy
+
+x-service-env: &service-env
+  REGION: ${REGION}
+  COUNTRY_CODE: ${COUNTRY_CODE}
+  CURRENCY: ${CURRENCY}
+  TIMEZONE: ${TIMEZONE}
+  DB_PRIMARY_HOST: postgres-primary
+  DB_REPLICA_HOST: postgres-replica
+  DB_PORT: "5432"
+  # Service tự kiểm chữ ký, hạn token bằng khóa công khai của Keycloak (ADR 0014).
+  JWT_JWKS_URL: http://host.docker.internal:8180/realms/tbt/protocol/openid-connect/certs
+  JWT_ISSUER: http://localhost:8180/realms/tbt
+  REDIS_HOST: redis
+  # Đăng ký với Eureka, gửi log request về Elasticsearch ở Hub (ADR 0029)
+  EUREKA_URL: http://host.docker.internal:8762/eureka/
+  ELASTICSEARCH_URL: http://host.docker.internal:9201
+
+services:
+  # Redis chỉ làm cache: giới hạn 64 MB, đầy thì bỏ key ít dùng, không lưu xuống đĩa
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  postgres-primary:
+    image: postgres:17
+    restart: unless-stopped
+    env_file: [secrets/postgres.env]
+    environment:
+      SERVICE_DATABASES: hr_db attendance_db payroll_db finance_db project_contract_db recruitment_db currency_db notification_db integration_db mirror_db
+    command: postgres -c wal_keep_size=256MB
+    volumes:
+      - pg-primary:/var/lib/postgresql/data
+      - ./postgres/primary-init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+    ports:
+      - "${PG_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      retries: 10
+
+  postgres-replica:
+    image: postgres:17
+    restart: unless-stopped
+    user: postgres
+    env_file: [secrets/postgres.env]
+    entrypoint: ["bash", "/scripts/replica-entrypoint.sh"]
+    volumes:
+      - pg-replica:/var/lib/postgresql/data
+      - ./postgres/replica-entrypoint.sh:/scripts/replica-entrypoint.sh:ro
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+
+  kong:
+    image: kong:3.9
+    restart: unless-stopped
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: "off"
+      # Mặc định Kong mở số tiến trình bằng số nhân CPU (16 = ~1 GB RAM); 2 là đủ cho dev.
+      KONG_NGINX_WORKER_PROCESSES: "2"
+      # Chỉ hỏi DNS bản ghi A, tránh chờ 4s hỏi SRV ở lần gọi đầu
+      KONG_DNS_ORDER: "LAST,A,CNAME"
+    volumes:
+      - ./kong/kong.yml:/kong/kong.yml:ro
+    # Không mở cổng ra ngoài: mọi request đi qua WAF trước
+    expose: ["8000"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on: [hr, attendance, payroll, recruitment, finance, project_contract, notification]
+
+  # WAF: ModSecurity + OWASP CRS đứng trước Kong, chặn SQL injection, XSS...
+  waf:
+    image: owasp/modsecurity-crs:nginx-alpine
+    restart: unless-stopped
+    environment:
+      BACKEND: http://kong:8000
+      PARANOIA: "1"
+      BLOCKING_PARANOIA: "1"
+      ANOMALY_INBOUND: "5"
+      ANOMALY_OUTBOUND: "4"
+      # App dùng cả PUT, PATCH, DELETE
+      ALLOWED_METHODS: GET HEAD POST OPTIONS PUT PATCH DELETE
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+    ports:
+      - "${KONG_PORT}:8080"
+    depends_on: [kong]
+
+  hr:
+    <<: *service
+    image: tbt/hr
+    # Load Balancer: 2 bản, Kong chia đều request
+    deploy:
+      replicas: 2
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: hr}
+    environment:
+      <<: *service-env
+      DB_NAME: hr_db
+
+  attendance:
+    <<: *service
+    image: tbt/attendance
+    # Load Balancer: 2 bản, Kong chia đều request
+    deploy:
+      replicas: 2
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: attendance}
+    environment:
+      <<: *service-env
+      DB_NAME: attendance_db
+
+  payroll:
+    <<: *service
+    image: tbt/payroll
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: payroll}
+    environment:
+      <<: *service-env
+      DB_NAME: payroll_db
+
+  finance:
+    <<: *service
+    image: tbt/finance
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: finance}
+    environment:
+      <<: *service-env
+      DB_NAME: finance_db
+
+  project_contract:
+    <<: *service
+    image: tbt/project_contract
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: project_contract}
+    environment:
+      <<: *service-env
+      DB_NAME: project_contract_db
+    # Tên có dấu gạch dưới không hợp lệ làm hostname cho Kong, thêm tên gạch ngang.
+    networks:
+      default:
+        aliases: [project-contract]
+
+  # Hộp thông báo: đọc dòng sự kiện của khu vực trong sổ audit ở Hub (ADR 0012).
+  notification:
+    <<: *service
+    image: tbt/notification
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: notification}
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/sync.env, secrets/rabbitmq.env]
+    environment:
+      <<: *service-env
+      DB_NAME: notification_db
+      # RabbitMQ ở Hub báo có sự kiện mới của khu vực
+      RABBITMQ_HOST: host.docker.internal
+      RABBITMQ_PORT: "5673"
+      HUB_AUDIT_URL: http://host.docker.internal:8195/events
+      # Khóa Firebase để gửi FCM; không có file thì chỉ ghi log
+      FCM_SERVICE_ACCOUNT: /run/secrets/firebase-sa.json
+    volumes:
+      - ./secrets/firebase-sa.json:/run/secrets/firebase-sa.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  currency:
+    <<: *service
+    image: tbt/currency
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: currency}
+    environment:
+      <<: *service-env
+      DB_NAME: currency_db
+
+  # Cổng ra ngân hàng, có Circuit Breaker. Không có database.
+  integration:
+    image: tbt/integration
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: integration}
+    restart: unless-stopped
+    env_file: [secrets/internal.env]
+    environment:
+      BANK_URL: http://bank_mock:8080
+      REGION: ${REGION}
+      SERVICE_NAME: integration
+      EUREKA_URL: http://host.docker.internal:8762/eureka/
+      ELASTICSEARCH_URL: http://host.docker.internal:9201
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  recruitment:
+    <<: *service
+    image: tbt/recruitment
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: recruitment}
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/anthropic.env, secrets/gemini.env, secrets/garage.env, secrets/identity.env]
+    environment:
+      <<: *service-env
+      DB_NAME: recruitment_db
+      S3_INTERNAL_ENDPOINT: http://garage:3900
+      S3_PUBLIC_ENDPOINT: http://localhost:${S3_PORT}
+      S3_BUCKET: tbt-cv
+      CANDIDATE_SHEET_URL: ""
+      # Keycloak ở Hub, để cấp tài khoản cho nhân viên mới tuyển.
+      KEYCLOAK_ADMIN_URL: http://host.docker.internal:8180
+      HR_URL: http://hr:8080
+
+  # Ngân hàng giả lập (hệ thống ngoài) để thử chi lương, Circuit Breaker, Saga.
+  # Đổi chế độ khi demo: POST http://localhost:${BANK_PORT}/admin/mode {"mode": "failing"}
+  bank_mock:
+    image: tbt/bank_mock
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: bank_mock}
+    restart: unless-stopped
+    ports:
+      - "${BANK_PORT}:8080"
+
+  # Lưu CV của ứng viên trong khu vực (chuẩn S3). App tải lên qua URL ký sẵn.
+  garage:
+    image: dxflrs/garage:v2.3.0
+    restart: unless-stopped
+    env_file: [secrets/garage.env]
+    volumes:
+      - ./garage/garage.toml:/etc/garage.toml:ro
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+    ports:
+      - "${S3_PORT}:3900"
+
+  # Đọc outbox các service trong khu vực, đẩy lên audit ở Hub (máy chủ: host.docker.internal).
+  sync_worker:
+    image: tbt/sync_worker
+    build:
+      context: ..
+      dockerfile: deploy/docker/worker.Dockerfile
+      args: {SERVICE: sync_worker}
+    restart: unless-stopped
+    # Chỉ giữ khóa mã hóa, token của chính nước mình và tài khoản Firestore chỉ đọc
+    env_file: [secrets/postgres.env, secrets/sync.env, "secrets/datakey-${REGION}.env"]
+    environment:
+      REGION: ${REGION}
+      DB_PRIMARY_HOST: postgres-primary
+      DB_PORT: "5432"
+      SYNC_SERVICES: attendance,payroll,recruitment,finance,project_contract
+      HUB_AUDIT_URL: http://host.docker.internal:8195/events
+      DATASTORE_URL: http://host.docker.internal:8197/internal/ingest
+      FIRESTORE_SA: /run/secrets/firestore.json
+    volumes:
+      - ./secrets/firestore-region-reader.json:/run/secrets/firestore.json:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+
+  # Giám sát khu vực (R45, R69, R70). Grafana ở Hub đọc qua cổng PROM_PORT.
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=expand-external-labels
+      - --storage.tsdb.retention.time=3d
+    environment:
+      REGION: ${REGION}
+    volumes:
+      - ./prometheus/region.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "${PROM_PORT}:9090"
+    # Gửi cảnh báo tới Alertmanager ở Hub
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  prometheus-data:
+  pg-primary:
+  pg-replica:
+  garage-meta:
+  garage-data:

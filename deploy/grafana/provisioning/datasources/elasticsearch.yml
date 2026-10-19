@@ -1,0 +1,13 @@
+# Log request của mọi service (ADR 0029), mỗi ngày một index tbt-requests-YYYY.MM.DD
+apiVersion: 1
+
+datasources:
+  - name: Elasticsearch
+    uid: es-requests
+    type: elasticsearch
+    url: http://elasticsearch:9200
+    jsonData:
+      index: "tbt-requests-*"
+      timeField: "@timestamp"
+      logMessageField: path
+      logLevelField: status

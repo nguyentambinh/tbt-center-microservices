@@ -1,0 +1,142 @@
+_format_version: "3.0"
+# Template. Chạy deploy/scripts/sync-kong-jwt.sh để sinh kong.yml kèm public key của Keycloak.
+
+services:
+  - name: hr
+    url: http://hr.upstream
+    routes:
+      - name: hr
+        paths: [/hr]
+  - name: attendance
+    url: http://attendance.upstream
+    routes:
+      - name: attendance
+        paths: [/attendance]
+  - name: payroll
+    url: http://payroll:8080
+    routes:
+      - name: payroll
+        paths: [/payroll]
+  - name: recruitment
+    url: http://recruitment:8080
+    routes:
+      - name: recruitment
+        paths: [/recruitment]
+  - name: finance
+    url: http://finance:8080
+    routes:
+      - name: finance
+        paths: [/finance]
+  - name: project_contract
+    url: http://project-contract:8080
+    routes:
+      - name: project_contract
+        paths: [/project-contract]
+  - name: notification
+    url: http://notification:8080
+    routes:
+      - name: notification
+        paths: [/notification]
+  # Sổ kiểm toán ở Hub (R54, R88–R90): chỉ đọc, đi qua Kong để được kiểm token.
+  - name: audit
+    url: http://host.docker.internal:8195
+    routes:
+      - name: audit
+        paths: [/audit]
+  # Báo cáo hợp nhất nằm ở Hub, đi qua Kong khu vực để vẫn được kiểm token.
+  - name: report
+    url: http://host.docker.internal:8196
+    routes:
+      - name: report
+        paths: [/report]
+  # Kho tri thức ở Hub
+  - name: knowledge
+    url: http://host.docker.internal:8198
+    routes:
+      - name: knowledge
+        paths: [/knowledge]
+
+# Load Balancer: hr, attendance chạy 2 bản; Kong chia đều (round-robin) và tự bỏ bản hỏng
+upstreams:
+  - name: hr.upstream
+    algorithm: round-robin
+    targets:
+      # Tên DNS trả về IP của mọi bản đang chạy, Kong tách thành từng đích
+      - target: hr:8080
+    healthchecks:
+      active:
+        type: http
+        http_path: /
+        timeout: 2
+        healthy:
+          interval: 5
+          successes: 1
+        unhealthy:
+          interval: 5
+          http_failures: 2
+          tcp_failures: 2
+          timeouts: 2
+      passive:
+        unhealthy:
+          http_failures: 3
+          tcp_failures: 2
+          timeouts: 2
+  - name: attendance.upstream
+    algorithm: round-robin
+    targets:
+      # Tên DNS trả về IP của mọi bản đang chạy, Kong tách thành từng đích
+      - target: attendance:8080
+    healthchecks:
+      active:
+        type: http
+        http_path: /
+        timeout: 2
+        healthy:
+          interval: 5
+          successes: 1
+        unhealthy:
+          interval: 5
+          http_failures: 2
+          tcp_failures: 2
+          timeouts: 2
+      passive:
+        unhealthy:
+          http_failures: 3
+          tcp_failures: 2
+          timeouts: 2
+
+# Số liệu /metrics chỉ cho Prometheus trong mạng nội bộ, chặn mọi đường
+# .../metrics đi từ ngoài vào qua Kong.
+routes:
+  - name: block-metrics
+    paths: ["~/[^/]+/metrics$"]
+    regex_priority: 100
+    plugins:
+      - name: request-termination
+        config:
+          status_code: 404
+          message: Not found
+
+consumers:
+  - username: keycloak-tbt
+    jwt_secrets:
+      - key: __ISSUER__
+        algorithm: RS256
+        rsa_public_key: |
+__PUBLIC_KEY__
+
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Correlation-Id
+      generator: uuid
+      echo_downstream: true
+  - name: rate-limiting
+    config:
+      minute: 300
+      policy: local
+  - name: jwt
+    config:
+      key_claim_name: iss
+      claims_to_verify: [exp]
+      uri_param_names: []

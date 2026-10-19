@@ -1,0 +1,8 @@
+apiVersion: 1
+
+providers:
+  - name: tbt
+    folder: TBT Center
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

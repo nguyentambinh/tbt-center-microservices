@@ -1,0 +1,12 @@
+**/.dart_tool/
+**/build/
+**/.dart_frog/
+.git/
+.idea/
+.claude/
+tbt-center/
+tools/
+docs/
+deploy/
+!deploy/docker/healthcheck.dart
+*.md

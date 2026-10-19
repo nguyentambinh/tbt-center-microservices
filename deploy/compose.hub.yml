@@ -1,0 +1,345 @@
+# Hub đặt tại Việt Nam. Chạy từ thư mục gốc dự án:
+#   docker compose -p tbt-hub -f deploy/compose.hub.yml up -d
+# App trên máy ảo hoặc điện thoại cắm USB truy cập Keycloak qua: adb reverse tcp:8180 tcp:8180
+
+services:
+  hub-postgres:
+    image: postgres:17
+    restart: unless-stopped
+    env_file: [secrets/postgres.env]
+    environment:
+      SERVICE_DATABASES: keycloak_db audit_db
+    volumes:
+      - hub-pg:/var/lib/postgresql/data
+      - ./postgres/primary-init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+    ports:
+      - "5440:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    restart: unless-stopped
+    command: start-dev --import-realm
+    env_file: [secrets/keycloak.env]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://hub-postgres:5432/keycloak_db
+      # Cố định issuer để token lấy từ máy ảo hay từ máy tính đều giống nhau (Kong so khớp theo iss)
+      KC_HOSTNAME: http://localhost:8180
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      - ./keycloak/realm-tbt.json:/opt/keycloak/data/import/realm-tbt.json:ro
+    # Cổng 8180 do WAF giữ, Keycloak chỉ mở nội bộ
+    expose: ["8080"]
+    depends_on:
+      hub-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+      interval: 10s
+      retries: 30
+
+  keycloak-init:
+    image: quay.io/keycloak/keycloak:26.8.1
+    env_file: [secrets/keycloak.env, secrets/identity.env]
+    entrypoint: ["bash", "/scripts/init-users.sh"]
+    volumes:
+      - ./keycloak/init-users.sh:/scripts/init-users.sh:ro
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    restart: "no"
+
+  # Tra IP ra khu vực, ngôn ngữ mặc định. App gọi trước khi đăng nhập: adb reverse tcp:8190 tcp:8190
+  geo:
+    image: tbt/geo
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: geo}
+    restart: unless-stopped
+    environment:
+      GEO_DB_PATH: /data/dbip-country-lite.csv.gz
+    volumes:
+      - ./geo/data:/data:ro
+    expose: ["8080"]
+
+  # Sổ sự kiện chỉ ghi thêm, có chuỗi băm. Nhận sự kiện từ sync_worker các khu vực.
+  audit:
+    image: tbt/audit
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: audit}
+    restart: unless-stopped
+    env_file: [secrets/postgres.env, secrets/sync.env, secrets/rabbitmq.env]
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_URL: http://eureka:8761/eureka/
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      SERVICE_NAME: audit
+      DB_PRIMARY_HOST: hub-postgres
+      DB_PORT: "5432"
+      DB_NAME: audit_db
+      # Đường /audit-log dùng token người dùng: kiểm chữ ký bằng JWKS (ADR 0014).
+      JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
+      JWT_ISSUER: http://localhost:8180/realms/tbt
+    ports:
+      - "8195:8080"
+    depends_on:
+      hub-postgres:
+        condition: service_healthy
+
+  # Phía đọc của CQRS: chiếu sổ sự kiện audit vào Doris, trả báo cáo hợp nhất.
+  # App gọi qua Kong của khu vực (route /report → host.docker.internal:8196).
+  # Redis chỉ làm cache: giới hạn 64 MB, đầy thì bỏ key ít dùng, không lưu xuống đĩa
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Hàng đợi sự kiện (Event-Driven, ADR 0029): audit phát, notification, report nhận
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: tbt-rabbitmq
+    restart: unless-stopped
+    env_file: [secrets/rabbitmq.env]
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      # Cổng ngoài 5673, 15673
+      - "5673:5672"
+      - "15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # Gom log request của mọi service, tra theo correlation id (ADR 0029)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.2
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      # Chỉ mở trong máy dev; ra ngoài thì bật xpack.security
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms384m -Xmx384m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9201:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # Sổ đăng ký service (Service Discovery, ADR 0029); mã ở deploy/eureka
+  eureka:
+    image: tbt/eureka
+    build: ./eureka
+    restart: unless-stopped
+    environment:
+      JAVA_TOOL_OPTIONS: -Xmx160m -XX:+UseSerialGC
+    command:
+      - --eureka.server.enable-self-preservation=false
+      - --eureka.server.eviction-interval-timer-in-ms=10000
+      - --eureka.server.response-cache-update-interval-ms=5000
+    ports:
+      - "8762:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/actuator/health >/dev/null 2>&1 || curl -fs http://localhost:8761/ >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  # WAF trước Keycloak (trang đăng nhập) và geo, giống WAF ở các khu vực
+  waf-keycloak:
+    image: owasp/modsecurity-crs:nginx-alpine
+    restart: unless-stopped
+    environment: &hub-waf
+      BACKEND: http://keycloak:8080
+      PARANOIA: "1"
+      BLOCKING_PARANOIA: "1"
+      ANOMALY_INBOUND: "5"
+      ANOMALY_OUTBOUND: "4"
+      ALLOWED_METHODS: GET HEAD POST OPTIONS PUT PATCH DELETE
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+      # Giữ cả cổng trong Host để Keycloak dựng đúng URL trả về
+      PROXY_HOST_HEADER: $$http_host
+    volumes:
+      # Ngoại lệ hẹp cho Admin API của Keycloak (luật 930120 chặn nhầm)
+      - ./waf/keycloak-exclusions.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf:ro
+    ports:
+      - "8180:8080"
+    depends_on: [keycloak]
+
+  waf-geo:
+    image: owasp/modsecurity-crs:nginx-alpine
+    restart: unless-stopped
+    environment:
+      <<: *hub-waf
+      BACKEND: http://geo:8080
+    ports:
+      - "8190:8080"
+    depends_on: [geo]
+
+  # Kho tri thức: bài viết, đồ thị tri thức, hỏi đáp AI (Claude, dự phòng Gemini)
+  knowledge:
+    image: tbt/knowledge
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: knowledge}
+    restart: unless-stopped
+    env_file: [secrets/postgres.env, secrets/anthropic.env, secrets/gemini.env]
+    environment:
+      EUREKA_URL: http://eureka:8761/eureka/
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      SERVICE_NAME: knowledge
+      DB_PRIMARY_HOST: hub-postgres
+      DB_PORT: "5432"
+      DB_NAME: knowledge_db
+      JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
+      JWT_ISSUER: http://localhost:8180/realms/tbt
+      REDIS_HOST: redis
+      GEMINI_QA_MODELS: gemini-3.8-flash,gemini-3.5-flash,gemini-2.5-flash
+      GEMINI_EMBED_MODEL: gemini-embedding-2
+    ports:
+      - "8198:8080"
+    depends_on:
+      hub-postgres:
+        condition: service_healthy
+
+  # Kho tổng: nơi duy nhất ghi lên Firestore, mã hóa dữ liệu cá nhân theo từng nước
+  datastore:
+    image: tbt/datastore
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: datastore}
+    restart: unless-stopped
+    env_file: [secrets/datastore-hub.env]
+    environment:
+      EUREKA_URL: http://eureka:8761/eureka/
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      SERVICE_NAME: datastore
+      FIRESTORE_SA: /run/secrets/firestore.json
+    volumes:
+      - ./secrets/firestore-hub-writer.json:/run/secrets/firestore.json:ro
+    ports:
+      - "8197:8080"
+
+  # Tự khởi động lại mọi container báo unhealthy trên máy này (Hub và các khu vực)
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    restart: unless-stopped
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: all
+      AUTOHEAL_INTERVAL: "10"
+      AUTOHEAL_START_PERIOD: "30"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  report:
+    image: tbt/report
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: report}
+    restart: unless-stopped
+    env_file: [secrets/postgres.env, secrets/rabbitmq.env]
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      EUREKA_URL: http://eureka:8761/eureka/
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      SERVICE_NAME: report
+      DB_PRIMARY_HOST: hub-postgres
+      DB_PORT: "5432"
+      DB_NAME: audit_db
+      DORIS_FE_URL: http://doris:8030
+      DORIS_BE_URL: http://doris:8040
+      JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
+      JWT_ISSUER: http://localhost:8180/realms/tbt
+      REDIS_HOST: redis
+    ports:
+      - "8196:8080"
+    depends_on:
+      hub-postgres:
+        condition: service_healthy
+
+  # Mô hình đọc của CQRS: báo cáo hợp nhất toàn tập đoàn, nạp từ sổ sự kiện audit.
+  # Một FE + một BE trong một container (bản cho máy dev).
+  doris:
+    image: apache/doris:all-in-one-4.1.3
+    restart: unless-stopped
+    environment:
+      FE_HEAP: 1024m
+      BE_CONFIG_EXTRA: "mem_limit = 3G"
+    volumes:
+      - doris-fe:/opt/apache-doris/fe/doris-meta
+      - doris-be:/opt/apache-doris/be/storage
+    ports:
+      - "8030:8030"
+      - "8040:8040"
+      - "9030:9030"
+    mem_limit: 5g
+
+  # Giám sát Hub; Grafana gom Prometheus của Hub và mọi khu vực (http://localhost:3000).
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=3d
+    volumes:
+      - ./prometheus/hub.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9099:9090"
+
+  # Gửi cảnh báo của mọi Prometheus về Gmail (mẫu HTML ở alertmanager/email.tmpl)
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    restart: unless-stopped
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./alertmanager/email.tmpl:/etc/alertmanager/email.tmpl:ro
+      - ./secrets/gmail-app-password.txt:/etc/alertmanager/gmail_password:ro
+    ports:
+      - "9093:9093"
+
+  grafana:
+    image: grafana/grafana:13.2.4
+    restart: unless-stopped
+    env_file: [secrets/grafana.env]
+    environment:
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/tbt-overview.json
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  prometheus-data:
+  rabbitmq-data:
+  es-data:
+  grafana-data:
+  hub-pg:
+  doris-fe:
+  doris-be:

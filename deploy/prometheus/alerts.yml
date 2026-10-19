@@ -1,0 +1,46 @@
+# Cảnh báo (R70): Prometheus đánh giá, Alertmanager ở Hub gửi email về Gmail.
+groups:
+  - name: tbt
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }} ở {{ $externalLabels.region }} không trả lời quá 1 phút"
+
+      # Container vừa bị Docker hoặc autoheal khởi động lại
+      - alert: ServiceRestarted
+        expr: changes(tbt_process_start_time_seconds[10m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.instance }} ở {{ $externalLabels.region }} vừa khởi động lại (container chết hoặc bị treo)"
+
+      # Dịch vụ đối tác (ngân hàng, Claude) lỗi liên tục nên mạch đang ngắt.
+      - alert: PartnerCircuitOpen
+        expr: tbt_circuit_state == 2
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mạch {{ $labels.name }} của {{ $labels.instance }} đang ngắt: dịch vụ đối tác gặp sự cố"
+
+      - alert: HighServerErrorRate
+        expr: |
+          sum by (instance) (rate(tbt_http_requests_total{status=~"5.."}[5m]))
+            / sum by (instance) (rate(tbt_http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.instance }} trả lỗi máy chủ cho hơn 5% request trong 5 phút"
+
+      - alert: SlowRequests
+        expr: |
+          histogram_quantile(0.95, sum by (instance, le) (rate(tbt_http_request_seconds_bucket[5m]))) > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "95% request của {{ $labels.instance }} chậm hơn 2 giây"

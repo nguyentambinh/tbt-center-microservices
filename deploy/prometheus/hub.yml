@@ -1,0 +1,29 @@
+# Prometheus ở Hub: các service của trụ sở và Doris (mô hình đọc CQRS).
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    region: hub
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+  - job_name: services
+    static_configs:
+      - targets: [audit:8080, report:8080, datastore:8080, knowledge:8080]
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: "([^:]+):.*"
+        target_label: instance
+  - job_name: doris
+    static_configs:
+      - targets: [doris:8030]
+    relabel_configs:
+      - target_label: instance
+        replacement: doris

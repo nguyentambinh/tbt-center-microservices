@@ -1,0 +1,12 @@
+name: sync_worker
+description: Đọc Outbox ở khu vực, đẩy sự kiện lên Hub
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.1
+dependencies:
+  crypto: ^3.0.7
+  postgres: ^3.5.20
+  tbt_common:
+    path: ../../packages/common

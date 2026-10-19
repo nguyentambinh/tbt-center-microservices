@@ -1,0 +1,310 @@
+/*
+ * Họ tên: Nguyễn Tâm Bình
+ * MSSV:   2324801030003
+ * Môn:    Phát triển ứng dụng đa nền tảng
+ * Bài:    Đồ án TBT Center đa quốc gia
+ * Ngày:   2026-10-15
+ */
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../core/auth/auth_controller.dart';
+import '../../../../core/error/error_reporter.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/async_states.dart';
+import '../../../../core/widgets/motion.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/attendance.dart';
+import '../providers/attendance_providers.dart';
+import '../widgets/clock_card.dart';
+import '../widgets/leave_form.dart';
+import '../widgets/overtime_widgets.dart';
+
+abstract final class LeaveStatusLabel {
+  static String of(AppLocalizations l10n, String status) => switch (status) {
+        'approved' => l10n.statusApproved,
+        'rejected' => l10n.statusRejected,
+        _ => l10n.statusPending,
+      };
+}
+
+class AttendancePage extends ConsumerWidget {
+  const AttendancePage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final roles = ref.watch(authControllerProvider).value?.roles ?? const [];
+    final canApprove = roles.any(leaveApproverRoles.contains);
+
+    return DefaultTabController(
+      length: canApprove ? 4 : 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.attendance),
+          bottom: TabBar(isScrollable: canApprove, tabAlignment: canApprove ? TabAlignment.start : null, tabs: [
+            Tab(text: l10n.tabTimesheet),
+            Tab(text: l10n.tabLeave),
+            Tab(text: l10n.tabOvertime),
+            if (canApprove) Tab(text: l10n.tabApprovals),
+          ]),
+        ),
+        body: TabBarView(children: [
+          const _TimesheetTab(),
+          const _MyLeavesTab(),
+          const MyOvertimeTab(),
+          if (canApprove) const _ApprovalsTab(),
+        ]),
+      ),
+    );
+  }
+}
+
+class _TimesheetTab extends ConsumerStatefulWidget {
+  const _TimesheetTab();
+
+  @override
+  ConsumerState<_TimesheetTab> createState() => _TimesheetTabState();
+}
+
+class _TimesheetTabState extends ConsumerState<_TimesheetTab> {
+  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+
+  void _shift(int months) => setState(() => _month = DateTime(_month.year, _month.month + months));
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final sheet = ref.watch(timesheetProvider(_month));
+    final hours = NumberFormat.decimalPattern(locale);
+
+    return Column(
+      children: [
+        const ClockCard(),
+        Row(
+          children: [
+            IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => _shift(-1)),
+            Expanded(
+              child: Text(
+                DateFormat.yMMMM(locale).format(_month),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            IconButton(icon: const Icon(Icons.chevron_right), onPressed: () => _shift(1)),
+          ],
+        ),
+        Expanded(
+          child: switch (sheet) {
+            AsyncValue(:final value?) when value.days.isEmpty => EmptyView(message: l10n.noTimesheets),
+            AsyncValue(:final value?) => ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Text(
+                      l10n.totalHours(hours.format(value.totalHours), value.days.length),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                  for (final day in value.days)
+                    ListTile(
+                      title: Text(DateFormat.MMMEd(locale).format(day.date)),
+                      subtitle: Text(l10n.checkInOut(day.checkIn ?? '--:--', day.checkOut ?? '--:--')),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text('${hours.format(day.totalHours)} h'),
+                          if (day.overtimeHours > 0)
+                            Text(
+                              l10n.overtimeHours(hours.format(day.overtimeHours)),
+                              style: const TextStyle(color: AppColors.brandGold, fontSize: 12),
+                            ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(timesheetProvider(_month))),
+            _ => const SkeletonList(),
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _MyLeavesTab extends ConsumerWidget {
+  const _MyLeavesTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final leaves = ref.watch(myLeavesProvider);
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: Text(l10n.newLeave),
+        onPressed: () => showLeaveForm(context),
+      ),
+      body: switch (leaves) {
+        AsyncValue(:final value?) when value.isEmpty => EmptyView(message: l10n.noLeaves, icon: Icons.beach_access),
+        AsyncValue(:final value?) => RefreshIndicator(
+            onRefresh: () => ref.refresh(myLeavesProvider.future),
+            child: ListView(
+              padding: const EdgeInsets.only(bottom: 88),
+              children: [for (final leave in value) _LeaveTile(leave: leave)],
+            ),
+          ),
+        AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(myLeavesProvider)),
+        _ => const SkeletonList(),
+      },
+    );
+  }
+}
+
+class _ApprovalsTab extends ConsumerWidget {
+  const _ApprovalsTab();
+
+  Future<void> _decide(BuildContext context, WidgetRef ref, Future<void> Function() send) async {
+    try {
+      await send();
+      ref
+        ..invalidate(pendingLeavesProvider)
+        ..invalidate(myLeavesProvider)
+        ..invalidate(pendingOvertimeProvider)
+        ..invalidate(myOvertimeProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).leaveDecided), behavior: SnackBarBehavior.floating),
+        );
+      }
+    } on Object catch (e) {
+      reportFailure(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final leaves = ref.watch(pendingLeavesProvider);
+    final overtime = ref.watch(pendingOvertimeProvider);
+    final attendance = ref.read(attendanceRepositoryProvider);
+    final workTime = ref.read(workTimeRepositoryProvider);
+
+    if (leaves.error ?? overtime.error case final error?) {
+      return ErrorView(
+        error: error,
+        onRetry: () => ref
+          ..invalidate(pendingLeavesProvider)
+          ..invalidate(pendingOvertimeProvider),
+      );
+    }
+    final (pendingLeaves, pendingOvertime) = (leaves.value, overtime.value);
+    if (pendingLeaves == null || pendingOvertime == null) return const SkeletonList();
+    if (pendingLeaves.isEmpty && pendingOvertime.isEmpty) {
+      return EmptyView(message: l10n.noPending, icon: Icons.task_alt);
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref
+          ..invalidate(pendingLeavesProvider)
+          ..invalidate(pendingOvertimeProvider);
+      },
+      child: ListView(
+        children: [
+          for (final leave in pendingLeaves)
+            _LeaveTile(
+              leave: leave,
+              showEmployee: true,
+              actions: [
+                TextButton(
+                  onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: false)),
+                  child: Text(l10n.reject),
+                ),
+                FilledButton(
+                  onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: true)),
+                  child: Text(l10n.approve),
+                ),
+              ],
+            ),
+          for (final request in pendingOvertime)
+            OvertimeTile(
+              request: request,
+              showEmployee: true,
+              actions: [
+                TextButton(
+                  onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: false)),
+                  child: Text(l10n.reject),
+                ),
+                FilledButton(
+                  onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: true)),
+                  child: Text(l10n.approve),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LeaveTile extends StatelessWidget {
+  const _LeaveTile({required this.leave, this.showEmployee = false, this.actions = const []});
+
+  final LeaveRequest leave;
+  final bool showEmployee;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final format = DateFormat.yMMMd(locale);
+    final (label, color) = switch (leave.status) {
+      LeaveStatus.pending => (l10n.statusPending, AppColors.brandGold),
+      LeaveStatus.approved => (l10n.statusApproved, const Color(0xFF3FCF8E)),
+      LeaveStatus.rejected => (l10n.statusRejected, const Color(0xFFFF4D79)),
+    };
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Text(leave.leaveType, style: Theme.of(context).textTheme.titleMedium)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: color.withValues(alpha: 0.7)),
+                  ),
+                  child: Text(label, style: TextStyle(color: color, fontSize: 12)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '${format.format(leave.fromDate)} – ${format.format(leave.toDate)}  ·  ${l10n.leaveDays(leave.days)}',
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+            if (showEmployee) Text(leave.employeeId, style: const TextStyle(color: AppColors.textSecondary)),
+            if (leave.reason case final reason? when reason.isNotEmpty) Text(reason),
+            if (actions.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [...actions.expand((a) => [a, const SizedBox(width: 8)])]),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,47 @@
+# Prometheus của một khu vực (R45, R69). Mỗi khu vực một bản, đọc số liệu các
+# service trong mạng nội bộ của khu vực; Grafana ở Hub hỏi các bản này.
+# ${REGION} được thay nhờ cờ --enable-feature=expand-external-labels.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    region: ${REGION}
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['host.docker.internal:9093']
+
+scrape_configs:
+  - job_name: services
+    static_configs:
+      - targets:
+          - payroll:8080
+          - finance:8080
+          - project-contract:8080
+          - recruitment:8080
+          - notification:8080
+          - currency:8080
+          - integration:8080
+          - bank_mock:8080
+    relabel_configs:
+      # Tên service lấy từ địa chỉ, bỏ cổng: hr:8080 → hr.
+      - source_labels: [__address__]
+        regex: "([^:]+):.*"
+        target_label: instance
+
+  # Service chạy nhiều bản (Load Balancer): hỏi DNS để scrape đủ từng bản
+  - job_name: services-replicated
+    dns_sd_configs:
+      - names: [hr, attendance]
+        type: A
+        port: 8080
+        refresh_interval: 15s
+    relabel_configs:
+      - source_labels: [__meta_dns_name]
+        target_label: instance
+      - source_labels: [__address__]
+        target_label: replica
