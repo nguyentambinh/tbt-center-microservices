@@ -6,6 +6,8 @@
  * Ngày:   2026-10-15
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -138,8 +140,126 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
+          // Giả lập IP công khai để thử dò khu vực, ngôn ngữ của nước khác
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextButton.icon(
+                  onPressed: () => showDialog<void>(context: context, builder: (_) => const _ManualIpDialog()),
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.tbt.textSecondary,
+                    visualDensity: VisualDensity.compact,
+                    textStyle: text.labelSmall,
+                  ),
+                  icon: const Icon(Icons.lan_outlined, size: 16),
+                  label: Text(l10n.manualIpButton),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// IP công khai mẫu của từng nước (đã tra đúng nước bằng service geo)
+const sampleIps = {
+  'vn': '113.161.0.1',
+  'de': '85.214.0.1',
+  'us': '8.8.8.8',
+  'br': '200.160.0.1',
+  'za': '196.25.1.1',
+  'au': '139.130.4.5',
+};
+
+class _ManualIpDialog extends ConsumerStatefulWidget {
+  const _ManualIpDialog();
+
+  @override
+  ConsumerState<_ManualIpDialog> createState() => _ManualIpDialogState();
+}
+
+class _ManualIpDialogState extends ConsumerState<_ManualIpDialog> {
+  late final _field = TextEditingController(text: ref.read(locationSimulatorProvider).ip ?? '');
+  String? _error;
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  Future<void> _apply(String? ip) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    await ref.read(locationSimulatorProvider).simulate(ip: ip);
+    if (!mounted) return;
+    Navigator.pop(context);
+    messenger.showSnackBar(SnackBar(
+      content: Text(ip == null ? l10n.manualIpCleared : l10n.manualIpSaved(ip)),
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  void _submit(AppLocalizations l10n) {
+    final ip = _field.text.trim();
+    if (ip.isEmpty) {
+      _apply(null);
+    } else if (InternetAddress.tryParse(ip) == null) {
+      setState(() => _error = l10n.manualIpInvalid);
+    } else {
+      _apply(ip);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final region = ref.watch(submitRegionProvider);
+    return AlertDialog(
+      title: Text(l10n.manualIpTitle),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.manualIpHint),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _field,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(hintText: sampleIps['de'], errorText: _error),
+              onSubmitted: (_) => _submit(l10n),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final MapEntry(key: code, value: ip) in sampleIps.entries)
+                  ActionChip(
+                    label: Text(l10n.regionName(code)),
+                    tooltip: ip,
+                    onPressed: () => setState(() {
+                      _field.text = ip;
+                      _error = null;
+                    }),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(l10n.manualIpCurrent(l10n.regionName(region)), style: TextStyle(color: context.tbt.textSecondary)),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => _apply(null), child: Text(l10n.manualIpReset)),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+        FilledButton(onPressed: () => _submit(l10n), child: Text(l10n.save)),
+      ],
     );
   }
 }

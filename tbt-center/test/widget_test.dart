@@ -115,4 +115,33 @@ void main() {
     await tester.pumpAndSettle();
     expect(prefs.getString('theme_mode'), isNull);
   });
+
+  testWidgets('Change Manual IP ở màn đăng nhập: chọn IP nước khác thì lưu và dò lại khu vực', (tester) async {
+    await pumpApp(tester, language: 'vi');
+    await tester.tap(find.text('Change Manual IP'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'abc');
+    await tester.tap(find.text('Lưu'));
+    await tester.pumpAndSettle();
+    expect(find.text('IP không hợp lệ'), findsOneWidget);
+
+    await tester.tap(find.text('Đức'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, '85.214.0.1');
+    await tester.tap(find.text('Lưu'));
+    await tester.pumpAndSettle();
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('geo_simulated_ip'), '85.214.0.1');
+    expect(find.text('Đang giả lập IP 85.214.0.1'), findsOneWidget);
+
+    // Đợi thanh thông báo tắt rồi mới bấm lại nút ở góc dưới
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Change Manual IP'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dùng IP thật'));
+    await tester.pumpAndSettle();
+    expect(prefs.getString('geo_simulated_ip'), isNull);
+  });
 }

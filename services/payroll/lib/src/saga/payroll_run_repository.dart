@@ -416,12 +416,32 @@ class PostgresPayrollRunRepository implements PayrollRunRepository {
     String runId,
     String employeeId,
     String bankReference,
-  ) => _db.execute(
-    "update payslips set status = 'paid', paid_on = current_date, "
-    'bank_reference = @ref where run_id::text = @run '
-    'and employee_id = @employee',
-    params: {'ref': bankReference, 'run': runId, 'employee': employeeId},
-  );
+  ) => _db.transaction((tx) async {
+    final params = {
+      'ref': bankReference,
+      'run': runId,
+      'employee': employeeId,
+    };
+    await tx.execute(
+      Sql.named(
+        "update payslips set status = 'paid', paid_on = current_date, "
+        'bank_reference = @ref where run_id::text = @run '
+        'and employee_id = @employee',
+      ),
+      parameters: params,
+    );
+    await tx.execute(
+      Sql.named(
+        'insert into payout_log (period, employee_id, action, source, '
+        'reference, bank_reference, amount, currency, actor) '
+        "select period, employee_id, 'paid', 'saga', "
+        "'PAY-' || period || '-' || employee_id, @ref, net_original, "
+        "currency_original, 'saga' from payslips "
+        'where run_id::text = @run and employee_id = @employee',
+      ),
+      parameters: params,
+    );
+  });
 
   @override
   Future<void> compensate(String runId, String reason) {

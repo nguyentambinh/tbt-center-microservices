@@ -13,7 +13,7 @@ import 'package:crypto/crypto.dart';
 import 'package:integration_service/src/bank_gateway.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-/// Cấu hình kênh chi hộ payOS, đọc từ deploy/secrets/payos.env
+/// Cấu hình kênh chi hộ payOS của công ty khu vực, đọc từ deploy/secrets/payos-<khu vực>.env
 class PayOsConfig {
   const PayOsConfig({
     required this.clientId,
@@ -27,10 +27,6 @@ class PayOsConfig {
 
   /// `null` khi chưa bật hoặc thiếu khóa, thiếu tài khoản nhận
   static PayOsConfig? fromEnv(Map<String, String> env) {
-    final region = env['REGION'] ?? '';
-    final regions = (env['PAYOS_REGIONS'] ?? 'vn')
-        .split(',')
-        .map((r) => r.trim());
     final config = PayOsConfig(
       clientId: env['PAYOS_CLIENT_ID'] ?? '',
       apiKey: env['PAYOS_API_KEY'] ?? '',
@@ -42,7 +38,6 @@ class PayOsConfig {
     );
     final ready =
         env['PAYOS_ENABLED'] == 'true' &&
-        regions.contains(region) &&
         [
           config.clientId,
           config.apiKey,
@@ -102,14 +97,25 @@ String _text(Object? value) => switch (value) {
 /// Chi lương qua payOS (lệnh chi hộ /v1/payouts), cùng Circuit Breaker như cổng ngân hàng.
 /// Mỗi khoản chuyển [PayOsConfig.payoutAmount] đồng tới tài khoản cấu hình sẵn.
 class PayOsGateway implements PayoutGateway {
-  PayOsGateway(this.config, {CircuitBreaker? breaker, HttpClient? http})
-    : breaker = breaker ?? CircuitBreaker('bank'),
-      _http =
-          http ??
-          (HttpClient()..connectionTimeout = const Duration(seconds: 8));
+  PayOsGateway(
+    this.config, {
+    CircuitBreaker? breaker,
+    HttpClient? http,
+    this.rateLimitDelays = const [
+      Duration(seconds: 2),
+      Duration(seconds: 4),
+      Duration(seconds: 8),
+    ],
+  }) : breaker = breaker ?? CircuitBreaker('bank'),
+       _http =
+           http ??
+           (HttpClient()..connectionTimeout = const Duration(seconds: 8));
 
   final PayOsConfig config;
   final HttpClient _http;
+
+  /// Khoảng chờ trước mỗi lần gửi lại khi payOS báo gọi quá nhiều
+  final List<Duration> rateLimitDelays;
 
   @override
   final CircuitBreaker breaker;
@@ -126,15 +132,36 @@ class PayOsGateway implements PayoutGateway {
       'toBin': config.toBin,
       'toAccountNumber': config.toAccount,
     };
-    // Cùng reference gửi lại thì payOS coi là một lệnh, không chi lần hai
-    final data = await _send(
-      'POST',
-      '/v1/payouts',
-      body: body,
-      idempotencyKey: item.reference,
-    );
-    return data['id'] as String;
+    try {
+      final data = await _send(
+        'POST',
+        '/v1/payouts',
+        body: body,
+        idempotencyKey: item.reference,
+      );
+      return data['id'] as String;
+    } on BankError catch (e) {
+      // 606: mã này đã có lệnh, trả lại lệnh cũ thay vì chi lần hai
+      if (!e.message.contains('payOS 606')) rethrow;
+      final existing = await find(item.reference);
+      if (existing == null) rethrow;
+      return existing;
+    }
   }, isFailure: (e) => e is! BankError || e.statusCode >= 500);
+
+  /// Mã lệnh chi payOS theo referenceId, `null` nếu không có
+  Future<String?> find(String reference) async {
+    final data = await _send(
+      'GET',
+      '/v1/payouts?referenceId=${Uri.encodeQueryComponent(reference)}&limit=5',
+    );
+    final list = data['payouts'] ?? data['items'] ?? data['data'];
+    if (list is! List) return null;
+    for (final p in list.cast<Map<String, dynamic>>()) {
+      if (p['referenceId'] == reference) return p['id'] as String?;
+    }
+    return null;
+  }
 
   /// Số dư tài khoản chi hộ, dùng kiểm khóa mà không chuyển tiền
   Future<Map<String, dynamic>> balance() =>
@@ -146,33 +173,48 @@ class PayOsGateway implements PayoutGateway {
     Map<String, dynamic>? body,
     String? idempotencyKey,
   }) async {
-    final request = await _http.openUrl(
-      method,
-      Uri.parse('${config.baseUrl}$path'),
-    );
-    request.headers
-      ..set('x-client-id', config.clientId)
-      ..set('x-api-key', config.apiKey);
-    if (body != null) {
+    for (var attempt = 0; ; attempt++) {
+      final request = await _http.openUrl(
+        method,
+        Uri.parse('${config.baseUrl}$path'),
+      );
       request.headers
-        ..contentType = ContentType.json
-        ..set('x-signature', payOsSignature(body, config.checksumKey));
-      if (idempotencyKey != null) {
-        request.headers.set('x-idempotency-key', idempotencyKey);
+        ..set('x-client-id', config.clientId)
+        ..set('x-api-key', config.apiKey);
+      if (body != null) {
+        request.headers
+          ..contentType = ContentType.json
+          ..set('x-signature', payOsSignature(body, config.checksumKey));
+        if (idempotencyKey != null) {
+          request.headers.set('x-idempotency-key', idempotencyKey);
+        }
+        request.add(utf8.encode(jsonEncode(body)));
       }
-      request.add(utf8.encode(jsonEncode(body)));
+      final response = await request.close().timeout(
+        const Duration(seconds: 15),
+      );
+      final text = await utf8.decodeStream(response);
+      // 429 khi gọi dồn dập: chờ rồi gửi lại (lệnh chi có khóa chống trùng)
+      if (response.statusCode == 429 && attempt < rateLimitDelays.length) {
+        await Future<void>.delayed(rateLimitDelays[attempt]);
+        continue;
+      }
+      final Object? json;
+      try {
+        json = text.isEmpty ? <String, dynamic>{} : jsonDecode(text);
+      } on FormatException {
+        throw BankError(response.statusCode, 'payOS: ${text.trim()}');
+      }
+      if (json is! Map<String, dynamic>) {
+        throw BankError(response.statusCode, 'payOS: ${text.trim()}');
+      }
+      // payOS trả HTTP 200 kèm code '00' khi thành công
+      if (response.statusCode >= 300 || json['code'] != '00') {
+        final status = response.statusCode >= 300 ? response.statusCode : 422;
+        throw BankError(status, 'payOS ${json['code']}: ${json['desc']}');
+      }
+      return (json['data'] as Map<String, dynamic>?) ?? {};
     }
-    final response = await request.close().timeout(const Duration(seconds: 15));
-    final text = await utf8.decodeStream(response);
-    final json = text.isEmpty
-        ? <String, dynamic>{}
-        : jsonDecode(text) as Map<String, dynamic>;
-    // payOS trả HTTP 200 kèm code '00' khi thành công
-    if (response.statusCode >= 300 || json['code'] != '00') {
-      final status = response.statusCode >= 300 ? response.statusCode : 422;
-      throw BankError(status, 'payOS ${json['code']}: ${json['desc']}');
-    }
-    return (json['data'] as Map<String, dynamic>?) ?? {};
   }
 
   // Nội dung chuyển khoản không dấu, ngắn

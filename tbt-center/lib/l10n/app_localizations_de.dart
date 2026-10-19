@@ -1647,4 +1647,192 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeDark => 'Dunkel';
+
+  @override
+  String get payoutCompany => 'Gesellschaft';
+
+  @override
+  String payoutPayRegion(String region) {
+    return '$region auszahlen';
+  }
+
+  @override
+  String get payoutPayGroup => 'Ganzen Konzern auszahlen';
+
+  @override
+  String payoutPaySelected(int count) {
+    return '$count Personen auszahlen';
+  }
+
+  @override
+  String payoutConfirmTitle(String period) {
+    return 'Periode $period auszahlen?';
+  }
+
+  @override
+  String payoutConfirmRegion(String region) {
+    return 'Zahlt an die Mitarbeitenden von $region. Bereits Bezahlte werden Ihnen vorher angezeigt.';
+  }
+
+  @override
+  String payoutConfirmGroup(int count) {
+    return 'Zahlt an die Mitarbeitenden aller $count Gesellschaften. Bereits Bezahlte werden Ihnen vorher angezeigt.';
+  }
+
+  @override
+  String payoutConfirmPeople(int count, String region) {
+    return 'Zahlt an die $count ausgewählten Personen in $region.';
+  }
+
+  @override
+  String get payoutConfirm => 'Auszahlen';
+
+  @override
+  String get payoutDuplicateTitle => 'Einige wurden bereits bezahlt';
+
+  @override
+  String get payoutDuplicateBody =>
+      'Erneutes Zahlen überweist ihr Gehalt noch einmal. Jede Wahl wird protokolliert.';
+
+  @override
+  String payoutDuplicateRegion(String region, int count) {
+    return '$region: $count bereits bezahlt';
+  }
+
+  @override
+  String payoutDuplicatePerson(String employee, int count) {
+    return '$employee · $count-mal bezahlt';
+  }
+
+  @override
+  String get payoutSkipPaid => 'Bereits Bezahlte überspringen';
+
+  @override
+  String get payoutResend => 'Erneut zahlen';
+
+  @override
+  String get payoutTabPeople => 'Mitarbeitende';
+
+  @override
+  String get payoutTabRuns => 'Läufe';
+
+  @override
+  String get payoutTabLog => 'Protokoll';
+
+  @override
+  String get payoutUnpaid => 'Nicht bezahlt';
+
+  @override
+  String payoutPaidTimes(int count) {
+    return '$count-mal bezahlt';
+  }
+
+  @override
+  String get payoutNotCalculated =>
+      'Diese Periode ist noch nicht abgerechnet. Zuerst die ganze Gesellschaft auszahlen.';
+
+  @override
+  String get payoutResultTitle => 'Ergebnis der Auszahlung';
+
+  @override
+  String payoutResultSummary(int paid, int resent, int skipped) {
+    return 'Bezahlt $paid · erneut $resent · übersprungen $skipped';
+  }
+
+  @override
+  String payoutResultFailed(int count) {
+    return '$count Zahlungen nicht durchgeführt, bitte später erneut versuchen';
+  }
+
+  @override
+  String payoutResultMissing(int count) {
+    return '$count Personen ohne Lohnabrechnung in dieser Periode';
+  }
+
+  @override
+  String get payoutStarted => 'Abrechnung gestartet, Auszahlung läuft';
+
+  @override
+  String get payoutRetried => 'Restlicher Teil wird ausgezahlt';
+
+  @override
+  String get payoutBusy =>
+      'Diese Periode wird gerade verarbeitet, bitte danach erneut versuchen';
+
+  @override
+  String get payoutUnreachable => 'Server dieser Gesellschaft nicht erreichbar';
+
+  @override
+  String get payoutNothing => 'Nichts auszuzahlen';
+
+  @override
+  String get payoutAmountHidden =>
+      'Beträge nur innerhalb dieser Gesellschaft sichtbar';
+
+  @override
+  String get payoutLogPaid => 'Bezahlt';
+
+  @override
+  String get payoutLogResent => 'Erneut bezahlt';
+
+  @override
+  String get payoutLogSkipped => 'Übersprungen, bereits bezahlt';
+
+  @override
+  String get payoutLogWarned => 'Warnung: doppelte Zahlung';
+
+  @override
+  String get payoutLogFailed => 'Nicht durchgeführt';
+
+  @override
+  String get payoutLogSaga => 'Automatische Abrechnung';
+
+  @override
+  String payoutLogLine(String actor, String time) {
+    return '$actor · $time';
+  }
+
+  @override
+  String get noPayoutLog => 'Noch keine Auszahlungen';
+
+  @override
+  String get errPayoutFailed =>
+      'Die Auszahlung wurde unterbrochen. Erledigte Zahlungen sind gespeichert, bitte später erneut versuchen.';
+
+  @override
+  String payoutAccepted(int count) {
+    return '$count Zahlungen laufen, Fortschritt im Tab Protokoll';
+  }
+
+  @override
+  String get payoutLogInDoubt => 'Unklar, Abgleich nötig';
+
+  @override
+  String get manualIpButton => 'Change Manual IP';
+
+  @override
+  String get manualIpTitle => 'Manuelle IP';
+
+  @override
+  String get manualIpHint =>
+      'Öffentliche IP eingeben, um dieses Land zu simulieren: Region und Sprache werden daraus erkannt. Leer lassen für die echte IP.';
+
+  @override
+  String manualIpCurrent(String region) {
+    return 'Erkannte Region: $region';
+  }
+
+  @override
+  String get manualIpInvalid => 'Ungültige IP';
+
+  @override
+  String manualIpSaved(String ip) {
+    return 'IP $ip wird simuliert';
+  }
+
+  @override
+  String get manualIpCleared => 'Wieder echte IP';
+
+  @override
+  String get manualIpReset => 'Echte IP';
 }

@@ -1634,4 +1634,191 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get themeDark => 'Tối';
+
+  @override
+  String get payoutCompany => 'Công ty';
+
+  @override
+  String payoutPayRegion(String region) {
+    return 'Chuyển lương $region';
+  }
+
+  @override
+  String get payoutPayGroup => 'Chuyển cả tập đoàn';
+
+  @override
+  String payoutPaySelected(int count) {
+    return 'Chuyển cho $count người';
+  }
+
+  @override
+  String payoutConfirmTitle(String period) {
+    return 'Chuyển lương kỳ $period?';
+  }
+
+  @override
+  String payoutConfirmRegion(String region) {
+    return 'Chuyển cho nhân viên công ty $region. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.';
+  }
+
+  @override
+  String payoutConfirmGroup(int count) {
+    return 'Chuyển cho nhân viên của cả $count công ty. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.';
+  }
+
+  @override
+  String payoutConfirmPeople(int count, String region) {
+    return 'Chuyển cho $count người đã chọn ở công ty $region.';
+  }
+
+  @override
+  String get payoutConfirm => 'Chuyển';
+
+  @override
+  String get payoutDuplicateTitle => 'Có người đã nhận lương kỳ này';
+
+  @override
+  String get payoutDuplicateBody =>
+      'Chuyển lại sẽ chi thêm một lần nữa cho những người này. Lựa chọn nào cũng được ghi vào nhật ký.';
+
+  @override
+  String payoutDuplicateRegion(String region, int count) {
+    return '$region: $count người đã nhận';
+  }
+
+  @override
+  String payoutDuplicatePerson(String employee, int count) {
+    return '$employee · đã nhận $count lần';
+  }
+
+  @override
+  String get payoutSkipPaid => 'Bỏ qua người đã nhận';
+
+  @override
+  String get payoutResend => 'Chuyển lại';
+
+  @override
+  String get payoutTabPeople => 'Nhân viên';
+
+  @override
+  String get payoutTabRuns => 'Các đợt';
+
+  @override
+  String get payoutTabLog => 'Nhật ký';
+
+  @override
+  String get payoutUnpaid => 'Chưa chuyển';
+
+  @override
+  String payoutPaidTimes(int count) {
+    return 'Đã chuyển $count lần';
+  }
+
+  @override
+  String get payoutNotCalculated =>
+      'Kỳ này chưa chốt lương. Hãy chuyển cho cả công ty trước.';
+
+  @override
+  String get payoutResultTitle => 'Kết quả chuyển lương';
+
+  @override
+  String payoutResultSummary(int paid, int resent, int skipped) {
+    return 'Chuyển $paid · chuyển lại $resent · bỏ qua $skipped';
+  }
+
+  @override
+  String payoutResultFailed(int count) {
+    return '$count khoản chưa chuyển được, hãy thử lại sau';
+  }
+
+  @override
+  String payoutResultMissing(int count) {
+    return '$count người chưa có phiếu lương kỳ này';
+  }
+
+  @override
+  String get payoutStarted => 'Đã bắt đầu chốt kỳ và chuyển lương';
+
+  @override
+  String get payoutRetried => 'Đang chuyển nốt phần chưa chuyển';
+
+  @override
+  String get payoutBusy =>
+      'Kỳ này đang chốt hoặc đang chuyển, chờ xong rồi thử lại';
+
+  @override
+  String get payoutUnreachable => 'Không kết nối được máy chủ công ty này';
+
+  @override
+  String get payoutNothing => 'Không có khoản nào phải chuyển';
+
+  @override
+  String get payoutAmountHidden => 'Số tiền chỉ xem được trong công ty đó';
+
+  @override
+  String get payoutLogPaid => 'Đã chuyển';
+
+  @override
+  String get payoutLogResent => 'Chuyển lại';
+
+  @override
+  String get payoutLogSkipped => 'Bỏ qua vì đã nhận';
+
+  @override
+  String get payoutLogWarned => 'Cảnh báo chuyển trùng';
+
+  @override
+  String get payoutLogFailed => 'Chuyển không được';
+
+  @override
+  String get payoutLogSaga => 'Chốt lương tự động';
+
+  @override
+  String payoutLogLine(String actor, String time) {
+    return '$actor · $time';
+  }
+
+  @override
+  String get noPayoutLog => 'Chưa có lần chuyển nào';
+
+  @override
+  String get errPayoutFailed =>
+      'Chuyển lương bị gián đoạn. Khoản đã chuyển vẫn được ghi lại, hãy thử lại sau.';
+
+  @override
+  String payoutAccepted(int count) {
+    return 'Đang chuyển $count khoản, xem tiến độ ở tab Nhật ký';
+  }
+
+  @override
+  String get payoutLogInDoubt => 'Chưa rõ, cần đối soát';
+
+  @override
+  String get manualIpButton => 'Change Manual IP';
+
+  @override
+  String get manualIpTitle => 'Đổi IP thủ công';
+
+  @override
+  String get manualIpHint =>
+      'Nhập IP công khai để giả lập đang ở nước đó: app dò khu vực lưu hồ sơ và ngôn ngữ theo IP này. Để trống để dùng IP thật.';
+
+  @override
+  String manualIpCurrent(String region) {
+    return 'Khu vực đang nhận: $region';
+  }
+
+  @override
+  String get manualIpInvalid => 'IP không hợp lệ';
+
+  @override
+  String manualIpSaved(String ip) {
+    return 'Đang giả lập IP $ip';
+  }
+
+  @override
+  String get manualIpCleared => 'Đã dùng lại IP thật';
+
+  @override
+  String get manualIpReset => 'Dùng IP thật';
 }

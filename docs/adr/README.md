@@ -32,3 +32,4 @@ Mỗi file ghi một quyết định kiến trúc, kèm bối cảnh, lý do và
 - [ADR 0028: Đồ thị tri thức và hỏi đáp AI (GraphRAG) trong kho tri thức](0028-do-thi-tri-thuc-hoi-dap-ai.md)
 - [ADR 0029: RabbitMQ, Elasticsearch, Eureka trong TBT Center](0029-rabbitmq-elasticsearch-eureka.md)
 - [ADR 0030: Bản thể học, suy luận, AI trích xuất và SPARQL cho đồ thị tri thức](0030-ban-the-hoc-suy-luan-trich-xuat.md)
+- [ADR 0031: Chuyển lương theo tập đoàn, công ty, từng người; chống chuyển trùng và nhật ký chuyển](0031-chuyen-luong-theo-cong-ty-nguoi-nhat-ky.md)

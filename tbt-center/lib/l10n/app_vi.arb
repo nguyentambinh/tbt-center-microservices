@@ -1055,5 +1055,185 @@
   "appearance": "Giao diện",
   "themeSystem": "Theo điện thoại",
   "themeLight": "Sáng",
-  "themeDark": "Tối"
+  "themeDark": "Tối",
+  "payoutCompany": "Công ty",
+  "payoutPayRegion": "Chuyển lương {region}",
+  "@payoutPayRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "payoutPayGroup": "Chuyển cả tập đoàn",
+  "payoutPaySelected": "Chuyển cho {count} người",
+  "@payoutPaySelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutConfirmTitle": "Chuyển lương kỳ {period}?",
+  "@payoutConfirmTitle": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "payoutConfirmRegion": "Chuyển cho nhân viên công ty {region}. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.",
+  "@payoutConfirmRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "payoutConfirmGroup": "Chuyển cho nhân viên của cả {count} công ty. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.",
+  "@payoutConfirmGroup": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutConfirmPeople": "Chuyển cho {count} người đã chọn ở công ty {region}.",
+  "@payoutConfirmPeople": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "payoutConfirm": "Chuyển",
+  "payoutDuplicateTitle": "Có người đã nhận lương kỳ này",
+  "payoutDuplicateBody": "Chuyển lại sẽ chi thêm một lần nữa cho những người này. Lựa chọn nào cũng được ghi vào nhật ký.",
+  "payoutDuplicateRegion": "{region}: {count} người đã nhận",
+  "@payoutDuplicateRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutDuplicatePerson": "{employee} · đã nhận {count} lần",
+  "@payoutDuplicatePerson": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutSkipPaid": "Bỏ qua người đã nhận",
+  "payoutResend": "Chuyển lại",
+  "payoutTabPeople": "Nhân viên",
+  "payoutTabRuns": "Các đợt",
+  "payoutTabLog": "Nhật ký",
+  "payoutUnpaid": "Chưa chuyển",
+  "payoutPaidTimes": "Đã chuyển {count} lần",
+  "@payoutPaidTimes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutNotCalculated": "Kỳ này chưa chốt lương. Hãy chuyển cho cả công ty trước.",
+  "payoutResultTitle": "Kết quả chuyển lương",
+  "payoutResultSummary": "Chuyển {paid} · chuyển lại {resent} · bỏ qua {skipped}",
+  "@payoutResultSummary": {
+    "placeholders": {
+      "paid": {
+        "type": "int"
+      },
+      "resent": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutResultFailed": "{count} khoản chưa chuyển được, hãy thử lại sau",
+  "@payoutResultFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutResultMissing": "{count} người chưa có phiếu lương kỳ này",
+  "@payoutResultMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutStarted": "Đã bắt đầu chốt kỳ và chuyển lương",
+  "payoutRetried": "Đang chuyển nốt phần chưa chuyển",
+  "payoutBusy": "Kỳ này đang chốt hoặc đang chuyển, chờ xong rồi thử lại",
+  "payoutUnreachable": "Không kết nối được máy chủ công ty này",
+  "payoutNothing": "Không có khoản nào phải chuyển",
+  "payoutAmountHidden": "Số tiền chỉ xem được trong công ty đó",
+  "payoutLogPaid": "Đã chuyển",
+  "payoutLogResent": "Chuyển lại",
+  "payoutLogSkipped": "Bỏ qua vì đã nhận",
+  "payoutLogWarned": "Cảnh báo chuyển trùng",
+  "payoutLogFailed": "Chuyển không được",
+  "payoutLogSaga": "Chốt lương tự động",
+  "payoutLogLine": "{actor} · {time}",
+  "@payoutLogLine": {
+    "placeholders": {
+      "actor": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noPayoutLog": "Chưa có lần chuyển nào",
+  "errPayoutFailed": "Chuyển lương bị gián đoạn. Khoản đã chuyển vẫn được ghi lại, hãy thử lại sau.",
+  "payoutAccepted": "Đang chuyển {count} khoản, xem tiến độ ở tab Nhật ký",
+  "@payoutAccepted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payoutLogInDoubt": "Chưa rõ, cần đối soát",
+  "manualIpButton": "Change Manual IP",
+  "manualIpTitle": "Đổi IP thủ công",
+  "manualIpHint": "Nhập IP công khai để giả lập đang ở nước đó: app dò khu vực lưu hồ sơ và ngôn ngữ theo IP này. Để trống để dùng IP thật.",
+  "manualIpCurrent": "Khu vực đang nhận: {region}",
+  "@manualIpCurrent": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "manualIpInvalid": "IP không hợp lệ",
+  "manualIpSaved": "Đang giả lập IP {ip}",
+  "@manualIpSaved": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "manualIpCleared": "Đã dùng lại IP thật",
+  "manualIpReset": "Dùng IP thật"
 }

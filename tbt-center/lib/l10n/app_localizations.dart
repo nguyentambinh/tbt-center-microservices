@@ -3005,6 +3005,306 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tối'**
   String get themeDark;
+
+  /// No description provided for @payoutCompany.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công ty'**
+  String get payoutCompany;
+
+  /// No description provided for @payoutPayRegion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lương {region}'**
+  String payoutPayRegion(String region);
+
+  /// No description provided for @payoutPayGroup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển cả tập đoàn'**
+  String get payoutPayGroup;
+
+  /// No description provided for @payoutPaySelected.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển cho {count} người'**
+  String payoutPaySelected(int count);
+
+  /// No description provided for @payoutConfirmTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lương kỳ {period}?'**
+  String payoutConfirmTitle(String period);
+
+  /// No description provided for @payoutConfirmRegion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển cho nhân viên công ty {region}. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.'**
+  String payoutConfirmRegion(String region);
+
+  /// No description provided for @payoutConfirmGroup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển cho nhân viên của cả {count} công ty. Ai đã nhận rồi sẽ được hỏi lại trước khi chuyển.'**
+  String payoutConfirmGroup(int count);
+
+  /// No description provided for @payoutConfirmPeople.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển cho {count} người đã chọn ở công ty {region}.'**
+  String payoutConfirmPeople(int count, String region);
+
+  /// No description provided for @payoutConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển'**
+  String get payoutConfirm;
+
+  /// No description provided for @payoutDuplicateTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Có người đã nhận lương kỳ này'**
+  String get payoutDuplicateTitle;
+
+  /// No description provided for @payoutDuplicateBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lại sẽ chi thêm một lần nữa cho những người này. Lựa chọn nào cũng được ghi vào nhật ký.'**
+  String get payoutDuplicateBody;
+
+  /// No description provided for @payoutDuplicateRegion.
+  ///
+  /// In vi, this message translates to:
+  /// **'{region}: {count} người đã nhận'**
+  String payoutDuplicateRegion(String region, int count);
+
+  /// No description provided for @payoutDuplicatePerson.
+  ///
+  /// In vi, this message translates to:
+  /// **'{employee} · đã nhận {count} lần'**
+  String payoutDuplicatePerson(String employee, int count);
+
+  /// No description provided for @payoutSkipPaid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua người đã nhận'**
+  String get payoutSkipPaid;
+
+  /// No description provided for @payoutResend.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lại'**
+  String get payoutResend;
+
+  /// No description provided for @payoutTabPeople.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhân viên'**
+  String get payoutTabPeople;
+
+  /// No description provided for @payoutTabRuns.
+  ///
+  /// In vi, this message translates to:
+  /// **'Các đợt'**
+  String get payoutTabRuns;
+
+  /// No description provided for @payoutTabLog.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhật ký'**
+  String get payoutTabLog;
+
+  /// No description provided for @payoutUnpaid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa chuyển'**
+  String get payoutUnpaid;
+
+  /// No description provided for @payoutPaidTimes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chuyển {count} lần'**
+  String payoutPaidTimes(int count);
+
+  /// No description provided for @payoutNotCalculated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kỳ này chưa chốt lương. Hãy chuyển cho cả công ty trước.'**
+  String get payoutNotCalculated;
+
+  /// No description provided for @payoutResultTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kết quả chuyển lương'**
+  String get payoutResultTitle;
+
+  /// No description provided for @payoutResultSummary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển {paid} · chuyển lại {resent} · bỏ qua {skipped}'**
+  String payoutResultSummary(int paid, int resent, int skipped);
+
+  /// No description provided for @payoutResultFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} khoản chưa chuyển được, hãy thử lại sau'**
+  String payoutResultFailed(int count);
+
+  /// No description provided for @payoutResultMissing.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} người chưa có phiếu lương kỳ này'**
+  String payoutResultMissing(int count);
+
+  /// No description provided for @payoutStarted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã bắt đầu chốt kỳ và chuyển lương'**
+  String get payoutStarted;
+
+  /// No description provided for @payoutRetried.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chuyển nốt phần chưa chuyển'**
+  String get payoutRetried;
+
+  /// No description provided for @payoutBusy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kỳ này đang chốt hoặc đang chuyển, chờ xong rồi thử lại'**
+  String get payoutBusy;
+
+  /// No description provided for @payoutUnreachable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không kết nối được máy chủ công ty này'**
+  String get payoutUnreachable;
+
+  /// No description provided for @payoutNothing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không có khoản nào phải chuyển'**
+  String get payoutNothing;
+
+  /// No description provided for @payoutAmountHidden.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số tiền chỉ xem được trong công ty đó'**
+  String get payoutAmountHidden;
+
+  /// No description provided for @payoutLogPaid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã chuyển'**
+  String get payoutLogPaid;
+
+  /// No description provided for @payoutLogResent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lại'**
+  String get payoutLogResent;
+
+  /// No description provided for @payoutLogSkipped.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ qua vì đã nhận'**
+  String get payoutLogSkipped;
+
+  /// No description provided for @payoutLogWarned.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cảnh báo chuyển trùng'**
+  String get payoutLogWarned;
+
+  /// No description provided for @payoutLogFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển không được'**
+  String get payoutLogFailed;
+
+  /// No description provided for @payoutLogSaga.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chốt lương tự động'**
+  String get payoutLogSaga;
+
+  /// No description provided for @payoutLogLine.
+  ///
+  /// In vi, this message translates to:
+  /// **'{actor} · {time}'**
+  String payoutLogLine(String actor, String time);
+
+  /// No description provided for @noPayoutLog.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có lần chuyển nào'**
+  String get noPayoutLog;
+
+  /// No description provided for @errPayoutFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển lương bị gián đoạn. Khoản đã chuyển vẫn được ghi lại, hãy thử lại sau.'**
+  String get errPayoutFailed;
+
+  /// No description provided for @payoutAccepted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chuyển {count} khoản, xem tiến độ ở tab Nhật ký'**
+  String payoutAccepted(int count);
+
+  /// No description provided for @payoutLogInDoubt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa rõ, cần đối soát'**
+  String get payoutLogInDoubt;
+
+  /// No description provided for @manualIpButton.
+  ///
+  /// In vi, this message translates to:
+  /// **'Change Manual IP'**
+  String get manualIpButton;
+
+  /// No description provided for @manualIpTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi IP thủ công'**
+  String get manualIpTitle;
+
+  /// No description provided for @manualIpHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập IP công khai để giả lập đang ở nước đó: app dò khu vực lưu hồ sơ và ngôn ngữ theo IP này. Để trống để dùng IP thật.'**
+  String get manualIpHint;
+
+  /// No description provided for @manualIpCurrent.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khu vực đang nhận: {region}'**
+  String manualIpCurrent(String region);
+
+  /// No description provided for @manualIpInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'IP không hợp lệ'**
+  String get manualIpInvalid;
+
+  /// No description provided for @manualIpSaved.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang giả lập IP {ip}'**
+  String manualIpSaved(String ip);
+
+  /// No description provided for @manualIpCleared.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã dùng lại IP thật'**
+  String get manualIpCleared;
+
+  /// No description provided for @manualIpReset.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng IP thật'**
+  String get manualIpReset;
 }
 
 class _AppLocalizationsDelegate

@@ -215,8 +215,8 @@ services:
     restart: unless-stopped
     env_file:
       - secrets/internal.env
-      # Kênh chi hộ payOS (tùy chọn): không có file thì chi qua bank_mock
-      - path: secrets/payos.env
+      # Kênh chi hộ payOS riêng của công ty khu vực (tùy chọn): không có file thì chi qua bank_mock
+      - path: secrets/payos-${REGION}.env
         required: false
     environment:
       BANK_URL: http://bank_mock:8080

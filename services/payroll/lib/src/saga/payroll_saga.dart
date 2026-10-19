@@ -115,7 +115,7 @@ class PayrollSaga {
       Duration(seconds: 16),
     ],
     this.stepTimeout = const Duration(seconds: 30),
-    this.payTimeout = const Duration(minutes: 2),
+    this.payTimeout = const Duration(minutes: 20),
   });
 
   final PayrollRunRepository repository;

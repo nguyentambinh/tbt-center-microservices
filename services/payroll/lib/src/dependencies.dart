@@ -8,6 +8,7 @@
 
 import 'dart:io';
 
+import 'package:payroll_service/src/payout_desk.dart';
 import 'package:payroll_service/src/payroll_repository.dart';
 import 'package:payroll_service/src/saga/payroll_run_repository.dart';
 import 'package:payroll_service/src/saga/payroll_saga.dart';
@@ -19,14 +20,24 @@ final database = Database.fromEnvironment();
 final payrollRepository = PostgresPayrollRepository(database);
 final runRepository = PostgresPayrollRunRepository(database);
 
-InternalClient _client(String service, String fallback) => InternalClient(
+InternalClient _client(
+  String service,
+  String fallback, {
+  Duration timeout = const Duration(seconds: 20),
+}) => InternalClient(
   service,
   Uri.parse(_env['${service.toUpperCase()}_URL'] ?? fallback),
+  timeout: timeout,
 );
 
 final _attendance = _client('attendance', 'http://attendance:8080');
 final _currency = _client('currency', 'http://currency:8080');
-final _integration = _client('integration', 'http://integration:8080');
+// Kênh chi thật mất vài giây mỗi khoản
+final _integration = _client(
+  'integration',
+  'http://integration:8080',
+  timeout: const Duration(seconds: 45),
+);
 final _finance = _client('finance', 'http://finance:8080');
 
 final payrollSaga = PayrollSaga(
@@ -77,11 +88,22 @@ final payrollSaga = PayrollSaga(
       date: DateTime.parse(data['rateDate'] as String),
     );
   },
-  payout: (items) async {
+  payout: payoutSink,
+);
+
+/// Chi qua integration (ngân hàng giả lập hoặc payOS), mỗi lời gọi một khoản
+/// để kịp hạn chờ giữa hai service
+Future<Map<String, String>> payoutSink(
+  List<({String reference, String account, double amount, String currency})>
+  items,
+) async {
+  final paid = <String, String>{};
+  for (final item in items) {
+    final chunk = [item];
     try {
       final data = await _integration.post('/internal/payouts', {
         'items': [
-          for (final i in items)
+          for (final i in chunk)
             {
               'reference': i.reference,
               'account': i.account,
@@ -90,14 +112,20 @@ final payrollSaga = PayrollSaga(
             },
         ],
       });
-      return _paid(data);
+      paid.addAll(_paid(data));
     } on InternalCallException catch (e) {
       // Quá hạn, mất kết nối: không biết ngân hàng đã chuyển chưa
       if (e.statusCode == null) throw PayoutInDoubt(e.message);
       // Ngân hàng trả lời từ chối: khoản đã chuyển vẫn phải ghi nhận
-      throw PayoutFailed(e.message, _paid(e.body));
+      throw PayoutFailed(e.message, {...paid, ..._paid(e.body)});
     }
-  },
+  }
+  return paid;
+}
+
+final payoutDesk = PayoutDesk(
+  store: PostgresPayoutStore(database),
+  payout: payoutSink,
 );
 
 Map<String, String> _paid(Map<String, dynamic> data) => {

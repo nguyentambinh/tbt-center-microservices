@@ -1637,4 +1637,192 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
+
+  @override
+  String get payoutCompany => 'Company';
+
+  @override
+  String payoutPayRegion(String region) {
+    return 'Pay $region';
+  }
+
+  @override
+  String get payoutPayGroup => 'Pay the whole group';
+
+  @override
+  String payoutPaySelected(int count) {
+    return 'Pay $count people';
+  }
+
+  @override
+  String payoutConfirmTitle(String period) {
+    return 'Pay period $period?';
+  }
+
+  @override
+  String payoutConfirmRegion(String region) {
+    return 'Pays the employees of $region. Anyone already paid is shown to you first.';
+  }
+
+  @override
+  String payoutConfirmGroup(int count) {
+    return 'Pays the employees of all $count companies. Anyone already paid is shown to you first.';
+  }
+
+  @override
+  String payoutConfirmPeople(int count, String region) {
+    return 'Pays the $count selected people in $region.';
+  }
+
+  @override
+  String get payoutConfirm => 'Pay';
+
+  @override
+  String get payoutDuplicateTitle => 'Some people are already paid';
+
+  @override
+  String get payoutDuplicateBody =>
+      'Paying again sends their salary one more time. Either choice is recorded in the log.';
+
+  @override
+  String payoutDuplicateRegion(String region, int count) {
+    return '$region: $count already paid';
+  }
+
+  @override
+  String payoutDuplicatePerson(String employee, int count) {
+    return '$employee · paid $count times';
+  }
+
+  @override
+  String get payoutSkipPaid => 'Skip those already paid';
+
+  @override
+  String get payoutResend => 'Pay again';
+
+  @override
+  String get payoutTabPeople => 'Employees';
+
+  @override
+  String get payoutTabRuns => 'Runs';
+
+  @override
+  String get payoutTabLog => 'Log';
+
+  @override
+  String get payoutUnpaid => 'Not paid';
+
+  @override
+  String payoutPaidTimes(int count) {
+    return 'Paid $count times';
+  }
+
+  @override
+  String get payoutNotCalculated =>
+      'This period has not been run yet. Pay the whole company first.';
+
+  @override
+  String get payoutResultTitle => 'Payout result';
+
+  @override
+  String payoutResultSummary(int paid, int resent, int skipped) {
+    return 'Paid $paid · again $resent · skipped $skipped';
+  }
+
+  @override
+  String payoutResultFailed(int count) {
+    return '$count payments did not go through, try again later';
+  }
+
+  @override
+  String payoutResultMissing(int count) {
+    return '$count people have no payslip this period';
+  }
+
+  @override
+  String get payoutStarted => 'Payroll started and paying';
+
+  @override
+  String get payoutRetried => 'Paying the remaining part';
+
+  @override
+  String get payoutBusy =>
+      'This period is being processed, try again when it finishes';
+
+  @override
+  String get payoutUnreachable => 'Could not reach this company\'s server';
+
+  @override
+  String get payoutNothing => 'Nothing to pay';
+
+  @override
+  String get payoutAmountHidden =>
+      'Amounts are visible only inside that company';
+
+  @override
+  String get payoutLogPaid => 'Paid';
+
+  @override
+  String get payoutLogResent => 'Paid again';
+
+  @override
+  String get payoutLogSkipped => 'Skipped, already paid';
+
+  @override
+  String get payoutLogWarned => 'Duplicate warning';
+
+  @override
+  String get payoutLogFailed => 'Did not go through';
+
+  @override
+  String get payoutLogSaga => 'Automatic payroll';
+
+  @override
+  String payoutLogLine(String actor, String time) {
+    return '$actor · $time';
+  }
+
+  @override
+  String get noPayoutLog => 'No payouts yet';
+
+  @override
+  String get errPayoutFailed =>
+      'The payout was interrupted. Completed payments are recorded, try again later.';
+
+  @override
+  String payoutAccepted(int count) {
+    return 'Paying $count items, follow progress in the Log tab';
+  }
+
+  @override
+  String get payoutLogInDoubt => 'Unclear, needs reconciliation';
+
+  @override
+  String get manualIpButton => 'Change Manual IP';
+
+  @override
+  String get manualIpTitle => 'Manual IP';
+
+  @override
+  String get manualIpHint =>
+      'Enter a public IP to act as if you were in that country: region and language are detected from it. Leave empty to use the real IP.';
+
+  @override
+  String manualIpCurrent(String region) {
+    return 'Detected region: $region';
+  }
+
+  @override
+  String get manualIpInvalid => 'Invalid IP';
+
+  @override
+  String manualIpSaved(String ip) {
+    return 'Simulating IP $ip';
+  }
+
+  @override
+  String get manualIpCleared => 'Using the real IP again';
+
+  @override
+  String get manualIpReset => 'Real IP';
 }

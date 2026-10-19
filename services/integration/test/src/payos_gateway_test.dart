@@ -31,9 +31,9 @@ void main() {
       expect(config.toBin, '971025');
     });
 
-    test('chưa bật, khác khu vực hoặc thiếu khóa thì dùng bank_mock', () {
+    test('chưa bật hoặc thiếu khóa thì dùng bank_mock', () {
       expect(PayOsConfig.fromEnv({..._env, 'PAYOS_ENABLED': 'false'}), isNull);
-      expect(PayOsConfig.fromEnv({..._env, 'REGION': 'de'}), isNull);
+      expect(PayOsConfig.fromEnv(const {'REGION': 'de'}), isNull);
       expect(PayOsConfig.fromEnv({..._env, 'PAYOS_API_KEY': ''}), isNull);
       expect(PayOsConfig.fromEnv({..._env, 'PAYOS_TO_ACCOUNT': ''}), isNull);
     });
@@ -59,24 +59,45 @@ void main() {
     late HttpServer server;
     late PayOsGateway gateway;
     final requests = <(HttpHeaders, Map<String, dynamic>)>[];
+    final paths = <String>[];
     var reply = <String, dynamic>{};
+    var listReply = <String, dynamic>{};
+    var limited = 0;
 
     setUp(() async {
       requests.clear();
+      paths.clear();
+      limited = 0;
       server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0)
         ..listen((request) async {
-          final body = jsonDecode(await utf8.decodeStream(request));
-          requests.add((request.headers, body as Map<String, dynamic>));
-          request.response
-            ..headers.contentType = ContentType.json
-            ..write(jsonEncode(reply));
+          final text = await utf8.decodeStream(request);
+          paths.add('${request.method} ${request.uri}');
+          if (text.isNotEmpty) {
+            requests.add((
+              request.headers,
+              jsonDecode(text) as Map<String, dynamic>,
+            ));
+          }
+          if (limited > 0) {
+            limited--;
+            request.response
+              ..statusCode = 429
+              ..write('Too many requests');
+          } else {
+            request.response
+              ..headers.contentType = ContentType.json
+              ..write(jsonEncode(request.method == 'GET' ? listReply : reply));
+          }
           await request.response.close();
         });
       final config = PayOsConfig.fromEnv({
         ..._env,
         'PAYOS_BASE_URL': 'http://127.0.0.1:${server.port}',
       })!;
-      gateway = PayOsGateway(config);
+      gateway = PayOsGateway(
+        config,
+        rateLimitDelays: const [Duration.zero, Duration.zero],
+      );
     });
 
     tearDown(() => server.close(force: true));
@@ -104,6 +125,59 @@ void main() {
       expect(headers.value('x-api-key'), 'api');
       expect(headers.value('x-idempotency-key'), 'run-2026-10-EMP01');
       expect(headers.value('x-signature'), payOsSignature(body, 'checksum'));
+    });
+
+    test('mã đã có lệnh (606) thì trả lệnh cũ, không chi lần hai', () async {
+      reply = {'code': '606', 'desc': 'Idempotency key đã tồn tại'};
+      listReply = {
+        'code': '00',
+        'data': {
+          'payouts': [
+            {'id': 'PO-OLD', 'referenceId': 'R1'},
+          ],
+        },
+      };
+      const item = PayoutItem(
+        reference: 'R1',
+        account: 'x',
+        amount: 1,
+        currency: 'VND',
+      );
+      expect(await gateway.transfer(item), 'PO-OLD');
+      expect(paths.last, 'GET /v1/payouts?referenceId=R1&limit=5');
+      expect(requests, hasLength(1));
+    });
+
+    test('payOS báo gọi quá nhiều thì chờ rồi gửi lại', () async {
+      limited = 2;
+      reply = {
+        'code': '00',
+        'data': {'id': 'PO-2'},
+      };
+      const item = PayoutItem(
+        reference: 'R3',
+        account: 'x',
+        amount: 1,
+        currency: 'VND',
+      );
+      expect(await gateway.transfer(item), 'PO-2');
+      expect(paths, hasLength(3));
+    });
+
+    test('payOS trả chữ thường thì báo lỗi rõ ràng', () async {
+      limited = 5;
+      const item = PayoutItem(
+        reference: 'R4',
+        account: 'x',
+        amount: 1,
+        currency: 'VND',
+      );
+      await expectLater(
+        gateway.transfer(item),
+        throwsA(
+          isA<BankError>().having((e) => e.statusCode, 'status', 429),
+        ),
+      );
     });
 
     test('payOS từ chối thì báo lỗi, không tính là kênh hỏng', () async {

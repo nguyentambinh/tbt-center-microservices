@@ -83,6 +83,14 @@ void main() {
       expect((await response.json() as Map)['code'], 'region_mismatch');
     });
 
+    test('vai trò cấp tập đoàn gọi được khu vực khác', () async {
+      final response = await _call(
+        requireClaims(region: 'de', anyRegionRoles: {'hr'}),
+        authorization: _hrVn,
+      );
+      expect(response.statusCode, 200);
+    });
+
     test('không đủ vai trò thì 403 forbidden', () async {
       final response = await _call(
         requireClaims(anyRole: {'finance'}),

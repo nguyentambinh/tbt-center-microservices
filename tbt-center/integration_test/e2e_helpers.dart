@@ -93,7 +93,7 @@ List<String> homeCards(WidgetTester tester) => [
         if (tile.title case Text(:final data?)) data,
     ];
 
-Future<void> pumpAs(WidgetTester tester, String username, {String language = 'vi'}) async {
+Future<void> pumpAs(WidgetTester tester, String username, {String language = 'vi', List extraOverrides = const []}) async {
   SharedPreferences.setMockInitialValues({'language': language});
   final prefs = await SharedPreferences.getInstance();
   final session = await login(username);
@@ -104,6 +104,7 @@ Future<void> pumpAs(WidgetTester tester, String username, {String language = 'vi
       sharedPreferencesProvider.overrideWithValue(prefs),
       sessionStoreProvider.overrideWithValue(MemoryStore(session)),
       authGatewayProvider.overrideWithValue(PasswordGateway(username)),
+      ...extraOverrides,
     ],
     child: const TbtApp(),
   ));

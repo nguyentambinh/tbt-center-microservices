@@ -67,7 +67,8 @@ String newCorrelationId() {
 /// Bắt buộc có token; [anyRole] là các vai trò được phép;
 /// [region] là khu vực của service: người khu vực khác không đọc được dữ liệu ở đây.
 /// [allowNoRegion] cho token chưa gắn khu vực (ứng viên tự đăng ký nộp hồ sơ
-/// về khu vực theo IP) đi qua.
+/// về khu vực theo IP) đi qua. [anyRegionRoles] là vai trò cấp tập đoàn,
+/// gọi được service của mọi khu vực.
 ///
 /// Có [verifier] (mặc định đọc `JWT_JWKS_URL`, `JWT_ISSUER`) thì kiểm chữ ký
 /// và hạn của token lần nữa ở service, không chỉ tin Kong.
@@ -75,6 +76,7 @@ Middleware requireClaims({
   Set<String> anyRole = const {},
   String? region,
   bool allowNoRegion = false,
+  Set<String> anyRegionRoles = const {},
   JwtVerifier? verifier,
 }) {
   final jwt = verifier ?? _environmentVerifier;
@@ -98,7 +100,9 @@ Middleware requireClaims({
           return apiError(401, 'unauthorized', 'Token rejected: $rejected');
         }
       }
-      final noRegionAllowed = allowNoRegion && claims.region == null;
+      final noRegionAllowed =
+          (allowNoRegion && claims.region == null) ||
+          claims.hasAnyRole(anyRegionRoles);
       if (region != null && claims.region != region && !noRegionAllowed) {
         return apiError(
           403,
