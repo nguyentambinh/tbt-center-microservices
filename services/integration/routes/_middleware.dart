@@ -10,11 +10,18 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:integration_service/src/bank_gateway.dart';
+import 'package:integration_service/src/payos_gateway.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-final bankGateway = BankGateway(
-  Uri.parse(Platform.environment['BANK_URL'] ?? 'http://localhost:8090'),
-);
+// Có cấu hình payOS cho khu vực này thì chi qua payOS, không thì bank_mock
+final PayoutGateway bankGateway = switch (PayOsConfig.fromEnv(
+  Platform.environment,
+)) {
+  final config? => PayOsGateway(config),
+  null => BankGateway(
+    Uri.parse(Platform.environment['BANK_URL'] ?? 'http://localhost:8090'),
+  ),
+};
 
 /// Cổng ra hệ thống ngoài (ngân hàng). Chỉ service trong khu vực gọi được.
 Handler middleware(Handler handler) {
@@ -24,7 +31,7 @@ Handler middleware(Handler handler) {
         if (context.request.uri.path == '/') return handler(context);
         return internal(context);
       })
-      .use(provider<BankGateway>((_) => bankGateway))
+      .use(provider<PayoutGateway>((_) => bankGateway))
       .use(correlationAndErrors())
       .use(metrics('integration'))
       .use(serviceRegistry('integration'));

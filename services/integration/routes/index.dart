@@ -14,7 +14,8 @@ Response onRequest(RequestContext context) {
     body: {
       'service': 'integration',
       'status': 'ok',
-      'circuits': {'bank': context.read<BankGateway>().breaker.state.name},
+      'channel': context.read<PayoutGateway>().channel,
+      'circuits': {'bank': context.read<PayoutGateway>().breaker.state.name},
     },
   );
 }

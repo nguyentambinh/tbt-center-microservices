@@ -213,7 +213,11 @@ services:
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: integration}
     restart: unless-stopped
-    env_file: [secrets/internal.env]
+    env_file:
+      - secrets/internal.env
+      # Kênh chi hộ payOS (tùy chọn): không có file thì chi qua bank_mock
+      - path: secrets/payos.env
+        required: false
     environment:
       BANK_URL: http://bank_mock:8080
       REGION: ${REGION}

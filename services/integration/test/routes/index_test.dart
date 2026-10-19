@@ -19,7 +19,7 @@ import '../../routes/internal/payouts.dart' as payouts_route;
 
 class _MockContext extends Mock implements RequestContext {}
 
-class _MockGateway extends Mock implements BankGateway {}
+class _MockGateway extends Mock implements PayoutGateway {}
 
 PayoutItem _item(String ref) => PayoutItem(
   reference: ref,
@@ -37,7 +37,8 @@ void main() {
   setUp(() {
     context = _MockContext();
     gateway = _MockGateway();
-    when(() => context.read<BankGateway>()).thenReturn(gateway);
+    when(() => context.read<PayoutGateway>()).thenReturn(gateway);
+    when(() => gateway.channel).thenReturn('bank_mock');
     when(() => gateway.breaker).thenReturn(CircuitBreaker('bank'));
   });
 

@@ -28,7 +28,7 @@ Future<Response> onRequest(RequestContext context) async {
     return apiError(400, 'invalid_payouts', 'Body must be {"items": [...]}');
   }
 
-  final gateway = context.read<BankGateway>();
+  final gateway = context.read<PayoutGateway>();
   final paid = <Map<String, dynamic>>[];
   for (final item in items) {
     try {

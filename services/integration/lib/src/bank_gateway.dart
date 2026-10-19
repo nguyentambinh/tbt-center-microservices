@@ -43,9 +43,20 @@ class BankError implements Exception {
   String toString() => 'Bank $statusCode: $message';
 }
 
+/// Kênh chi lương ra ngoài: ngân hàng giả lập hoặc payOS
+abstract interface class PayoutGateway {
+  CircuitBreaker get breaker;
+
+  /// Tên kênh hiện ở GET /
+  String get channel;
+
+  /// Chuyển một khoản; trả mã giao dịch phía kênh chi.
+  Future<String> transfer(PayoutItem item);
+}
+
 /// Gửi lệnh chi lương sang ngân hàng (R72). Mọi lời gọi đi qua Circuit
 /// Breaker: ngân hàng lỗi liên tiếp thì ngắt, không gửi tiếp vào chỗ hỏng.
-class BankGateway {
+class BankGateway implements PayoutGateway {
   BankGateway(this.bankUrl, {CircuitBreaker? breaker, HttpClient? http})
     : breaker = breaker ?? CircuitBreaker('bank'),
       _http =
@@ -53,11 +64,16 @@ class BankGateway {
           (HttpClient()..connectionTimeout = const Duration(seconds: 5));
 
   final Uri bankUrl;
-  final CircuitBreaker breaker;
   final HttpClient _http;
 
-  /// Chuyển một khoản; trả mã giao dịch của ngân hàng.
+  @override
+  final CircuitBreaker breaker;
+
+  @override
+  String get channel => 'bank_mock';
+
   /// Cùng `reference` gửi lại thì ngân hàng trả giao dịch cũ, không chuyển lại.
+  @override
   Future<String> transfer(PayoutItem item) => breaker.call(() async {
     final request = await _http.postUrl(bankUrl.resolve('/transfers'));
     request

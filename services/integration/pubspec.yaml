@@ -8,6 +8,7 @@ environment:
   sdk: ^3.13.1
 
 dependencies:
+  crypto: ^3.0.7
   dart_frog: ^1.1.0
   tbt_common:
     path: ../../packages/common
