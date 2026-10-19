@@ -59,23 +59,23 @@ class _Banner extends ConsumerWidget {
         padding: EdgeInsets.fromLTRB(16, MediaQuery.paddingOf(context).top + 6, 8, 6),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: AppColors.textMain),
+            Icon(icon, size: 18, color: context.tbt.textMain),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(text, style: const TextStyle(color: AppColors.textMain, fontSize: 13)),
+              child: Text(text, style: TextStyle(color: context.tbt.textMain, fontSize: 13)),
             ),
             if (snapshot.isDown)
               snapshot.retrying
-                  ? const Padding(
+                  ? Padding(
                       padding: EdgeInsets.all(12),
                       child: SizedBox.square(
                         dimension: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.textMain),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: context.tbt.textMain),
                       ),
                     )
                   : TextButton(
                       onPressed: () => ref.read(connectionMonitorProvider.notifier).retryNow(),
-                      style: TextButton.styleFrom(foregroundColor: AppColors.brandGold),
+                      style: TextButton.styleFrom(foregroundColor: context.tbt.brandGold),
                       child: Text(l10n.reconnect),
                     ),
           ],

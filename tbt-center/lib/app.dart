@@ -17,6 +17,7 @@ import 'core/locale/locale_providers.dart';
 import 'core/push/push_service.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_mode.dart';
 import 'core/theme/role_gem.dart';
 import 'core/widgets/back_gestures.dart';
 import 'core/widgets/connection_banner.dart';
@@ -72,7 +73,9 @@ class _TbtAppState extends ConsumerState<TbtApp> {
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(gem),
+      theme: buildTheme(gem, brightness: Brightness.light),
+      darkTheme: buildTheme(gem),
+      themeMode: ref.watch(themeModeProvider),
       locale: ref.watch(appLocaleProvider),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

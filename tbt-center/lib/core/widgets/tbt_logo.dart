@@ -28,7 +28,7 @@ class TbtLogo extends StatelessWidget {
         shaderCallback: (bounds) => LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [gem.deep, gem.color, Colors.white, gem.color, gem.deep],
+          colors: gem.shine(Theme.of(context).brightness),
           stops: const [0, 0.25, 0.45, 0.65, 1],
         ).createShader(bounds),
         child: SizedBox(

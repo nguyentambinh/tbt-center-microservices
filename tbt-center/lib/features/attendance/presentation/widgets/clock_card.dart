@@ -73,7 +73,7 @@ class _ClockCardState extends ConsumerState<ClockCard> {
                 Text(l10n.clockToday, style: text.titleLarge),
                 Text(
                   DateFormat.yMMMMEEEEd(locale).format(value.workDate),
-                  style: const TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(color: context.tbt.textSecondary),
                 ),
                 const SizedBox(height: 8),
                 if (!value.hasShift)

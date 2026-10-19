@@ -206,7 +206,7 @@ class _ProposalCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               proposal.isNode ? '${p['id']} · ${p['class']}' : '${p['source']} ${p['relation']} ${p['target']}',
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+              style: TextStyle(color: context.tbt.textSecondary, fontSize: 11),
             ),
             if (proposal.evidence case final quote?) ...[
               const SizedBox(height: 8),
@@ -223,7 +223,7 @@ class _ProposalCard extends StatelessWidget {
                 if (proposal.confidence case final c?) l10n.proposalConfidence((c * 100).round()),
                 ?proposal.model,
               ].join(' · '),
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              style: TextStyle(color: context.tbt.textSecondary, fontSize: 12),
             ),
             if (proposal.reason case final r?) ...[
               const SizedBox(height: 4),

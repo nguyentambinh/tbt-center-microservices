@@ -124,7 +124,7 @@ class _NodePickerState extends ConsumerState<_NodePicker> {
                       leading: CircleAvatar(radius: 7, backgroundColor: nodeColor(n.type, accent)),
                       title: Text(n.label),
                       subtitle: Text(nodeTypeLabel(l10n, n.type),
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                          style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
                       onTap: () => Navigator.of(context).pop(n),
                     ),
                 ],
@@ -183,12 +183,12 @@ class _PathSheet extends ConsumerWidget {
                           child: Row(
                             children: [
                               Icon(s.forward ? Icons.arrow_downward : Icons.arrow_upward,
-                                  size: 16, color: AppColors.textSecondary),
+                                  size: 16, color: context.tbt.textSecondary),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   '${s.edge.label}${s.edge.inferred ? ' (${l10n.graphInferred})' : ''}',
-                                  style: const TextStyle(color: AppColors.textSecondary),
+                                  style: TextStyle(color: context.tbt.textSecondary),
                                 ),
                               ),
                             ],

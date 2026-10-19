@@ -1629,4 +1629,16 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get errSparqlSyntax =>
       'A consulta tem um erro de sintaxe. Verifique os parênteses, o ponto após cada padrão e os prefixos (kg:, kgo:).';
+
+  @override
+  String get appearance => 'Aparência';
+
+  @override
+  String get themeSystem => 'Igual ao telefone';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
 }

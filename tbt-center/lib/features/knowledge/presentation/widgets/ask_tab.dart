@@ -133,7 +133,7 @@ class _Welcome extends StatelessWidget {
         Icon(Icons.auto_awesome, size: 44, color: accent),
         const SizedBox(height: 14),
         Text(l10n.askIntro,
-            textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textSecondary, height: 1.4)),
+            textAlign: TextAlign.center, style: TextStyle(color: context.tbt.textSecondary, height: 1.4)),
         const SizedBox(height: 24),
         for (final q in [l10n.askExample1, l10n.askExample2, l10n.askExample3, l10n.askExample4])
           Padding(
@@ -191,7 +191,7 @@ class _Turn extends ConsumerWidget {
                     index: index, answer: answer, helpful: entry.helpful, onFollowUp: onFollowUp),
                 _ => Row(
                     children: [
-                      const Icon(Icons.error_outline, color: AppColors.textSecondary),
+                      Icon(Icons.error_outline, color: context.tbt.textSecondary),
                       const SizedBox(width: 10),
                       Expanded(child: Text(l10n.askFailed)),
                       TextButton(
@@ -225,7 +225,7 @@ class _Thinking extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
             ),
             const SizedBox(width: 12),
-            Text(label, style: const TextStyle(color: AppColors.textSecondary)),
+            Text(label, style: TextStyle(color: context.tbt.textSecondary)),
           ],
         ),
       );
@@ -275,11 +275,11 @@ class _AnswerBody extends ConsumerWidget {
                           Text(s.title, style: const TextStyle(fontWeight: FontWeight.w600)),
                           if (s.via.isNotEmpty)
                             Text([for (final v in s.via) via[v] ?? v].join(' · '),
-                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                                style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
+                    Icon(Icons.chevron_right, color: context.tbt.textSecondary, size: 20),
                   ],
                 ),
               ),
@@ -334,12 +334,12 @@ class _AnswerBody extends ConsumerWidget {
             Expanded(
               child: Text(
                 answer.cached ? '$provider · ${l10n.askCached}' : provider,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                style: TextStyle(color: context.tbt.textSecondary, fontSize: 11),
               ),
             ),
             if (answer.id != null)
               if (helpful != null)
-                Text(l10n.askThanks, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))
+                Text(l10n.askThanks, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12))
               else ...[
                 IconButton(
                   tooltip: l10n.askHelpful,

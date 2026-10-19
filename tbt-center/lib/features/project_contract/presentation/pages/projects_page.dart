@@ -77,7 +77,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
                           subtitle: Text(
                             '${p.id} · ${p.customerName ?? '-'}\n'
                             '${l10n.expectedAcceptance}: ${p.expectedAcceptance == null ? '-' : money.format(p.expectedAcceptance)}',
-                            style: const TextStyle(color: AppColors.textSecondary),
+                            style: TextStyle(color: context.tbt.textSecondary),
                           ),
                           isThreeLine: true,
                           trailing: Text(l10n.employeesCount(p.members)),

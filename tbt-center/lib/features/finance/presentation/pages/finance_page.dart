@@ -140,7 +140,7 @@ class _YearChart extends StatelessWidget {
         child: GroupedBarChart(
           series: [
             BarSeries(l10n.revenue, Theme.of(context).colorScheme.primary),
-            BarSeries(l10n.cost, AppColors.textSecondary),
+            BarSeries(l10n.cost, context.tbt.textSecondary),
           ],
           groups: [
             for (final m in year.months) BarGroup(m.period.substring(5), [m.revenueUsd, m.costUsd]),
@@ -166,7 +166,7 @@ class _MonthCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final money = NumberFormat.simpleCurrency(locale: locale, name: currency);
     final usd = NumberFormat.simpleCurrency(locale: locale, name: 'USD');
-    final profitColor = month.profit >= 0 ? const Color(0xFF3FCF8E) : const Color(0xFFFF4D79);
+    final profitColor = month.profit >= 0 ? context.tbt.success : context.tbt.danger;
 
     Widget line(String label, double amount, double amountUsd, {Color? color}) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
@@ -178,7 +178,7 @@ class _MonthCard extends StatelessWidget {
                 children: [
                   Text(money.format(amount), style: TextStyle(color: color)),
                   if (currency != 'USD')
-                    Text(usd.format(amountUsd), style: text.bodySmall?.copyWith(color: AppColors.textSecondary)),
+                    Text(usd.format(amountUsd), style: text.bodySmall?.copyWith(color: context.tbt.textSecondary)),
                 ],
               ),
             ],
@@ -244,7 +244,7 @@ class _SuppliersTab extends ConsumerWidget {
                         l10n.supplierPurchases(s.purchases),
                         if (s.paidPercent case final p?) l10n.supplierPaidPercent(NumberFormat.decimalPattern(locale).format(p)),
                       ].join(' · '),
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: context.tbt.textSecondary),
                     ),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

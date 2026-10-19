@@ -1622,4 +1622,16 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get errSparqlSyntax =>
       'Câu truy vấn chưa đúng cú pháp. Kiểm tra lại dấu ngoặc, dấu chấm cuối mỗi điều kiện và tên tiền tố (kg:, kgo:).';
+
+  @override
+  String get appearance => 'Giao diện';
+
+  @override
+  String get themeSystem => 'Theo điện thoại';
+
+  @override
+  String get themeLight => 'Sáng';
+
+  @override
+  String get themeDark => 'Tối';
 }

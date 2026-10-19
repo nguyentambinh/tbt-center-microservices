@@ -135,7 +135,7 @@ class _SparqlPageState extends ConsumerState<SparqlPage> {
           ),
           if (answer != null) ...[
             const SizedBox(height: 8),
-            Text(l10n.sparqlRows(answer.rows.length, answer.ms), style: const TextStyle(color: AppColors.textSecondary)),
+            Text(l10n.sparqlRows(answer.rows.length, answer.ms), style: TextStyle(color: context.tbt.textSecondary)),
             const SizedBox(height: 6),
             if (answer.rows.isEmpty)
               Padding(padding: const EdgeInsets.all(24), child: EmptyView(message: l10n.sparqlNoRows))
@@ -161,7 +161,7 @@ class _SparqlPageState extends ConsumerState<SparqlPage> {
                                         Text(c.label ?? c.value),
                                         if (c.label != null)
                                           Text(c.value,
-                                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                                              style: TextStyle(color: context.tbt.textSecondary, fontSize: 11)),
                                       ],
                                     ),
                                 },

@@ -1635,4 +1635,16 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get errSparqlSyntax =>
       'Die Abfrage enthält einen Syntaxfehler. Prüfen Sie Klammern, den Punkt nach jedem Muster und die Präfixe (kg:, kgo:).';
+
+  @override
+  String get appearance => 'Darstellung';
+
+  @override
+  String get themeSystem => 'Wie am Telefon';
+
+  @override
+  String get themeLight => 'Hell';
+
+  @override
+  String get themeDark => 'Dunkel';
 }

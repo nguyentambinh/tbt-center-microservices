@@ -71,7 +71,7 @@ class _SearchTabState extends ConsumerState<SearchTab> {
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         title: Text(value[i].title),
                         subtitle: _Snippet(value[i].snippet),
-                        trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                        trailing: Icon(Icons.chevron_right, color: context.tbt.textSecondary),
                         onTap: () => showArticleSheet(context, value[i].id),
                       ),
                     ),
@@ -100,7 +100,7 @@ class _Snippet extends StatelessWidget {
     final parts = text.split(RegExp('<<|>>'));
     return Text.rich(
       TextSpan(
-        style: const TextStyle(color: AppColors.textSecondary),
+        style: TextStyle(color: context.tbt.textSecondary),
         children: [
           for (var i = 0; i < parts.length; i++)
             TextSpan(

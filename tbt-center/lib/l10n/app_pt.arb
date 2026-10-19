@@ -479,5 +479,9 @@
   "signOutConfirm": "Sair do TBT Center?",
   "stepErrorTimeout": "O banco não respondeu a tempo; o sistema concilia pela referência antes de pagar novamente",
   "stepErrorGeneric": "Esta etapa não pôde ser executada; toque em Tentar novamente ou fale com a TI",
-  "errSparqlSyntax": "A consulta tem um erro de sintaxe. Verifique os parênteses, o ponto após cada padrão e os prefixos (kg:, kgo:)."
+  "errSparqlSyntax": "A consulta tem um erro de sintaxe. Verifique os parênteses, o ponto após cada padrão e os prefixos (kg:, kgo:).",
+  "appearance": "Aparência",
+  "themeSystem": "Igual ao telefone",
+  "themeLight": "Claro",
+  "themeDark": "Escuro"
 }

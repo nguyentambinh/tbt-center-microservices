@@ -10,6 +10,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 // Glassmorphism: tấm kính mờ, viền sáng mảnh
 class GlassPanel extends StatelessWidget {
   const GlassPanel({
@@ -34,13 +36,13 @@ class GlassPanel extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+            border: Border.all(color: context.tbt.glassBorder),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.14),
-                Colors.white.withValues(alpha: 0.04),
+                context.tbt.glassTop,
+                context.tbt.glassBottom,
               ],
             ),
           ),

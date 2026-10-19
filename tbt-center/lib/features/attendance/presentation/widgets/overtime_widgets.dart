@@ -67,9 +67,9 @@ class OvertimeTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final (label, color) = switch (request.status) {
-      LeaveStatus.pending => (l10n.statusPending, AppColors.brandGold),
-      LeaveStatus.approved => (l10n.statusApproved, const Color(0xFF3FCF8E)),
-      LeaveStatus.rejected => (l10n.statusRejected, const Color(0xFFFF4D79)),
+      LeaveStatus.pending => (l10n.statusPending, context.tbt.brandGold),
+      LeaveStatus.approved => (l10n.statusApproved, context.tbt.success),
+      LeaveStatus.rejected => (l10n.statusRejected, context.tbt.danger),
     };
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -90,7 +90,7 @@ class OvertimeTile extends StatelessWidget {
                 Text(label, style: TextStyle(color: color, fontSize: 12)),
               ],
             ),
-            if (showEmployee) Text(request.employeeId, style: const TextStyle(color: AppColors.textSecondary)),
+            if (showEmployee) Text(request.employeeId, style: TextStyle(color: context.tbt.textSecondary)),
             if (request.reason case final reason? when reason.isNotEmpty) Text(reason),
             if (actions.isNotEmpty)
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [...actions.expand((a) => [a, const SizedBox(width: 8)])]),
@@ -182,7 +182,7 @@ class _OvertimeFormState extends ConsumerState<_OvertimeForm> {
           TextField(controller: _reason, decoration: InputDecoration(labelText: l10n.reason)),
           if (_error != null) ...[
             const SizedBox(height: 8),
-            Text(_error!, style: const TextStyle(color: Color(0xFFFF4D79))),
+            Text(_error!, style: TextStyle(color: context.tbt.danger)),
           ],
           const SizedBox(height: 12),
           FilledButton(

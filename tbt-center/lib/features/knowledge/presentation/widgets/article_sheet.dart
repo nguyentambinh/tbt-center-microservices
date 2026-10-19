@@ -42,7 +42,7 @@ class ArticleSheet extends ConsumerWidget {
               Text(value.body, style: text.bodyLarge?.copyWith(height: 1.5)),
               if (value.source case final source?) ...[
                 const SizedBox(height: 16),
-                Text(source, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text(source, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
               ],
             ],
           ),

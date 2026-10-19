@@ -73,13 +73,13 @@ class _ApplicationView extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           [candidate.appliedPosition, candidate.email, candidate.phone].whereType<String>().join(' · '),
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: context.tbt.textSecondary),
         ),
         const SizedBox(height: 16),
         if (candidate.editable)
           OutlinedButton.icon(onPressed: onEdit, icon: const Icon(Icons.edit_outlined), label: Text(l10n.editProfile))
         else
-          Text(l10n.profileLockedHint, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(l10n.profileLockedHint, style: TextStyle(color: context.tbt.textSecondary)),
         const SizedBox(height: 16),
         _CvCard(candidate: candidate),
         const Divider(height: 32),
@@ -138,14 +138,14 @@ class _CvCardState extends ConsumerState<_CvCard> {
           children: [
             Row(
               children: [
-                Icon(c.hasCv ? Icons.description : Icons.upload_file, color: AppColors.brandGold),
+                Icon(c.hasCv ? Icons.description : Icons.upload_file, color: context.tbt.brandGold),
                 const SizedBox(width: 8),
                 Text(c.hasCv ? l10n.cvAttached : l10n.cvNone, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
             if (waitingForAi) ...[
               const SizedBox(height: 8),
-              Text(l10n.cvWaitingAi, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(l10n.cvWaitingAi, style: TextStyle(color: context.tbt.textSecondary)),
             ],
             if (c.editable) ...[
               const SizedBox(height: 12),

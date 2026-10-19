@@ -479,5 +479,9 @@
   "signOutConfirm": "Von TBT Center abmelden?",
   "stepErrorTimeout": "Die Bank hat nicht rechtzeitig geantwortet; das System gleicht per Referenz ab, bevor erneut gezahlt wird",
   "stepErrorGeneric": "Dieser Schritt konnte nicht ausgeführt werden; tippen Sie auf Wiederholen oder wenden Sie sich an die IT",
-  "errSparqlSyntax": "Die Abfrage enthält einen Syntaxfehler. Prüfen Sie Klammern, den Punkt nach jedem Muster und die Präfixe (kg:, kgo:)."
+  "errSparqlSyntax": "Die Abfrage enthält einen Syntaxfehler. Prüfen Sie Klammern, den Punkt nach jedem Muster und die Präfixe (kg:, kgo:).",
+  "appearance": "Darstellung",
+  "themeSystem": "Wie am Telefon",
+  "themeLight": "Hell",
+  "themeDark": "Dunkel"
 }

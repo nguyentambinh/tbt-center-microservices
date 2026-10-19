@@ -55,7 +55,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
           builder: (context) => AlertDialog(
             icon: Icon(
               check.intact ? Icons.verified_outlined : Icons.gpp_bad_outlined,
-              color: check.intact ? const Color(0xFF3FCF8E) : const Color(0xFFFF4D79),
+              color: check.intact ? context.tbt.success : context.tbt.danger,
               size: 40,
             ),
             title: Text(check.intact ? l10n.chainIntact : l10n.chainBroken('${check.brokenAt}')),
@@ -167,7 +167,7 @@ class _EventsList extends ConsumerWidget {
                 subtitle: Text(
                   '${l10n.regionName(e.region)} · ${e.sourceService} · ${DateFormat.yMMMd(locale).add_Hm().format(e.occurredAt)}\n'
                   'hash ${e.hash.substring(0, 16)}…',
-                  style: const TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(color: context.tbt.textSecondary),
                 ),
                 isThreeLine: true,
               );
@@ -208,7 +208,7 @@ class _AccessLogList extends ConsumerWidget {
                       if (a.rowCount != null) l10n.rowsCount(a.rowCount!),
                       if (a.checksum case final c?) 'SHA-256 ${c.substring(0, 16)}…',
                     ].join(' · '),
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(color: context.tbt.textSecondary),
                   ),
                 ),
             ],

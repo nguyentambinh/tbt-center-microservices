@@ -68,7 +68,7 @@ class _ReportView extends StatelessWidget {
                 Text(title, style: text.titleLarge),
                 const SizedBox(height: 8),
                 if (children.isEmpty)
-                  Text(l10n.noReportData, style: const TextStyle(color: AppColors.textSecondary))
+                  Text(l10n.noReportData, style: TextStyle(color: context.tbt.textSecondary))
                 else
                   ...children,
               ],
@@ -79,7 +79,7 @@ class _ReportView extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(l10n.dataAsOf('${report.projectedUntilEvent}'), style: text.bodySmall?.copyWith(color: AppColors.textSecondary)),
+        Text(l10n.dataAsOf('${report.projectedUntilEvent}'), style: text.bodySmall?.copyWith(color: context.tbt.textSecondary)),
         const SizedBox(height: 12),
         section(l10n.payrollCostByRegion, [
           for (final period in periods) ...[
@@ -114,7 +114,7 @@ class _ReportView extends StatelessWidget {
               subtitle: Text('${l10n.revenue} ${usd.format(f.revenueUsd)} · ${l10n.cost} ${usd.format(f.costUsd)}'),
               trailing: Text(
                 usd.format(f.revenueUsd - f.costUsd),
-                style: TextStyle(color: f.revenueUsd >= f.costUsd ? const Color(0xFF3FCF8E) : const Color(0xFFFF4D79)),
+                style: TextStyle(color: f.revenueUsd >= f.costUsd ? context.tbt.success : context.tbt.danger),
               ),
             ),
         ]),

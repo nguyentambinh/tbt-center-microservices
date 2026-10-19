@@ -8,39 +8,143 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'role_gem.dart';
 
-/// Nền đen, bề mặt kính mờ, màu nhấn theo role
-abstract final class AppColors {
-  static const background = Color(0xFF000000);
-  // Nền đặc cho hộp thoại, bảng trượt, menu nổi trên nội dung
-  static const card = Color(0xFF16151A);
-  // Glassmorphism: trắng trong suốt trên nền đen
-  static const glass = Color(0x17FFFFFF);
-  static const glassStrong = Color(0x24FFFFFF);
-  static const glassBorder = Color(0x2EFFFFFF);
-  static const overlay = Color(0xF2141418);
-  static const brandGold = Color(0xFFD4AF37);
-  static const textMain = Color(0xFFF5F1E6);
-  static const textSecondary = Color(0xFFA8A29E);
-}
+/// Bảng màu theo chế độ sáng/tối: bề mặt kính mờ, chữ, màu trạng thái
+@immutable
+class TbtColors extends ThemeExtension<TbtColors> {
+  const TbtColors({
+    required this.background,
+    required this.card,
+    required this.glass,
+    required this.glassStrong,
+    required this.glassBorder,
+    required this.glassTop,
+    required this.glassBottom,
+    required this.overlay,
+    required this.brandGold,
+    required this.textMain,
+    required this.textSecondary,
+    required this.navIdle,
+    required this.success,
+    required this.danger,
+    required this.warning,
+  });
 
-ThemeData buildTheme(RoleGem gem) {
-  final scheme = ColorScheme.dark(
-    surface: AppColors.background,
-    surfaceContainer: AppColors.card,
-    surfaceContainerHigh: AppColors.card,
-    primary: gem.color,
-    onPrimary: AppColors.background,
-    secondary: gem.color,
-    onSecondary: AppColors.background,
-    onSurface: AppColors.textMain,
-    onSurfaceVariant: AppColors.textSecondary,
-    outline: AppColors.glassBorder,
+  final Color background;
+
+  /// Nền đặc cho menu, nội dung vẽ tay nổi trên trang
+  final Color card;
+  final Color glass;
+  final Color glassStrong;
+  final Color glassBorder;
+
+  /// Hai đầu dải màu của tấm kính (đăng nhập, thanh điều hướng)
+  final Color glassTop;
+  final Color glassBottom;
+
+  /// Nền hộp thoại, bảng trượt, thông báo nổi
+  final Color overlay;
+  final Color brandGold;
+  final Color textMain;
+  final Color textSecondary;
+  final Color navIdle;
+  final Color success;
+  final Color danger;
+  final Color warning;
+
+  static const dark = TbtColors(
+    background: Color(0xFF000000),
+    card: Color(0xFF16151A),
+    glass: Color(0x17FFFFFF),
+    glassStrong: Color(0x24FFFFFF),
+    glassBorder: Color(0x2EFFFFFF),
+    glassTop: Color(0x24FFFFFF),
+    glassBottom: Color(0x0AFFFFFF),
+    overlay: Color(0xF2141418),
+    brandGold: Color(0xFFD4AF37),
+    textMain: Color(0xFFF5F1E6),
+    textSecondary: Color(0xFFA8A29E),
+    navIdle: Color(0x99FFFFFF),
+    success: Color(0xFF3FCF8E),
+    danger: Color(0xFFFF4D79),
+    warning: Color(0xFFFFA726),
   );
 
-  final base = ThemeData(colorScheme: scheme, useMaterial3: true);
+  static const light = TbtColors(
+    background: Color(0xFFF3F1EC),
+    card: Color(0xFFFFFFFF),
+    glass: Color(0xB8FFFFFF),
+    glassStrong: Color(0x0F000000),
+    glassBorder: Color(0x1F000000),
+    glassTop: Color(0xE6FFFFFF),
+    glassBottom: Color(0x99FFFFFF),
+    overlay: Color(0xF7FFFFFF),
+    brandGold: Color(0xFF7A5C0F),
+    textMain: Color(0xFF1D1B18),
+    textSecondary: Color(0xFF5C574F),
+    navIdle: Color(0xFF6B655C),
+    success: Color(0xFF1B7A4C),
+    danger: Color(0xFFB3264A),
+    warning: Color(0xFF8F5400),
+  );
+
+  @override
+  TbtColors copyWith() => this;
+
+  @override
+  TbtColors lerp(TbtColors? other, double t) {
+    if (other == null) return this;
+    Color l(Color a, Color b) => Color.lerp(a, b, t)!;
+    return TbtColors(
+      background: l(background, other.background),
+      card: l(card, other.card),
+      glass: l(glass, other.glass),
+      glassStrong: l(glassStrong, other.glassStrong),
+      glassBorder: l(glassBorder, other.glassBorder),
+      glassTop: l(glassTop, other.glassTop),
+      glassBottom: l(glassBottom, other.glassBottom),
+      overlay: l(overlay, other.overlay),
+      brandGold: l(brandGold, other.brandGold),
+      textMain: l(textMain, other.textMain),
+      textSecondary: l(textSecondary, other.textSecondary),
+      navIdle: l(navIdle, other.navIdle),
+      success: l(success, other.success),
+      danger: l(danger, other.danger),
+      warning: l(warning, other.warning),
+    );
+  }
+}
+
+extension TbtColorsContext on BuildContext {
+  TbtColors get tbt => Theme.of(this).extension<TbtColors>() ?? TbtColors.dark;
+}
+
+ThemeData buildTheme(RoleGem gem, {Brightness brightness = Brightness.dark}) {
+  final dark = brightness == Brightness.dark;
+  final c = dark ? TbtColors.dark : TbtColors.light;
+  final accent = gem.accent(brightness);
+  final onAccent = dark ? c.background : Colors.white;
+  final scheme = ColorScheme.fromSeed(
+    seedColor: accent,
+    brightness: brightness,
+  ).copyWith(
+    surface: c.background,
+    surfaceContainer: c.card,
+    surfaceContainerHigh: c.card,
+    primary: accent,
+    onPrimary: onAccent,
+    secondary: accent,
+    onSecondary: onAccent,
+    onSurface: c.textMain,
+    onSurfaceVariant: c.textSecondary,
+    outline: c.glassBorder,
+    error: c.danger,
+  );
+
+  final base = ThemeData(colorScheme: scheme, useMaterial3: true, extensions: [c]);
   final t = base.textTheme;
   // Tiêu đề in đậm
   const bold = FontWeight.w800;
@@ -49,17 +153,17 @@ ThemeData buildTheme(RoleGem gem) {
   const buttonText = TextStyle(fontWeight: semi, fontSize: 15);
 
   return base.copyWith(
-    scaffoldBackgroundColor: AppColors.background,
+    scaffoldBackgroundColor: c.background,
     textTheme: t.copyWith(
-      displayLarge: t.displayLarge?.copyWith(fontWeight: bold, color: gem.color),
-      displayMedium: t.displayMedium?.copyWith(fontWeight: bold, color: gem.color),
-      displaySmall: t.displaySmall?.copyWith(fontWeight: bold, color: gem.color),
-      headlineLarge: t.headlineLarge?.copyWith(fontWeight: bold, color: gem.color),
-      headlineMedium: t.headlineMedium?.copyWith(fontWeight: bold, color: gem.color),
-      headlineSmall: t.headlineSmall?.copyWith(fontWeight: bold, color: AppColors.textMain),
-      titleLarge: t.titleLarge?.copyWith(fontWeight: semi, color: AppColors.textMain),
-      titleMedium: t.titleMedium?.copyWith(fontWeight: semi, color: AppColors.textMain),
-      titleSmall: t.titleSmall?.copyWith(fontWeight: semi, color: AppColors.textMain),
+      displayLarge: t.displayLarge?.copyWith(fontWeight: bold, color: accent),
+      displayMedium: t.displayMedium?.copyWith(fontWeight: bold, color: accent),
+      displaySmall: t.displaySmall?.copyWith(fontWeight: bold, color: accent),
+      headlineLarge: t.headlineLarge?.copyWith(fontWeight: bold, color: accent),
+      headlineMedium: t.headlineMedium?.copyWith(fontWeight: bold, color: accent),
+      headlineSmall: t.headlineSmall?.copyWith(fontWeight: bold, color: c.textMain),
+      titleLarge: t.titleLarge?.copyWith(fontWeight: semi, color: c.textMain),
+      titleMedium: t.titleMedium?.copyWith(fontWeight: semi, color: c.textMain),
+      titleSmall: t.titleSmall?.copyWith(fontWeight: semi, color: c.textMain),
       labelLarge: t.labelLarge?.copyWith(fontWeight: semi),
     ),
     // Trượt từ phải sang, vuốt mép trái để back
@@ -67,41 +171,41 @@ ThemeData buildTheme(RoleGem gem) {
       builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder()},
     ),
     cardTheme: CardThemeData(
-      color: AppColors.glass,
+      color: c.glass,
       elevation: 0,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppColors.glassBorder),
+        side: BorderSide(color: c.glassBorder),
       ),
     ),
     listTileTheme: ListTileThemeData(
-      iconColor: gem.color,
-      titleTextStyle: t.titleMedium?.copyWith(fontWeight: semi, color: AppColors.textMain),
-      subtitleTextStyle: t.bodyMedium?.copyWith(color: AppColors.textSecondary),
+      iconColor: accent,
+      titleTextStyle: t.titleMedium?.copyWith(fontWeight: semi, color: c.textMain),
+      subtitleTextStyle: t.bodyMedium?.copyWith(color: c.textSecondary),
     ),
-    dividerTheme: const DividerThemeData(color: AppColors.glassBorder, thickness: 1),
+    dividerTheme: DividerThemeData(color: c.glassBorder, thickness: 1),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.glass,
+      fillColor: c.glass,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: AppColors.glassBorder),
+        borderSide: BorderSide(color: c.glassBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: AppColors.glassBorder),
+        borderSide: BorderSide(color: c.glassBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: BorderSide(color: gem.color, width: 1.6),
+        borderSide: BorderSide(color: accent, width: 1.6),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: gem.color,
-        foregroundColor: AppColors.background,
+        backgroundColor: accent,
+        foregroundColor: onAccent,
         shape: pill,
         textStyle: buttonText,
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
@@ -109,63 +213,64 @@ ThemeData buildTheme(RoleGem gem) {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: gem.color,
-        backgroundColor: Colors.white.withValues(alpha: 0.06),
-        side: BorderSide(color: gem.color.withValues(alpha: 0.6)),
+        foregroundColor: accent,
+        backgroundColor: c.glass,
+        side: BorderSide(color: accent.withValues(alpha: 0.6)),
         shape: pill,
         textStyle: buttonText,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: gem.color, textStyle: buttonText),
+      style: TextButton.styleFrom(foregroundColor: accent, textStyle: buttonText),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: AppColors.glass,
-      selectedColor: gem.color,
-      side: const BorderSide(color: AppColors.glassBorder),
+      backgroundColor: c.glass,
+      selectedColor: accent,
+      side: BorderSide(color: c.glassBorder),
       shape: const StadiumBorder(),
-      labelStyle: const TextStyle(fontWeight: semi),
-      secondaryLabelStyle: const TextStyle(color: AppColors.background, fontWeight: semi),
-      checkmarkColor: AppColors.background,
+      labelStyle: TextStyle(fontWeight: semi, color: c.textMain),
+      secondaryLabelStyle: TextStyle(color: onAccent, fontWeight: semi),
+      checkmarkColor: onAccent,
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: gem.color,
-      foregroundColor: AppColors.background,
+      backgroundColor: accent,
+      foregroundColor: onAccent,
       shape: const StadiumBorder(),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColors.overlay,
-      contentTextStyle: const TextStyle(color: AppColors.textMain),
+      backgroundColor: c.overlay,
+      contentTextStyle: TextStyle(color: c.textMain),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: gem.color.withValues(alpha: 0.6)),
+        side: BorderSide(color: accent.withValues(alpha: 0.6)),
       ),
     ),
     dialogTheme: DialogThemeData(
-      backgroundColor: AppColors.overlay,
+      backgroundColor: c.overlay,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.glassBorder),
+        side: BorderSide(color: c.glassBorder),
       ),
-      titleTextStyle: t.titleLarge?.copyWith(fontWeight: bold, color: gem.color),
+      titleTextStyle: t.titleLarge?.copyWith(fontWeight: bold, color: accent),
     ),
-    bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: AppColors.overlay,
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: c.overlay,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
-        side: BorderSide(color: AppColors.glassBorder),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+        side: BorderSide(color: c.glassBorder),
       ),
     ),
-    progressIndicatorTheme: ProgressIndicatorThemeData(color: gem.color),
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: accent),
     appBarTheme: AppBarTheme(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       surfaceTintColor: Colors.transparent,
-      foregroundColor: AppColors.textMain,
+      foregroundColor: c.textMain,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      titleTextStyle: t.titleLarge?.copyWith(fontWeight: bold, color: gem.color),
+      titleTextStyle: t.titleLarge?.copyWith(fontWeight: bold, color: accent),
+      systemOverlayStyle: dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
     ),
   );
 }

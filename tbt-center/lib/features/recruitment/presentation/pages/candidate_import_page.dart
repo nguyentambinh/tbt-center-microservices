@@ -88,7 +88,7 @@ class _CandidateImportPageState extends ConsumerState<CandidateImportPage> {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   l10n.importSummary(value.rows.length, pending),
-                  style: const TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(color: context.tbt.textSecondary),
                 ),
               ),
               for (final row in value.rows)
@@ -144,9 +144,9 @@ class _RowTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final (label, color) = switch (row) {
-      ImportRow(status: 'accepted') => (l10n.importRowAccepted, const Color(0xFF3FCF8E)),
-      ImportRow(status: 'invalid') => (_errorText(l10n, row.error), const Color(0xFFFF4D79)),
-      ImportRow(isUpdate: true) => (l10n.importRowUpdate, AppColors.brandGold),
+      ImportRow(status: 'accepted') => (l10n.importRowAccepted, context.tbt.success),
+      ImportRow(status: 'invalid') => (_errorText(l10n, row.error), context.tbt.danger),
+      ImportRow(isUpdate: true) => (l10n.importRowUpdate, context.tbt.brandGold),
       _ => (l10n.importRowNew, Theme.of(context).colorScheme.primary),
     };
     final details = [row.email, row.phone, row.appliedPosition].nonNulls.join(' · ');
@@ -156,7 +156,7 @@ class _RowTile extends StatelessWidget {
       title: Text(row.fullName.isEmpty ? '—' : row.fullName),
       subtitle: Text(
         '${l10n.importRowNumber(row.rowNumber)}${details.isEmpty ? '' : ' · $details'}',
-        style: const TextStyle(color: AppColors.textSecondary),
+        style: TextStyle(color: context.tbt.textSecondary),
       ),
       secondary: Text(label, style: TextStyle(color: color, fontSize: 12)),
       controlAffinity: ListTileControlAffinity.leading,

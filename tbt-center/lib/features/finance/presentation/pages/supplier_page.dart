@@ -108,7 +108,7 @@ class _LedgerView extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         if (s.contact != null || s.address != null)
-          Text([s.contact, s.address].nonNulls.join(' · '), style: const TextStyle(color: AppColors.textSecondary)),
+          Text([s.contact, s.address].nonNulls.join(' · '), style: TextStyle(color: context.tbt.textSecondary)),
         const SizedBox(height: 12),
         Card(
           child: Padding(
@@ -140,7 +140,7 @@ class _LedgerView extends StatelessWidget {
         for (final e in detail.payments)
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.check_circle_outline, color: Color(0xFF3FCF8E)),
+            leading: Icon(Icons.check_circle_outline, color: context.tbt.success),
             title: Text(money(e.amount, e.currency)),
             subtitle: Text([day(e.date), e.label].nonNulls.join(' · ')),
           ),

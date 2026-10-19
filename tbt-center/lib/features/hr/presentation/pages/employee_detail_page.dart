@@ -81,7 +81,7 @@ class _DetailBody extends ConsumerWidget {
         const SizedBox(height: 8),
         Text(
           [s.position, s.department].whereType<String>().join(' · '),
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: context.tbt.textSecondary),
         ),
         const SizedBox(height: 16),
         _Section(title: l10n.sectionWork, rows: {
@@ -144,7 +144,7 @@ class _Section extends StatelessWidget {
             Text(title, style: text.titleLarge),
             const SizedBox(height: 8),
             if (filled.isEmpty)
-              Text(AppLocalizations.of(context).noData, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(AppLocalizations.of(context).noData, style: TextStyle(color: context.tbt.textSecondary)),
             for (final row in filled)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -153,7 +153,7 @@ class _Section extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 130,
-                      child: Text(row.key, style: text.bodyMedium?.copyWith(color: AppColors.textSecondary)),
+                      child: Text(row.key, style: text.bodyMedium?.copyWith(color: context.tbt.textSecondary)),
                     ),
                     Expanded(child: Text(row.value!, style: text.bodyMedium)),
                   ],
@@ -188,7 +188,7 @@ class _RelativesSection extends StatelessWidget {
             if (relatives.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(l10n.noData, style: const TextStyle(color: AppColors.textSecondary)),
+                child: Text(l10n.noData, style: TextStyle(color: context.tbt.textSecondary)),
               ),
             for (final r in relatives)
               ListTile(

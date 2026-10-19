@@ -194,7 +194,7 @@ class HomePage extends ConsumerWidget {
                 child: IconButton.outlined(
                   tooltip: l10n.signOut,
                   onPressed: () => _confirmSignOut(context, ref),
-                  style: IconButton.styleFrom(side: const BorderSide(color: AppColors.glassBorder)),
+                  style: IconButton.styleFrom(side: BorderSide(color: context.tbt.glassBorder)),
                   icon: const Icon(Icons.logout, size: 20),
                 ),
               ),
@@ -244,7 +244,7 @@ class HomePage extends ConsumerWidget {
                   const SizedBox(height: 6),
                   Text(
                     [for (final role in session.roles) l10n.roleName(role), l10n.regionName(session.region)].join(' · '),
-                    style: text.bodyMedium?.copyWith(color: AppColors.textSecondary),
+                    style: text.bodyMedium?.copyWith(color: context.tbt.textSecondary),
                   ),
                   const SizedBox(height: 20),
                   if (session.roles.any(leaveApproverRoles.contains)) ...[
@@ -319,13 +319,13 @@ class _TodoPanel extends ConsumerWidget {
             if (rows.isEmpty && !loading)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-                child: Text(l10n.todoNone, style: text.bodyMedium?.copyWith(color: AppColors.textSecondary)),
+                child: Text(l10n.todoNone, style: text.bodyMedium?.copyWith(color: context.tbt.textSecondary)),
               ),
             for (final row in rows)
               ListTile(
                 leading: Icon(row.icon),
                 title: Text(row.label(row.count)),
-                trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                trailing: Icon(Icons.chevron_right, color: context.tbt.textSecondary),
                 onTap: () => context.push(row.route),
               ),
           ],
@@ -353,7 +353,7 @@ class _FeatureTile extends StatelessWidget {
       ),
       title: Text(feature.title),
       subtitle: Text(feature.hint, maxLines: 2, overflow: TextOverflow.ellipsis),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      trailing: Icon(Icons.chevron_right, color: context.tbt.textSecondary),
       onTap: () => context.push(feature.route),
     );
   }
@@ -395,13 +395,13 @@ class TbtBottomNav extends ConsumerWidget {
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: const Border(top: BorderSide(color: AppColors.glassBorder)),
+            border: Border(top: BorderSide(color: context.tbt.glassBorder)),
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.white.withValues(alpha: 0.12),
-                Colors.white.withValues(alpha: 0.05),
+                context.tbt.glassTop,
+                context.tbt.glassBottom,
               ],
             ),
           ),
@@ -474,7 +474,7 @@ class _NavItem extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: selected ? 24 : 22,
-                  color: selected ? AppColors.background : Colors.white60,
+                  color: selected ? Theme.of(context).colorScheme.onPrimary : context.tbt.navIdle,
                 ),
               ),
             ),
@@ -486,7 +486,7 @@ class _NavItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: selected ? 12 : 11,
                 fontWeight: selected ? FontWeight.w800 : FontWeight.w500,
-                color: selected ? Colors.white : Colors.white60,
+                color: selected ? context.tbt.textMain : context.tbt.navIdle,
               ),
             ),
           ],
@@ -542,7 +542,7 @@ class _RegionCheckCardState extends ConsumerState<RegionCheckCard> {
             const SizedBox(height: 4),
             Text(
               l10n.regionCheckHint,
-              style: text.bodySmall?.copyWith(color: AppColors.textSecondary),
+              style: text.bodySmall?.copyWith(color: context.tbt.textSecondary),
             ),
             const SizedBox(height: 16),
             if (result != null) ...[
@@ -556,7 +556,7 @@ class _RegionCheckCardState extends ConsumerState<RegionCheckCard> {
                 Text(
                   'X-Correlation-Id: $id',
                   style: text.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
+                    color: context.tbt.textSecondary,
                   ),
                 ),
               const SizedBox(height: 12),

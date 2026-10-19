@@ -108,7 +108,7 @@ class _DetailView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             children: [
-              Expanded(child: Text(label, style: const TextStyle(color: AppColors.textSecondary))),
+              Expanded(child: Text(label, style: TextStyle(color: context.tbt.textSecondary))),
               Flexible(child: Text(value, textAlign: TextAlign.end)),
             ],
           ),
@@ -138,7 +138,7 @@ class _DetailView extends StatelessWidget {
         for (final n in project.notices)
           Text(
             l10n.customerNotice(n.channel == 'email' ? 'Email' : 'SMS', n.status == 'sent' ? l10n.noticeSent : l10n.noticeQueued),
-            style: text.bodySmall?.copyWith(color: AppColors.textSecondary),
+            style: text.bodySmall?.copyWith(color: context.tbt.textSecondary),
           ),
         const SizedBox(height: 12),
         section(l10n.projectMoney, [
@@ -151,7 +151,7 @@ class _DetailView extends StatelessWidget {
             if (customer.contact != null) row(l10n.fieldPhone, customer.contact!),
             if (customer.address != null) row(l10n.fieldAddress, customer.address!),
             if (customer.contact == null)
-              Text(l10n.customerContactHidden, style: text.bodySmall?.copyWith(color: AppColors.textSecondary)),
+              Text(l10n.customerContactHidden, style: text.bodySmall?.copyWith(color: context.tbt.textSecondary)),
           ]),
         section(l10n.contracts, [
           if (project.contracts.isEmpty) Text(l10n.noData),

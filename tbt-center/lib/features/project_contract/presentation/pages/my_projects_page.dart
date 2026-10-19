@@ -42,7 +42,7 @@ class MyProjectsPage extends ConsumerWidget {
                       title: Text(p.name ?? p.projectId),
                       subtitle: Text(
                         '${p.projectId} · ${day(p.startDate)} – ${day(p.endDate)}',
-                        style: const TextStyle(color: AppColors.textSecondary),
+                        style: TextStyle(color: context.tbt.textSecondary),
                       ),
                       trailing: Text(
                         l10n.hoursValue(NumberFormat.decimalPattern(locale).format(p.hours)),

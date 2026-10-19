@@ -14,6 +14,7 @@ import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/locale/locale_providers.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_mode.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../home/presentation/pages/home_page.dart';
 
@@ -26,6 +27,7 @@ class SettingsPage extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
     final chosen = ref.watch(languageControllerProvider);
     final geo = ref.watch(geoProvider);
+    final mode = ref.watch(themeModeProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
@@ -48,11 +50,30 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
+          Text(l10n.appearance, style: text.titleLarge),
+          const SizedBox(height: 8),
+          Card(
+            child: Column(
+              children: [
+                for (final (value, label) in [
+                  (ThemeMode.system, l10n.themeSystem),
+                  (ThemeMode.light, l10n.themeLight),
+                  (ThemeMode.dark, l10n.themeDark),
+                ])
+                  _LanguageTile(
+                    label: label,
+                    selected: mode == value,
+                    onTap: () => ref.read(themeModeProvider.notifier).choose(value),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
           Text(l10n.dataRegion, style: text.titleLarge),
           const SizedBox(height: 8),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.public, color: AppColors.brandGold),
+              leading: Icon(Icons.public, color: context.tbt.brandGold),
               title: geo.when(
                 loading: () => Text(l10n.detecting),
                 error: (_, _) => Text(l10n.locationUnknown),

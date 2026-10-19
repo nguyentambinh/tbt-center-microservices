@@ -133,7 +133,7 @@ class _GraphCanvasState extends State<GraphCanvas> {
             final hit = _hitTest(d.localPosition);
             if (hit != null) widget.onTapNode(hit);
           },
-          child: CustomPaint(size: size, painter: _GraphPainter(_drawn, _positions, accent)),
+          child: CustomPaint(size: size, painter: _GraphPainter(_drawn, _positions, accent, context.tbt)),
         ),
       );
     });
@@ -156,11 +156,12 @@ class _GraphCanvasState extends State<GraphCanvas> {
 }
 
 class _GraphPainter extends CustomPainter {
-  _GraphPainter(this.view, this.positions, this.accent);
+  _GraphPainter(this.view, this.positions, this.accent, this.colors);
 
   final GraphView view;
   final Map<String, Offset> positions;
   final Color accent;
+  final TbtColors colors;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -265,7 +266,7 @@ class _GraphPainter extends CustomPainter {
           style: TextStyle(
             fontSize: fontSize,
             height: 1.15,
-            color: AppColors.textMain,
+            color: colors.textMain,
             fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
           ),
         ),
@@ -300,7 +301,7 @@ class _GraphPainter extends CustomPainter {
     taken.add(rect);
     canvas.drawRRect(
       RRect.fromRectAndRadius(rect, const Radius.circular(4)),
-      Paint()..color = AppColors.card.withValues(alpha: 0.85),
+      Paint()..color = colors.card.withValues(alpha: 0.85),
     );
     painter.paint(canvas, rect.topLeft + const Offset(3, 1));
   }
@@ -318,7 +319,7 @@ class _GraphPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_GraphPainter old) =>
-      old.view != view || old.positions != positions || old.accent != accent;
+      old.view != view || old.positions != positions || old.accent != accent || old.colors != colors;
 
   @override
   bool shouldRebuildSemantics(_GraphPainter old) => shouldRepaint(old);

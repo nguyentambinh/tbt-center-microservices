@@ -82,10 +82,10 @@ class _OntologyBodyState extends ConsumerState<_OntologyBody> {
           child: Row(
             children: [
               Icon(depth == 0 ? Icons.account_tree_outlined : Icons.subdirectory_arrow_right,
-                  size: 16, color: AppColors.textSecondary),
+                  size: 16, color: context.tbt.textSecondary),
               const SizedBox(width: 6),
               Expanded(child: Text(c.label, style: const TextStyle(fontWeight: FontWeight.w600))),
-              Text(c.id, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text(c.id, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
               if (c.nodes > 0) ...[
                 const SizedBox(width: 8),
                 Text('${c.nodes}', style: TextStyle(color: accent, fontWeight: FontWeight.w700)),
@@ -117,11 +117,11 @@ class _OntologyBodyState extends ConsumerState<_OntologyBody> {
                   const SizedBox(height: 6),
                   Text(
                     l10n.ontologyReasoning(reasoning['inferred'] as int? ?? 0, reasoning['ms'] as int? ?? 0),
-                    style: const TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(color: context.tbt.textSecondary),
                   ),
                 ],
                 const SizedBox(height: 6),
-                Text(l10n.ontologyExport, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text(l10n.ontologyExport, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
                 if (roles.any(proposalReviewerRoles.contains)) ...[
                   const SizedBox(height: 10),
                   FilledButton.tonalIcon(
@@ -176,7 +176,7 @@ class _OntologyBodyState extends ConsumerState<_OntologyBody> {
             child: ListTile(
               leading: const Icon(Icons.auto_awesome_outlined),
               title: Text(r.label),
-              subtitle: Text('${r.kind} · ${r.id}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              subtitle: Text('${r.kind} · ${r.id}', style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
             ),
           ),
       ],

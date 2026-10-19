@@ -145,7 +145,7 @@ class _CandidateSheet extends ConsumerWidget {
               Text(value.fullName, style: Theme.of(context).textTheme.headlineSmall),
               Text(
                 [value.appliedPosition, value.email, value.phone].whereType<String>().join(' · '),
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: context.tbt.textSecondary),
               ),
               if (value.hasCv) ...[
                 const SizedBox(height: 8),
@@ -288,7 +288,7 @@ class _AiSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: text.titleSmall?.copyWith(color: AppColors.brandGold)),
+                Text(title, style: text.titleSmall?.copyWith(color: context.tbt.brandGold)),
                 for (final item in items) Text('• $item'),
               ],
             ),
@@ -303,13 +303,13 @@ class _AiSummaryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_awesome, color: AppColors.brandGold, size: 20),
+                Icon(Icons.auto_awesome, color: context.tbt.brandGold, size: 20),
                 const SizedBox(width: 8),
                 Text(l10n.aiSummary, style: text.titleLarge),
               ],
             ),
             const SizedBox(height: 4),
-            Text(l10n.aiDisclaimer, style: text.bodySmall?.copyWith(color: AppColors.textSecondary)),
+            Text(l10n.aiDisclaimer, style: text.bodySmall?.copyWith(color: context.tbt.textSecondary)),
             if (headline.isNotEmpty) ...[const SizedBox(height: 8), Text(headline)],
             if (years is num && years > 0) Text(l10n.yearsExperience(years.toString())),
             if (_list('skills').isNotEmpty)

@@ -32,7 +32,7 @@ class ErrorView extends StatelessWidget {
             Icon(
               failure.isConnectionProblem ? Icons.wifi_off : Icons.error_outline,
               size: 48,
-              color: AppColors.brandGold,
+              color: context.tbt.brandGold,
             ),
             const SizedBox(height: 16),
             Text(failure.message(l10n), textAlign: TextAlign.center),
@@ -57,9 +57,9 @@ class EmptyView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 48, color: AppColors.textSecondary),
+          Icon(icon, size: 48, color: context.tbt.textSecondary),
           const SizedBox(height: 12),
-          Text(message, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(message, style: TextStyle(color: context.tbt.textSecondary)),
         ],
       ),
     );
@@ -82,8 +82,8 @@ class InitialsAvatar extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.glass,
-        border: Border.all(color: AppColors.brandGold.withValues(alpha: 0.7)),
+        color: context.tbt.glass,
+        border: Border.all(color: context.tbt.brandGold.withValues(alpha: 0.7)),
       ),
       child: Text(
         initials.toUpperCase(),

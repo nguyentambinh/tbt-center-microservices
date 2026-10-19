@@ -119,7 +119,7 @@ class _EmployeeListPageState extends ConsumerState<EmployeeListPage> {
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
               child: Text(
                 [l10n.employeeCount(state.total), if (state.fromCache) l10n.savedDataNote].join('  ·  '),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: context.tbt.textSecondary),
               ),
             );
           }
@@ -144,7 +144,7 @@ class _EmployeeTile extends StatelessWidget {
       leading: InitialsAvatar(initials: employee.initials),
       title: Text(employee.fullName(familyFirst: familyFirst)),
       subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      trailing: Icon(Icons.chevron_right, color: context.tbt.textSecondary),
       onTap: () => context.push('/employees/${Uri.encodeComponent(employee.id)}'),
     );
   }

@@ -1625,4 +1625,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errSparqlSyntax =>
       'The query has a syntax error. Check the brackets, the dot after each pattern and the prefixes (kg:, kgo:).';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'Same as phone';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

@@ -31,9 +31,9 @@ class StageChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (stage) {
-      'offered' || 'hired' => const Color(0xFF3FCF8E),
-      'rejected' => const Color(0xFFFF4D79),
-      _ => AppColors.brandGold,
+      'offered' || 'hired' => context.tbt.success,
+      'rejected' => context.tbt.danger,
+      _ => context.tbt.brandGold,
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -63,7 +63,7 @@ class StageTimeline extends StatelessWidget {
           ListTile(
             leading: Icon(
               index == history.length - 1 ? Icons.radio_button_checked : Icons.check_circle_outline,
-              color: index == history.length - 1 ? accent : AppColors.textSecondary,
+              color: index == history.length - 1 ? accent : context.tbt.textSecondary,
             ),
             title: Text(stageName(l10n, step.status)),
             subtitle: Text([format.format(step.changedAt), step.note].whereType<String>().join(' · ')),

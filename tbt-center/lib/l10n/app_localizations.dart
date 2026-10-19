@@ -2981,6 +2981,30 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Câu truy vấn chưa đúng cú pháp. Kiểm tra lại dấu ngoặc, dấu chấm cuối mỗi điều kiện và tên tiền tố (kg:, kgo:).'**
   String get errSparqlSyntax;
+
+  /// No description provided for @appearance.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giao diện'**
+  String get appearance;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo điện thoại'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sáng'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tối'**
+  String get themeDark;
 }
 
 class _AppLocalizationsDelegate

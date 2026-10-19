@@ -112,21 +112,21 @@ class _SkeletonCard extends StatelessWidget {
     Widget bar(double width, double height) => Container(
           width: width,
           height: height,
-          decoration: BoxDecoration(color: AppColors.glassStrong, borderRadius: BorderRadius.circular(6)),
+          decoration: BoxDecoration(color: context.tbt.glassStrong, borderRadius: BorderRadius.circular(6)),
         );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.glass,
+        color: context.tbt.glass,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: context.tbt.glassBorder),
       ),
       child: Row(
         children: [
           Container(
             width: 44,
             height: 44,
-            decoration: const BoxDecoration(color: AppColors.glassStrong, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: context.tbt.glassStrong, shape: BoxShape.circle),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -162,7 +162,7 @@ class SectionLabel extends StatelessWidget {
             ),
           ),
           if (trailing != null)
-            Text(trailing!, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(trailing!, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
         ],
       ),
     );

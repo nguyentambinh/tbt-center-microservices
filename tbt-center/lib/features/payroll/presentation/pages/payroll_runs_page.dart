@@ -101,10 +101,10 @@ class RunStatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final (label, color) = switch (status) {
-      'completed' => (l10n.runCompleted, const Color(0xFF3FCF8E)),
-      'failed' => (l10n.runFailed, const Color(0xFFFF4D79)),
-      'needs_attention' => (l10n.runNeedsAttention, const Color(0xFFFFA726)),
-      _ => (l10n.runRunning, AppColors.brandGold),
+      'completed' => (l10n.runCompleted, context.tbt.success),
+      'failed' => (l10n.runFailed, context.tbt.danger),
+      'needs_attention' => (l10n.runNeedsAttention, context.tbt.warning),
+      _ => (l10n.runRunning, context.tbt.brandGold),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -214,7 +214,7 @@ class _RunDetail extends StatelessWidget {
         ),
         if (run.paidCount > 0)
           Text(l10n.paidSummary(run.paidCount, usd.format(run.paidUsd ?? 0)),
-              style: const TextStyle(color: AppColors.textSecondary)),
+              style: TextStyle(color: context.tbt.textSecondary)),
         if (run.isRunning) const Padding(padding: EdgeInsets.only(top: 8), child: LinearProgressIndicator()),
         if (run.status == 'failed' || run.status == 'needs_attention') ...[
           const SizedBox(height: 12),
@@ -232,9 +232,9 @@ class _RunDetail extends StatelessWidget {
                 _ => Icons.play_circle_outline,
               },
               color: switch (s.status) {
-                'done' => const Color(0xFF3FCF8E),
-                'failed' => const Color(0xFFFF4D79),
-                _ => AppColors.brandGold,
+                'done' => context.tbt.success,
+                'failed' => context.tbt.danger,
+                _ => context.tbt.brandGold,
               },
             ),
             title: Text(_stepName(l10n, s.step)),

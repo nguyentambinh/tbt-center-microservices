@@ -479,5 +479,9 @@
   "signOutConfirm": "Sign out of TBT Center?",
   "stepErrorTimeout": "The bank did not respond in time; the system reconciles by reference before paying again",
   "stepErrorGeneric": "This step could not run; tap Retry or contact IT",
-  "errSparqlSyntax": "The query has a syntax error. Check the brackets, the dot after each pattern and the prefixes (kg:, kgo:)."
+  "errSparqlSyntax": "The query has a syntax error. Check the brackets, the dot after each pattern and the prefixes (kg:, kgo:).",
+  "appearance": "Appearance",
+  "themeSystem": "Same as phone",
+  "themeLight": "Light",
+  "themeDark": "Dark"
 }

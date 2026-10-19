@@ -91,12 +91,12 @@ class _PayrollView extends StatelessWidget {
                   if (slip.netUsd case final usd? when slip.currency != 'USD')
                     Text(
                       l10n.netUsd(money(usd, 'USD')),
-                      style: text.bodySmall?.copyWith(color: AppColors.textSecondary),
+                      style: text.bodySmall?.copyWith(color: context.tbt.textSecondary),
                     ),
                   if (slip.paidOn case final paid?)
                     Text(
                       l10n.paidOn(DateFormat.yMMMd(locale).format(paid)),
-                      style: text.bodySmall?.copyWith(color: AppColors.textSecondary),
+                      style: text.bodySmall?.copyWith(color: context.tbt.textSecondary),
                     ),
                 ],
               ),
@@ -109,7 +109,7 @@ class _PayrollView extends StatelessWidget {
             ListTile(
               leading: Icon(
                 b.isBonus ? Icons.trending_up : Icons.trending_down,
-                color: b.isBonus ? const Color(0xFF3FCF8E) : const Color(0xFFFF4D79),
+                color: b.isBonus ? context.tbt.success : context.tbt.danger,
               ),
               title: Text(b.isBonus ? l10n.bonus : l10n.penalty),
               subtitle: Text(DateFormat.yMMMd(locale).format(b.date)),

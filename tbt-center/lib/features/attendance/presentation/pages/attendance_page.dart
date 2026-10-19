@@ -124,7 +124,7 @@ class _TimesheetTabState extends ConsumerState<_TimesheetTab> {
                           if (day.overtimeHours > 0)
                             Text(
                               l10n.overtimeHours(hours.format(day.overtimeHours)),
-                              style: const TextStyle(color: AppColors.brandGold, fontSize: 12),
+                              style: TextStyle(color: context.tbt.brandGold, fontSize: 12),
                             ),
                         ],
                       ),
@@ -269,9 +269,9 @@ class _LeaveTile extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final format = DateFormat.yMMMd(locale);
     final (label, color) = switch (leave.status) {
-      LeaveStatus.pending => (l10n.statusPending, AppColors.brandGold),
-      LeaveStatus.approved => (l10n.statusApproved, const Color(0xFF3FCF8E)),
-      LeaveStatus.rejected => (l10n.statusRejected, const Color(0xFFFF4D79)),
+      LeaveStatus.pending => (l10n.statusPending, context.tbt.brandGold),
+      LeaveStatus.approved => (l10n.statusApproved, context.tbt.success),
+      LeaveStatus.rejected => (l10n.statusRejected, context.tbt.danger),
     };
 
     return Card(
@@ -297,9 +297,9 @@ class _LeaveTile extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '${format.format(leave.fromDate)} – ${format.format(leave.toDate)}  ·  ${l10n.leaveDays(leave.days)}',
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: context.tbt.textSecondary),
             ),
-            if (showEmployee) Text(leave.employeeId, style: const TextStyle(color: AppColors.textSecondary)),
+            if (showEmployee) Text(leave.employeeId, style: TextStyle(color: context.tbt.textSecondary)),
             if (leave.reason case final reason? when reason.isNotEmpty) Text(reason),
             if (actions.isNotEmpty) ...[
               const SizedBox(height: 8),

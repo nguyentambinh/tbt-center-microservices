@@ -62,11 +62,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final text = Theme.of(context).textTheme;
     final region = ref.watch(submitRegionProvider);
 
-    final glassLine = Colors.white.withValues(alpha: 0.18);
+    final glassLine = context.tbt.glassBorder;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
+      backgroundColor: context.tbt.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -97,15 +98,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         Text(
                           l10n.tagline,
                           textAlign: TextAlign.center,
-                          style: text.labelMedium?.copyWith(color: AppColors.brandGold, letterSpacing: 4),
+                          style: text.labelMedium?.copyWith(color: context.tbt.brandGold, letterSpacing: 4),
                         ),
                         Divider(height: 40, color: glassLine),
                         FilledButton(
                           onPressed: _busy ? null : _signIn,
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
-                            backgroundColor: AppColors.brandGold,
-                            foregroundColor: Colors.black,
+                            backgroundColor: scheme.primary,
+                            foregroundColor: scheme.onPrimary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                           child: _busy
@@ -117,9 +118,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           onPressed: _busy ? null : () => _signIn(register: true),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
-                            foregroundColor: AppColors.textMain,
-                            backgroundColor: Colors.white.withValues(alpha: 0.06),
-                            side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
+                            foregroundColor: context.tbt.textMain,
+                            backgroundColor: context.tbt.glass,
+                            side: BorderSide(color: context.tbt.textSecondary.withValues(alpha: 0.5)),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                           ),
                           child: Text(l10n.applyAsCandidate),
@@ -131,7 +132,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   Text(
                     l10n.dataStoredIn(l10n.regionName(region)),
                     textAlign: TextAlign.center,
-                    style: text.bodySmall?.copyWith(color: AppColors.textMain.withValues(alpha: 0.8)),
+                    style: text.bodySmall?.copyWith(color: context.tbt.textMain.withValues(alpha: 0.8)),
                   ),
                 ],
               ),

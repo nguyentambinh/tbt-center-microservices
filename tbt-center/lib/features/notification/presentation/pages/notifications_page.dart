@@ -74,14 +74,14 @@ class _NotificationTile extends StatelessWidget {
     final accent = Theme.of(context).colorScheme.primary;
     final route = _routeFor(notification.kind);
     return ListTile(
-      leading: Icon(_iconFor(notification.kind), color: notification.read ? AppColors.textSecondary : accent),
+      leading: Icon(_iconFor(notification.kind), color: notification.read ? context.tbt.textSecondary : accent),
       title: Text(
         notificationText(l10n, notification, locale),
         style: TextStyle(fontWeight: notification.read ? FontWeight.normal : FontWeight.w600),
       ),
       subtitle: Text(
         DateFormat.yMMMd(locale).add_Hm().format(notification.createdAt),
-        style: const TextStyle(color: AppColors.textSecondary),
+        style: TextStyle(color: context.tbt.textSecondary),
       ),
       trailing: notification.read ? null : Icon(Icons.circle, size: 10, color: accent),
       onTap: route == null ? null : () => context.push(route),
