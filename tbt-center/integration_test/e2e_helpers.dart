@@ -66,7 +66,7 @@ class PasswordGateway implements AuthGateway {
   final String username;
 
   @override
-  Future<Session> signIn({bool register = false, String? locale}) => login(username);
+  Future<Session> signIn({bool register = false, String? locale, String? loginHint}) => login(username);
 
   @override
   Future<Session> changePassword({String? locale}) => login(username);

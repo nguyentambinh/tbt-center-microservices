@@ -124,11 +124,12 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   Future<void> _verify() => _run(() async {
         final l10n = AppLocalizations.of(context);
         final locale = Localizations.localeOf(context).languageCode;
-        await ref.read(signupRepositoryProvider).verify(email: _email.text.trim(), code: _code.text.trim(), password: _password.text);
+        final email = _email.text.trim();
+        await ref.read(signupRepositoryProvider).verify(email: email, code: _code.text.trim(), password: _password.text);
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.signupDone), behavior: SnackBarBehavior.floating));
         try {
-          await ref.read(authControllerProvider.notifier).signIn(locale: locale);
+          await ref.read(authControllerProvider.notifier).signIn(locale: locale, loginHint: email);
         } on SignInCancelled {
           // Người dùng đóng trang đăng nhập, lần sau đăng nhập bằng email vừa tạo
         }

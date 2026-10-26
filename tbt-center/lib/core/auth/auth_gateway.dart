@@ -28,7 +28,7 @@ class SessionExpired implements Exception {
 abstract interface class AuthGateway {
   /// [locale] là ngôn ngữ đang chọn trong app (`vi`, `en`, `de`, `pt`), để
   /// trang đăng nhập, đăng ký của Keycloak hiện cùng ngôn ngữ.
-  Future<Session> signIn({bool register = false, String? locale});
+  Future<Session> signIn({bool register = false, String? locale, String? loginHint});
 
   /// Mở trang đổi mật khẩu của Keycloak trên phiên đang đăng nhập
   Future<Session> changePassword({String? locale});
@@ -58,13 +58,15 @@ class KeycloakAuthGateway implements AuthGateway {
   }
 
   @override
-  Future<Session> signIn({bool register = false, String? locale}) async {
+  Future<Session> signIn({bool register = false, String? locale, String? loginHint}) async {
     try {
       final response = await _appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest(
         _clientId,
         _redirectUrl,
         issuer: _issuer,
         scopes: _scopes,
+        // login_hint: Keycloak điền sẵn ô tên đăng nhập
+        loginHint: loginHint,
         allowInsecureConnections: _insecure,
         // Keycloak hiểu prompt=create là mở thẳng trang đăng ký. AppAuth trên
         // Android cấm truyền prompt qua additionalParameters (văng app), phải

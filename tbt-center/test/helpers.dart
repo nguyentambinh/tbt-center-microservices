@@ -87,7 +87,7 @@ class FakeAuthGateway implements AuthGateway {
   String? lastLocale;
 
   @override
-  Future<Session> signIn({bool register = false, String? locale}) async {
+  Future<Session> signIn({bool register = false, String? locale, String? loginHint}) async {
     lastLocale = locale;
     return onSignIn();
   }

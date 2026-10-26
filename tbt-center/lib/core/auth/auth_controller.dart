@@ -36,8 +36,8 @@ class AuthController extends AsyncNotifier<Session?> {
     }
   }
 
-  Future<void> signIn({bool register = false, String? locale}) async {
-    final session = await _gateway.signIn(register: register, locale: locale);
+  Future<void> signIn({bool register = false, String? locale, String? loginHint}) async {
+    final session = await _gateway.signIn(register: register, locale: locale, loginHint: loginHint);
     await _store.write(session);
     state = AsyncData(session);
   }
