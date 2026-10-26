@@ -95,20 +95,25 @@ void main() {
   });
 
   testWidgets('chọn giao diện Sáng, Tối trong Cài đặt thì đổi ngay và lưu trên máy', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
     await pumpApp(tester, language: 'vi');
     await tester.tap(find.byTooltip('Cài đặt'));
     await tester.pumpAndSettle();
     expect(find.text('Theo điện thoại'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Sáng'));
     await tester.tap(find.text('Sáng'));
     await tester.pumpAndSettle();
-    expect(Theme.of(tester.element(find.text('Giao diện'))).brightness, Brightness.light);
+    expect(Theme.of(tester.element(find.text('Sáng'))).brightness, Brightness.light);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('theme_mode'), 'light');
 
+    await tester.ensureVisible(find.text('Tối'));
     await tester.tap(find.text('Tối'));
     await tester.pumpAndSettle();
-    expect(Theme.of(tester.element(find.text('Giao diện'))).brightness, Brightness.dark);
+    expect(Theme.of(tester.element(find.text('Sáng'))).brightness, Brightness.dark);
     expect(prefs.getString('theme_mode'), 'dark');
 
     await tester.tap(find.text('Theo điện thoại'));

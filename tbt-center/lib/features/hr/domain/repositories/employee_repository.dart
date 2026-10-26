@@ -9,6 +9,6 @@
 import '../entities/employee.dart';
 
 abstract interface class EmployeeRepository {
-  Future<EmployeePage> search({String query = '', int page = 1});
+  Future<EmployeePage> search({String query = '', int page = 1, EmployeeFilter filter = const EmployeeFilter()});
   Future<EmployeeDetail> find(String id);
 }

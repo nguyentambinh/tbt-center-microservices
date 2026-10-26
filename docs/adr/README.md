@@ -33,3 +33,6 @@ Mỗi file ghi một quyết định kiến trúc, kèm bối cảnh, lý do và
 - [ADR 0029: RabbitMQ, Elasticsearch, Eureka trong TBT Center](0029-rabbitmq-elasticsearch-eureka.md)
 - [ADR 0030: Bản thể học, suy luận, AI trích xuất và SPARQL cho đồ thị tri thức](0030-ban-the-hoc-suy-luan-trich-xuat.md)
 - [ADR 0031: Chuyển lương theo tập đoàn, công ty, từng người; chống chuyển trùng và nhật ký chuyển](0031-chuyen-luong-theo-cong-ty-nguoi-nhat-ky.md)
+- [ADR 0032: Khu vực Đức chạy trên Kubernetes (k3s, dựng bằng k3d)](0032-kubernetes-khu-vuc-duc.md)
+- [ADR 0033: Chạy online trên một máy chủ thật (VPS)](0033-may-chu-that-vps.md)
+- [ADR 0034: Ảnh nhân viên, dự án lưu trong Garage của từng khu vực, đọc bằng URL ký sẵn](0034-anh-nhan-vien-du-an-trong-garage.md)

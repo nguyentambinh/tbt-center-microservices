@@ -10,10 +10,10 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 /// Xem số liệu tài chính (R23: dữ liệu tài chính chỉ cho bộ phận liên quan).
-const financeViewerRoles = {'finance', 'admin', 'executive'};
+const financeViewerRoles = {'finance', 'executive'};
 
 /// Nhập chứng từ, trả nhà cung cấp, chốt sổ.
-const financeWriterRoles = {'finance', 'admin'};
+const financeWriterRoles = {'finance'};
 
 class FinanceRuleViolation implements Exception {
   const FinanceRuleViolation(this.code, this.message);

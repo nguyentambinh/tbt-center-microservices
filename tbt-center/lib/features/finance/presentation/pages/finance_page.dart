@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/error/error_reporter.dart';
+import '../../../../core/export/table_export.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
@@ -21,23 +22,48 @@ import '../../../../core/widgets/bar_chart.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/finance.dart';
 import '../providers/finance_providers.dart';
+import '../widgets/finance_analytics.dart';
 
 /// Tài chính của khu vực: thu chi theo tháng, chốt sổ (R19–R22, R62) và
 /// công nợ nhà cung cấp (R103, R104).
-class FinancePage extends StatelessWidget {
+class FinancePage extends ConsumerWidget {
   const FinancePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.finance),
-          bottom: TabBar(tabs: [Tab(text: l10n.incomeExpense), Tab(text: l10n.suppliers)]),
+          // Một nút xuất theo tab đang mở: Phân tích xuất xếp hạng dự án, còn lại xuất thu chi theo tháng
+          actions: [
+            Builder(
+              builder: (context) => ExportMenuButton(table: () {
+                if (DefaultTabController.of(context).index == 1) {
+                  final ranking = ref.read(projectRankingProvider).value;
+                  if (ranking == null) return null;
+                  return ExportTable(
+                    title: l10n.projectProfitRanking,
+                    headers: [l10n.exportRank, l10n.exportId, l10n.revenue, l10n.materialCost, l10n.profit, l10n.exportMargin],
+                    rows: [for (final p in ranking) [p.rank, p.projectId, p.revenue, p.cost, p.profit, p.margin == null ? '' : '${(p.margin! * 100).toStringAsFixed(1)}%']],
+                  );
+                }
+                final year = ref.read(financeSummaryProvider).value;
+                if (year == null) return null;
+                return ExportTable(
+                  title: l10n.exportFinanceTitle(year.year),
+                  subtitle: year.currency,
+                  headers: [l10n.exportPeriod, l10n.revenue, l10n.costs, l10n.profit, l10n.exportRevenueUsd, l10n.exportCostUsd, l10n.closePeriod],
+                  rows: [for (final m in year.months) [m.period, m.revenue, m.cost, m.profit, m.revenueUsd, m.costUsd, m.closed ? '✓' : '']],
+                );
+              }),
+            ),
+          ],
+          bottom: TabBar(tabs: [Tab(text: l10n.incomeExpense), Tab(text: l10n.financeAnalytics), Tab(text: l10n.suppliers)]),
         ),
-        body: const TabBarView(children: [_MonthsTab(), _SuppliersTab()]),
+        body: const TabBarView(children: [_MonthsTab(), FinanceAnalyticsTab(), _SuppliersTab()]),
       ),
     );
   }
@@ -195,7 +221,7 @@ class _MonthCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    DateFormat.yMMMM(locale).format(DateTime.parse('${month.period}-01')),
+                    toBeginningOfSentenceCase(DateFormat.yMMMM(locale).format(DateTime.parse('${month.period}-01')), locale),
                     style: text.titleLarge,
                   ),
                 ),

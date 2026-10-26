@@ -14,10 +14,16 @@ import 'package:recruitment_service/src/ai/ai_error.dart';
 import 'package:recruitment_service/src/ai/ai_summarizer.dart';
 import 'package:recruitment_service/src/ai/claude_client.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
+import 'package:recruitment_service/src/positions.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 typedef PdfReader = Future<Uint8List?> Function(String key);
-typedef Summarizer = Future<CvSummary> Function(Uint8List pdf, String language);
+typedef Summarizer =
+    Future<CvSummary> Function(
+      Uint8List pdf,
+      String language,
+      List<PositionBrief> positions,
+    );
 
 /// Chạy nền trong service recruitment: lấy từng hồ sơ có CV và đồng ý cho AI,
 /// gửi AI tóm tắt (Claude, dự phòng Gemini), lưu kết quả. Ứng viên nộp xong
@@ -49,7 +55,8 @@ class CvAnalyzer {
     try {
       final pdf = await readPdf(next.cvKey);
       if (pdf == null) throw const ClaudeError('CV file not found in storage');
-      final result = await summarize(pdf, language);
+      final positions = await repository.positionsFor(next.id);
+      final result = await summarize(pdf, language, positions);
       await repository.saveSummary(
         next.id,
         result.summary,

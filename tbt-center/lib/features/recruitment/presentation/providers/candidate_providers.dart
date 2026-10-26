@@ -9,13 +9,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/auth/auth_controller.dart';
+import '../../../../core/auth/work_region.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/locale/locale_providers.dart';
 import '../../../../core/network/api_client.dart';
 import '../../data/repositories/candidate_import_repository_impl.dart';
 import '../../data/repositories/candidate_repository_impl.dart';
+import '../../data/repositories/job_position_repository.dart';
 import '../../domain/entities/candidate.dart';
 import '../../domain/entities/candidate_import.dart';
+import '../../domain/entities/job_position.dart';
 import '../../domain/repositories/candidate_import_repository.dart';
 import '../../domain/repositories/candidate_repository.dart';
 
@@ -28,6 +31,27 @@ final candidateRepositoryProvider = Provider<CandidateRepository>((ref) {
   final String region = tokenRegion ?? ref.watch(submitRegionProvider);
   return CandidateRepositoryImpl(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region));
 });
+
+/// Cùng khu vực với nơi ứng viên nộp hồ sơ
+final jobPositionRepositoryProvider = Provider<JobPositionRepository>((ref) {
+  final String? tokenRegion = ref.watch(authControllerProvider.select((s) => s.value?.claims['region'] as String?));
+  final String region = tokenRegion ?? ref.watch(submitRegionProvider);
+  return JobPositionRepository(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region));
+});
+
+/// Vị trí còn nhận hồ sơ, cho ứng viên tick chọn
+final openPositionsProvider = FutureProvider.autoDispose<List<JobPosition>>(
+  (ref) => ref.watch(jobPositionRepositoryProvider).list(),
+);
+
+/// Mọi vị trí kể cả đã đóng, cho HR quản lý
+final allPositionsProvider = FutureProvider.autoDispose<List<JobPosition>>(
+  (ref) => ref.watch(jobPositionRepositoryProvider).list(all: true),
+);
+
+final positionDetailProvider = FutureProvider.autoDispose.family<JobPosition, int>(
+  (ref, id) => ref.watch(jobPositionRepositoryProvider).find(id),
+);
 
 final myApplicationProvider = FutureProvider<Candidate?>(
   (ref) => ref.watch(candidateRepositoryProvider).myApplication(),
@@ -42,7 +66,7 @@ final candidateDetailProvider = FutureProvider.family<Candidate, String>(
 );
 
 final candidateImportRepositoryProvider = Provider<CandidateImportRepository>((ref) {
-  final region = ref.watch(authControllerProvider.select((s) => s.value?.region)) ?? 'vn';
+  final region = ref.watch(workRegionProvider);
   return CandidateImportRepositoryImpl(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region));
 });
 

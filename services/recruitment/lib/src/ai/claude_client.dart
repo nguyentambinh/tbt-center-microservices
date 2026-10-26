@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:recruitment_service/src/ai/ai_error.dart';
+import 'package:recruitment_service/src/positions.dart';
 
 /// Mô hình tóm tắt CV
 const claudeModel = 'claude-sonnet-5-5';
@@ -51,6 +52,7 @@ const cvSummarySchema = {
     'suitablePositions',
     'strengths',
     'questionsForInterview',
+    'positionMatches',
   ],
   'properties': {
     'fullName': {'type': 'string'},
@@ -105,8 +107,47 @@ const cvSummarySchema = {
       'type': 'array',
       'items': {'type': 'string'},
     },
+    'positionMatches': {
+      'type': 'array',
+      'items': {
+        'type': 'object',
+        'additionalProperties': false,
+        'required': ['positionId', 'score', 'verdict', 'strengths', 'gaps'],
+        'properties': {
+          'positionId': {'type': 'integer'},
+          'score': {'type': 'integer'},
+          'verdict': {'type': 'string'},
+          'strengths': {'type': 'string'},
+          'gaps': {'type': 'string'},
+        },
+      },
+    },
   },
 };
+
+/// Đoạn yêu cầu so khớp CV với các vị trí ứng viên đã chọn
+String positionPrompt(List<PositionBrief> positions) {
+  if (positions.isEmpty) {
+    return 'The candidate chose no position: return positionMatches as an '
+        'empty list.';
+  }
+  String line(PositionBrief p) {
+    final department = p.department == null ? '' : ' (${p.department})';
+    final description = p.description.isEmpty ? '-' : p.description;
+    final requirements = p.requirements.isEmpty ? '-' : p.requirements;
+    return '- positionId ${p.id}: ${p.title}$department. '
+        'Description: $description. Requirements: $requirements';
+  }
+
+  final lines = positions.map(line).join('\n');
+  return 'The candidate applied for these open positions:\n$lines\n'
+      'For each one, add an item to positionMatches with that positionId: '
+      'score 0-100 (how well the CV meets the requirements; 80+ strong, '
+      '50-79 partial, below 50 weak), a one-sentence verdict, the CV '
+      'evidence that fits (strengths) and missing requirements (gaps). Base '
+      'the score only on skills, experience, education and certificates in '
+      'the CV.';
+}
 
 /// Các trường bắt buộc của bản tóm tắt, theo thứ tự trong [cvSummarySchema].
 final cvSummaryFields = [
@@ -146,6 +187,7 @@ class ClaudeClient {
   Future<Map<String, dynamic>> summarizeCv(
     List<int> pdf, {
     required String language,
+    List<PositionBrief> positions = const [],
   }) async {
     final url = Uri.parse('https://api.anthropic.com/v1/messages');
     final request = await _http.postUrl(url);
@@ -190,7 +232,7 @@ class ClaudeClient {
                         'Summarise this CV for the HR team. suitablePositions '
                         'lists roles in a construction company that fit this '
                         'person; questionsForInterview lists points HR should '
-                        'clarify.',
+                        'clarify. ${positionPrompt(positions)}',
                   },
                 ],
               },

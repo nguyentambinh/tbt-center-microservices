@@ -30,18 +30,10 @@ Future<void> _tapAt(WidgetTester tester, int pointer, Duration at) async {
 }
 
 void main() {
-  testWidgets('chạm hai lần nhanh thì quay lại', (tester) async {
+  testWidgets('chạm hai lần nhanh không quay lại', (tester) async {
     await _pumpTwoPages(tester);
     await _tapAt(tester, 1, const Duration(seconds: 10));
     await _tapAt(tester, 2, const Duration(seconds: 10, milliseconds: 180));
-    await tester.pumpAndSettle();
-    expect(find.text('Trang 1'), findsOneWidget);
-  });
-
-  testWidgets('hai lần chạm cách xa nhau thì không quay lại', (tester) async {
-    await _pumpTwoPages(tester);
-    await _tapAt(tester, 1, const Duration(seconds: 10));
-    await _tapAt(tester, 2, const Duration(seconds: 11));
     await tester.pumpAndSettle();
     expect(find.text('Trang 2'), findsOneWidget);
   });

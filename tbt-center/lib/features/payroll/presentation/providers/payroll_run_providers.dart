@@ -8,7 +8,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/auth/auth_controller.dart';
+import '../../../../core/auth/work_region.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/network/api_client.dart';
 import '../../data/repositories/payroll_run_repository_impl.dart';
@@ -20,7 +20,6 @@ import '../../domain/repositories/payroll_run_repository.dart';
 const payrollRunnerRoles = {'finance', 'admin', 'executive'};
 
 /// Lãnh đạo tập đoàn chốt, chuyển lương được ở mọi công ty (khu vực).
-const groupPayrollRoles = {'executive'};
 
 /// Repository Saga lương của một khu vực bất kỳ
 final payrollRunRepositoryForRegionProvider = Provider<PayrollRunRepository Function(String region)>((ref) {
@@ -33,7 +32,7 @@ final payrollRegionProvider = NotifierProvider<PayrollRegion, String>(PayrollReg
 
 class PayrollRegion extends Notifier<String> {
   @override
-  String build() => ref.watch(authControllerProvider.select((s) => s.value?.region)) ?? 'vn';
+  String build() => ref.watch(workRegionProvider);
 
   void select(String region) => state = region;
 }

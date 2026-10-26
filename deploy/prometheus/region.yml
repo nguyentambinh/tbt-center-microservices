@@ -25,6 +25,7 @@ scrape_configs:
           - recruitment:8080
           - notification:8080
           - currency:8080
+          - admin:8080
           - integration:8080
           - bank_mock:8080
     relabel_configs:

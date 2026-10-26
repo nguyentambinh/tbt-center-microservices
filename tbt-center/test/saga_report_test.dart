@@ -157,7 +157,7 @@ void main() {
   });
 
   testWidgets('chọn một người rồi chuyển lại cho người đó', (tester) async {
-    final runs = await pumpFinance(tester, ['executive']);
+    final runs = await pumpFinance(tester, ['finance', 'group']);
     await openHomeCard(tester, 'Chốt lương');
     expect(find.text('Chuyển cả tập đoàn'), findsOneWidget);
     await tester.tap(find.text('E1'));
@@ -175,7 +175,7 @@ void main() {
   });
 
   testWidgets('lãnh đạo xem báo cáo tập đoàn, cộng tổng USD theo kỳ', (tester) async {
-    await pumpFinance(tester, ['executive']);
+    await pumpFinance(tester, ['executive', 'group']);
     await openHomeCard(tester, 'Báo cáo tập đoàn');
     expect(find.text('Đức'), findsOneWidget);
     expect(find.textContaining('151.556,44'), findsOneWidget);

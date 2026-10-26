@@ -14,6 +14,9 @@ abstract interface class EmployeeRepository {
   Future<Page<EmployeeSummary>> search({
     String? query,
     String? departmentId,
+    String? positionId,
+    String? companyId,
+    String status = 'active',
     int page = 1,
     int size = 30,
   });
@@ -33,6 +36,7 @@ class NewHire {
     required this.email,
     this.phone,
     this.positionName,
+    this.departmentId,
   });
 
   final String id;
@@ -42,12 +46,18 @@ class NewHire {
   final String email;
   final String? phone;
   final String? positionName;
+
+  /// Phòng ban HR chọn lúc nhận việc; không có thì xếp sau
+  final String? departmentId;
 }
 
 class PostgresEmployeeRepository implements EmployeeRepository {
-  PostgresEmployeeRepository(this._db);
+  PostgresEmployeeRepository(this._db, {this.media});
 
   final Database _db;
+
+  /// Đổi đường dẫn ảnh trong Garage thành URL ký sẵn; null thì không trả ảnh
+  final MediaStore? media;
 
   static const _summaryColumns = '''
     e.id, e.family_name, e.given_name, e.email, e.photo_url,
@@ -63,6 +73,9 @@ class PostgresEmployeeRepository implements EmployeeRepository {
   Future<Page<EmployeeSummary>> search({
     String? query,
     String? departmentId,
+    String? positionId,
+    String? companyId,
+    String status = 'active',
     int page = 1,
     int size = 30,
   }) async {
@@ -71,11 +84,17 @@ class PostgresEmployeeRepository implements EmployeeRepository {
       if (query != null && query.isNotEmpty)
         '($nameMatches or e.id ilike @q or e.email ilike @q)',
       if (departmentId != null) 'e.department_id = @department',
+      if (positionId != null) 'e.position_id = @position',
+      if (companyId != null) 'e.company_id = @company',
+      'e.status = @status',
     ];
     final whereSql = where.isEmpty ? '' : 'where ${where.join(' and ')}';
     final params = <String, Object?>{
       if (query != null && query.isNotEmpty) 'q': '%$query%',
       if (departmentId != null) 'department': departmentId,
+      if (positionId != null) 'position': positionId,
+      if (companyId != null) 'company': companyId,
+      'status': status,
     };
 
     final count = await _db.query(
@@ -100,7 +119,8 @@ class PostgresEmployeeRepository implements EmployeeRepository {
   Future<EmployeeDetail?> find(String id) async {
     final rows = await _db.query(
       'select $_summaryColumns, e.birth_year, e.gender, e.labor_contract, '
-      'e.hired_on, e.department_id, e.company_id $_joins where e.id = @id',
+      'e.hired_on, e.department_id, e.company_id, e.status, e.archived_reason '
+      '$_joins where e.id = @id',
       params: {'id': id},
     );
     if (rows.isEmpty) return null;
@@ -137,6 +157,8 @@ class PostgresEmployeeRepository implements EmployeeRepository {
         'hiredOn': row['hired_on'],
         'departmentId': row['department_id'],
         'companyId': row['company_id'],
+        'status': row['status'],
+        'archivedReason': row['archived_reason'],
       }),
       contact: contact.isEmpty ? null : _jsonSafe(contact.first),
       health: health.isEmpty ? null : _jsonSafe(health.first),
@@ -152,11 +174,12 @@ class PostgresEmployeeRepository implements EmployeeRepository {
       await tx.execute(
         Sql.named(
           'insert into employees (id, company_id, country_code, family_name, '
-          'given_name, email, position_id, hired_on) '
+          'given_name, email, position_id, department_id, hired_on) '
           'select @id, (select id from companies where country_code = @country '
           'order by id limit 1), @country, @family, @given, @email, '
           '(select id from positions where lower(name) = lower(@position) '
-          'limit 1), current_date '
+          'limit 1), (select id from departments where id = @department), '
+          'current_date '
           'on conflict (id) do nothing',
         ),
         parameters: {
@@ -166,6 +189,7 @@ class PostgresEmployeeRepository implements EmployeeRepository {
           'given': hire.givenName,
           'email': hire.email,
           'position': hire.positionName ?? '',
+          'department': hire.departmentId,
         },
       );
       if (hire.phone != null) {
@@ -191,7 +215,7 @@ class PostgresEmployeeRepository implements EmployeeRepository {
     familyName: row['family_name'] as String,
     givenName: row['given_name'] as String,
     email: row['email'] as String?,
-    photoUrl: row['photo_url'] as String?,
+    photoUrl: media?.url(row['photo_url'] as String?),
     position: row['position'] as String?,
     department: row['department'] as String?,
     company: row['company'] as String?,

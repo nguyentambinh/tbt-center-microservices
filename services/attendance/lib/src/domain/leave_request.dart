@@ -7,7 +7,7 @@
  */
 
 /// Vai trò được xem dữ liệu của người khác và duyệt đơn nghỉ.
-const managerRoles = {'hr', 'admin', 'executive'};
+const managerRoles = {'hr', 'executive'};
 
 /// Một đơn xin nghỉ dài nhất 30 ngày.
 const maxLeaveDays = 30;
@@ -23,6 +23,9 @@ class LeaveRequest {
     this.reason,
     this.approvedBy,
     this.createdAt,
+    this.aiSummary,
+    this.aiSource,
+    this.fileCount = 0,
   });
 
   final String id;
@@ -34,6 +37,11 @@ class LeaveRequest {
   final String? reason;
   final String? approvedBy;
   final DateTime? createdAt;
+
+  /// AI tóm tắt minh chứng cho HR; chỉ để tham khảo
+  final Map<String, dynamic>? aiSummary;
+  final String? aiSource;
+  final int fileCount;
 
   int get days => toDate.difference(fromDate).inDays + 1;
 
@@ -48,6 +56,9 @@ class LeaveRequest {
     'reason': reason,
     'approvedBy': approvedBy,
     'createdAt': createdAt?.toIso8601String(),
+    'aiSummary': aiSummary,
+    'aiSource': aiSource,
+    'fileCount': fileCount,
   };
 }
 

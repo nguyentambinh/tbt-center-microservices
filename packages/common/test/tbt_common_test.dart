@@ -91,6 +91,26 @@ void main() {
       expect(response.statusCode, 200);
     });
 
+    test('tài khoản cấp tập đoàn (vai trò group) vào mọi khu vực, executive nước khác thì không', () async {
+      final groupHr = _token({
+        'preferred_username': 'hr.group',
+        'region': 'vn',
+        'realm_access': {
+          'roles': ['hr', 'group'],
+        },
+      });
+      final executiveVn = _token({
+        'preferred_username': 'executive.vn',
+        'region': 'vn',
+        'realm_access': {
+          'roles': ['executive'],
+        },
+      });
+      final guard = requireClaims(anyRole: {'hr', 'executive'}, region: 'de');
+      expect((await _call(guard, authorization: groupHr)).statusCode, 200);
+      expect((await _call(guard, authorization: executiveVn)).statusCode, 403);
+    });
+
     test('không đủ vai trò thì 403 forbidden', () async {
       final response = await _call(
         requireClaims(anyRole: {'finance'}),

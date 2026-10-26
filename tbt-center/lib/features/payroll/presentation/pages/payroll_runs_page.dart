@@ -25,7 +25,6 @@ import '../../domain/entities/payout.dart';
 import '../../domain/entities/payroll_run.dart';
 import '../providers/payroll_run_providers.dart';
 
-String _period(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}';
 
 /// Kết quả một lượt chuyển ở một công ty
 class _RegionOutcome {
@@ -49,6 +48,27 @@ class PayrollRunsPage extends ConsumerStatefulWidget {
   ConsumerState<PayrollRunsPage> createState() => _PayrollRunsPageState();
 }
 
+/// Lương tháng M chốt, chi từ ngày 10 tháng M+1 (cùng luật với service payroll)
+const payrollOpensOnDay = 10;
+
+DateTime payrollOpenDate(String period) {
+  final month = DateTime.parse('$period-01');
+  return DateTime(month.year, month.month + 1, payrollOpensOnDay);
+}
+
+/// Hai kỳ gần nhất đã tới hạn chốt, mới nhất trước
+List<String> payablePeriods(DateTime today) {
+  final latest = DateTime(today.year, today.month - (today.day >= payrollOpensOnDay ? 1 : 2));
+  String p(DateTime d) => d.toIso8601String().substring(0, 7);
+  return [p(latest), p(DateTime(latest.year, latest.month - 1))];
+}
+
+/// Kỳ kế tiếp chưa tới hạn
+String nextOpenPeriod(DateTime today) {
+  final latest = DateTime.parse('${payablePeriods(today).first}-01');
+  return DateTime(latest.year, latest.month + 1).toIso8601String().substring(0, 7);
+}
+
 class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
   late final List<String> _periods;
   late String _selectedPeriod;
@@ -58,8 +78,7 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _periods = [_period(DateTime(now.year, now.month)), _period(DateTime(now.year, now.month - 1))];
+    _periods = payablePeriods(DateTime.now());
     _selectedPeriod = _periods.first;
   }
 
@@ -271,8 +290,8 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final roles = ref.watch(authControllerProvider.select((s) => s.value?.roles)) ?? const [];
-    final isGroup = roles.any(groupPayrollRoles.contains);
+    // Tài chính tập đoàn chuyển lương mọi nước; tài chính một nước chỉ nước mình
+    final isGroup = ref.watch(authControllerProvider.select((s) => s.value?.isGroup)) ?? false;
     final region = ref.watch(payrollRegionProvider);
 
     return DefaultTabController(
@@ -322,6 +341,13 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
                       _selectedPeriod = s.first;
                       _selected.clear();
                     }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      l10n.payrollOpensOn(nextOpenPeriod(DateTime.now()), DateFormat.yMMMd(Localizations.localeOf(context).toString()).format(payrollOpenDate(nextOpenPeriod(DateTime.now())))),
+                      style: TextStyle(color: context.tbt.textSecondary, fontSize: 12),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Wrap(

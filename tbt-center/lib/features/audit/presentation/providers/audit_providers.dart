@@ -24,9 +24,12 @@ final auditRepositoryProvider = Provider<AuditRepository>((ref) {
   return AuditRepositoryImpl(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region));
 });
 
-/// Lọc theo khu vực; `null` là mọi khu vực.
-final auditEventsProvider = FutureProvider.autoDispose.family<List<AuditEvent>, String?>(
-  (ref, region) => ref.watch(auditRepositoryProvider).events(region: region),
+final auditEventsProvider = FutureProvider.autoDispose.family<List<AuditEvent>, AuditQuery>(
+  (ref, query) => ref.watch(auditRepositoryProvider).events(query),
+);
+
+final auditStatsProvider = FutureProvider.autoDispose.family<AuditStats, AuditQuery>(
+  (ref, query) => ref.watch(auditRepositoryProvider).stats(query),
 );
 
 final auditAccessLogProvider = FutureProvider.autoDispose<List<AccessEntry>>(

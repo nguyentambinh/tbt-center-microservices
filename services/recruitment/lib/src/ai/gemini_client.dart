@@ -11,6 +11,7 @@ import 'dart:io';
 
 import 'package:recruitment_service/src/ai/ai_error.dart';
 import 'package:recruitment_service/src/ai/claude_client.dart';
+import 'package:recruitment_service/src/positions.dart';
 
 class GeminiError implements AiProviderError {
   const GeminiError(this.message, {this.statusCode});
@@ -49,6 +50,7 @@ class GeminiClient {
   Future<Map<String, dynamic>> summarizeCv(
     List<int> pdf, {
     required String language,
+    List<PositionBrief> positions = const [],
   }) async {
     final url = Uri.parse(
       'https://generativelanguage.googleapis.com/v1beta/models/'
@@ -74,8 +76,10 @@ class GeminiClient {
                       'keys: ${cvSummaryFields.join(', ')}. education is a '
                       'list of {school, degree, period}; experience is a list '
                       'of {company, role, period, highlights}; '
-                      'yearsOfExperience is a number; the other list fields '
-                      'are lists of strings.',
+                      'yearsOfExperience is a number; positionMatches is a '
+                      'list of {positionId (integer), score (integer 0-100), '
+                      'verdict, strengths, gaps}; the other list fields are '
+                      'lists of strings.',
                 },
               ],
             },
@@ -94,7 +98,7 @@ class GeminiClient {
                         'Summarise this CV for the HR team. suitablePositions '
                         'lists roles in a construction company that fit this '
                         'person; questionsForInterview lists points HR should '
-                        'clarify.',
+                        'clarify. ${positionPrompt(positions)}',
                   },
                 ],
               },

@@ -28,7 +28,7 @@ services:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://hub-postgres:5432/keycloak_db
       # Cố định issuer để token lấy từ máy ảo hay từ máy tính đều giống nhau (Kong so khớp theo iss)
-      KC_HOSTNAME: http://localhost:8180
+      KC_HOSTNAME: ${KC_HOSTNAME:-http://localhost:8180}
       KC_HEALTH_ENABLED: "true"
     volumes:
       - ./keycloak/realm-tbt.json:/opt/keycloak/data/import/realm-tbt.json:ro
@@ -48,6 +48,7 @@ services:
     entrypoint: ["bash", "/scripts/init-users.sh"]
     volumes:
       - ./keycloak/init-users.sh:/scripts/init-users.sh:ro
+      - ./keycloak/user-profile.json:/scripts/user-profile.json:ro
     depends_on:
       keycloak:
         condition: service_healthy
@@ -86,7 +87,7 @@ services:
       DB_NAME: audit_db
       # Đường /audit-log dùng token người dùng: kiểm chữ ký bằng JWKS (ADR 0014).
       JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
-      JWT_ISSUER: http://localhost:8180/realms/tbt
+      JWT_ISSUER: ${JWT_ISSUER:-http://localhost:8180/realms/tbt}
     ports:
       - "8195:8080"
     depends_on:
@@ -210,10 +211,13 @@ services:
       DB_PORT: "5432"
       DB_NAME: knowledge_db
       JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
-      JWT_ISSUER: http://localhost:8180/realms/tbt
+      JWT_ISSUER: ${JWT_ISSUER:-http://localhost:8180/realms/tbt}
       REDIS_HOST: redis
       GEMINI_QA_MODELS: gemini-3.8-flash,gemini-3.5-flash,gemini-2.5-flash
       GEMINI_EMBED_MODEL: gemini-embedding-2
+      # Hỏi AI về dữ liệu của chính mình: gọi API khu vực https://{khu vực}.DOMAIN
+      DOMAIN: ${DOMAIN:-}
+      REGION_API_URL: ${REGION_API_URL:-}
     ports:
       - "8198:8080"
     depends_on:
@@ -269,7 +273,7 @@ services:
       DORIS_FE_URL: http://doris:8030
       DORIS_BE_URL: http://doris:8040
       JWT_JWKS_URL: http://keycloak:8080/realms/tbt/protocol/openid-connect/certs
-      JWT_ISSUER: http://localhost:8180/realms/tbt
+      JWT_ISSUER: ${JWT_ISSUER:-http://localhost:8180/realms/tbt}
       REDIS_HOST: redis
     ports:
       - "8196:8080"

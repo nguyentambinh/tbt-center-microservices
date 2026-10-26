@@ -59,5 +59,9 @@ Future<Response> onRequest(RequestContext context) async {
     objectKey: key,
     sha256: sha256.convert(bytes).toString(),
   );
-  return Response.json(body: updated ?? const {});
+  // HR đã xem hồ sơ thì không đổi CV được nữa
+  if (updated == null) {
+    return apiError(409, 'profile_locked', 'Profile was reviewed by HR');
+  }
+  return Response.json(body: updated);
 }

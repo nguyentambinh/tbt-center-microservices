@@ -40,6 +40,12 @@ class Session {
   String get username => claims['preferred_username'] as String? ?? subject;
   String get displayName => claims['given_name'] as String? ?? claims['name'] as String? ?? username;
   String get region => claims['region'] as String? ?? 'vn';
+
+  /// Mã nhân viên; ứng viên, kiểm toán ngoài không có
+  String? get employeeId => claims['employee_id'] as String?;
+
+  /// Họ tên khai lúc đăng ký (token `name`, không có thì `given_name`)
+  String? get fullName => claims['name'] as String? ?? claims['given_name'] as String?;
   String? get countryCode => claims['country_code'] as String?;
 
   List<String> get roles {
@@ -50,6 +56,16 @@ class Session {
     if (roles.any(staffRoles.contains)) roles.remove('candidate');
     return roles;
   }
+
+  /// Cấp tập đoàn (vai trò group): xem và làm việc với mọi khu vực
+  bool get isGroup {
+    final realm = claims['realm_access'];
+    return realm is Map && (realm['roles'] as List? ?? const []).contains('group');
+  }
+
+  /// Người làm trong công ty có hồ sơ nhân viên: có chấm công, phiếu lương, việc của tôi.
+  /// Văn phòng quản lý, quản trị chỉ duyệt và cấu hình nên không có phần này.
+  bool get isEmployee => (employeeId ?? '').isNotEmpty && roles.any({'employee', 'hr', 'finance'}.contains);
 
   /// Vai trò chính quyết định bộ màu: ai vừa là admin vừa là executive thì lấy executive.
   String get primaryRole => roles.isEmpty ? 'candidate' : roles.first;

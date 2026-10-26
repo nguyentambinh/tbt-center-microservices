@@ -8,7 +8,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/auth/auth_controller.dart';
+import '../../../../core/auth/work_region.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/network/api_client.dart';
 import '../../data/repositories/finance_repository_impl.dart';
@@ -19,7 +19,7 @@ import '../../domain/repositories/finance_repository.dart';
 const financeWriterRoles = {'finance', 'admin'};
 
 final financeRepositoryProvider = Provider<FinanceRepository>((ref) {
-  final region = ref.watch(authControllerProvider.select((s) => s.value?.region)) ?? 'vn';
+  final region = ref.watch(workRegionProvider);
   return FinanceRepositoryImpl(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region));
 });
 
@@ -44,4 +44,16 @@ final suppliersProvider = FutureProvider<List<Supplier>>((ref) => ref.watch(fina
 
 final supplierDetailProvider = FutureProvider.family<SupplierDetail, String>(
   (ref, id) => ref.watch(financeRepositoryProvider).supplier(id),
+);
+
+final financeAnalyticsProvider = FutureProvider.autoDispose.family<FinanceSeries, String>(
+  (ref, granularity) => ref.watch(financeRepositoryProvider).analytics(granularity),
+);
+
+final projectRankingProvider = FutureProvider.autoDispose<List<ProjectFinance>>(
+  (ref) => ref.watch(financeRepositoryProvider).projectRanking(),
+);
+
+final projectFinanceProvider = FutureProvider.autoDispose.family<ProjectFinanceDetail, String>(
+  (ref, id) => ref.watch(financeRepositoryProvider).projectFinance(id),
 );

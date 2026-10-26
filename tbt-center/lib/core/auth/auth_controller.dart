@@ -42,6 +42,13 @@ class AuthController extends AsyncNotifier<Session?> {
     state = AsyncData(session);
   }
 
+  /// Đổi mật khẩu xong thì nhận phiên mới
+  Future<void> changePassword({String? locale}) async {
+    final session = await _gateway.changePassword(locale: locale);
+    await _store.write(session);
+    state = AsyncData(session);
+  }
+
   Future<void> signOut() async {
     final session = state.value;
     await _clearLocalData();

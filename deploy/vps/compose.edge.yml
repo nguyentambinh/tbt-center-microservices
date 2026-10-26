@@ -1,0 +1,18 @@
+# Caddy làm cổng HTTPS cho máy chủ thật. Chạy: docker compose -p tbt-edge --env-file deploy/vps/vps.env -f deploy/vps/compose.edge.yml up -d
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    # Mạng của máy để chuyển vào 127.0.0.1:<cổng> của cả Docker lẫn k3s
+    network_mode: host
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv/site:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:

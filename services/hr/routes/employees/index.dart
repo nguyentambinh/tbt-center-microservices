@@ -12,7 +12,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:hr_service/src/data/employee_repository.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-/// GET /employees?q=&department=&page=1&size=30
+/// GET /employees?q=&department=&position=&company=&status=active&page=1&size=30
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.get) {
     return apiError(
@@ -36,6 +36,9 @@ Future<Response> onRequest(RequestContext context) async {
   final result = await context.read<EmployeeRepository>().search(
     query: query['q']?.trim(),
     departmentId: query['department'],
+    positionId: query['position'],
+    companyId: query['company'],
+    status: query['status'] == 'archived' ? 'archived' : 'active',
     page: page,
     size: size,
   );

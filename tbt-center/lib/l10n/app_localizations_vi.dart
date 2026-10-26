@@ -1821,4 +1821,2523 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get manualIpReset => 'Dùng IP thật';
+
+  @override
+  String moreNotifications(int count) {
+    return 'và $count thông báo khác';
+  }
+
+  @override
+  String get filterAll => 'Tất cả';
+
+  @override
+  String get filterStatus => 'Trạng thái';
+
+  @override
+  String get filterType => 'Loại';
+
+  @override
+  String get filterRead => 'Đã đọc';
+
+  @override
+  String get filterUnread => 'Chưa đọc';
+
+  @override
+  String get profileTab => 'Cá nhân';
+
+  @override
+  String get myProfile => 'Thông tin cá nhân';
+
+  @override
+  String get proposeChange => 'Đề xuất sửa thông tin';
+
+  @override
+  String get proposeChangeHint =>
+      'Chỉ sửa ô cần đổi. HR duyệt xong thông tin mới được cập nhật.';
+
+  @override
+  String get changeReason => 'Lý do (không bắt buộc)';
+
+  @override
+  String get sendRequest => 'Gửi đề xuất';
+
+  @override
+  String get changeRequestSent => 'Đã gửi đề xuất, chờ HR duyệt';
+
+  @override
+  String get changeRequestPending => 'Bạn đang có một đề xuất chờ HR duyệt';
+
+  @override
+  String get changeRequestNoChange => 'Bạn chưa sửa ô nào';
+
+  @override
+  String get changeHistory => 'Lịch sử đề xuất';
+
+  @override
+  String get changeRequests => 'Đề xuất sửa hồ sơ';
+
+  @override
+  String get changeRequestsHint => 'Nhân viên đề xuất sửa thông tin cá nhân';
+
+  @override
+  String pendingChangeRequests(int count) {
+    return '$count đề xuất sửa hồ sơ';
+  }
+
+  @override
+  String get noChangeRequests => 'Không có đề xuất nào';
+
+  @override
+  String get oldValue => 'Cũ';
+
+  @override
+  String get newValue => 'Mới';
+
+  @override
+  String get decisionNote => 'Ghi chú cho nhân viên (không bắt buộc)';
+
+  @override
+  String get fieldFacebook => 'Facebook';
+
+  @override
+  String get fieldXHandle => 'Tài khoản X';
+
+  @override
+  String get accountInfo => 'Tài khoản';
+
+  @override
+  String nProfileChangeRequested(String employee) {
+    return '$employee đề xuất sửa thông tin cá nhân';
+  }
+
+  @override
+  String get nProfileChangeApproved =>
+      'HR đã duyệt đề xuất sửa thông tin của bạn';
+
+  @override
+  String nProfileChangeRejected(String note) {
+    return 'HR từ chối đề xuất sửa thông tin: $note';
+  }
+
+  @override
+  String get invalidAmount => 'Giá trị không hợp lệ';
+
+  @override
+  String get invalidEmail => 'Email không hợp lệ';
+
+  @override
+  String todoProfileChanges(int count) {
+    return '$count đề xuất sửa hồ sơ';
+  }
+
+  @override
+  String get departments => 'Phòng ban';
+
+  @override
+  String get departmentsHint => 'Điều chuyển, trưởng phòng, giải thể';
+
+  @override
+  String get departmentAdd => 'Thêm phòng ban';
+
+  @override
+  String get departmentName => 'Tên phòng ban';
+
+  @override
+  String get departmentNameTaken => 'Công ty này đã có phòng ban cùng tên';
+
+  @override
+  String departmentCreated(String name) {
+    return 'Đã thêm phòng $name';
+  }
+
+  @override
+  String get departmentEmpty => 'Phòng ban chưa có ai';
+
+  @override
+  String get departmentHead => 'Trưởng phòng';
+
+  @override
+  String departmentHeadIs(String name) {
+    return 'Trưởng phòng: $name';
+  }
+
+  @override
+  String departmentMembers(int count) {
+    return '$count người';
+  }
+
+  @override
+  String get noHead => 'Chưa có trưởng phòng';
+
+  @override
+  String get noDepartments => 'Chưa có phòng ban nào';
+
+  @override
+  String get sortedByHours =>
+      'Trưởng phòng đứng đầu, còn lại theo tổng giờ làm';
+
+  @override
+  String get setHead => 'Giao làm trưởng phòng';
+
+  @override
+  String headAssigned(String name) {
+    return '$name đã làm trưởng phòng';
+  }
+
+  @override
+  String get moveToDepartment => 'Điều chuyển sang phòng khác';
+
+  @override
+  String get moveHere => 'Chuyển vào phòng';
+
+  @override
+  String transferDone(String name) {
+    return 'Đã chuyển sang $name';
+  }
+
+  @override
+  String get addMembers => 'Thêm người vào phòng';
+
+  @override
+  String get addMembersFrom => 'Lấy người từ phòng nào?';
+
+  @override
+  String addMembersTitle(String name) {
+    return 'Chuyển vào $name';
+  }
+
+  @override
+  String membersMoved(int count) {
+    return 'Đã chuyển $count người';
+  }
+
+  @override
+  String membersMovedPartly(int moved, int failed) {
+    return 'Đã chuyển $moved người, $failed người không chuyển được';
+  }
+
+  @override
+  String get dissolveDepartment => 'Giải thể phòng ban';
+
+  @override
+  String dissolveTitle(String name) {
+    return 'Giải thể $name?';
+  }
+
+  @override
+  String get dissolveReason => 'Lý do giải thể';
+
+  @override
+  String get dissolveNoLongerNeeded => 'Không còn nhu cầu';
+
+  @override
+  String get dissolveRestructured => 'Cơ cấu lại hoặc sáp nhập';
+
+  @override
+  String get dissolveUnderperforming => 'Hoạt động kém hiệu quả';
+
+  @override
+  String get dissolveOutsourced => 'Chuyển sang thuê ngoài';
+
+  @override
+  String get dissolveBusinessClosed => 'Thu hẹp hoặc đóng cửa mảng kinh doanh';
+
+  @override
+  String dissolveMembersMove(int count) {
+    return 'Phòng còn $count người, chọn phòng nhận lại họ';
+  }
+
+  @override
+  String get chooseReceivingDepartment => 'Chọn phòng nhận';
+
+  @override
+  String get dissolveConfirm => 'Giải thể';
+
+  @override
+  String dissolveDone(String name) {
+    return 'Đã giải thể $name';
+  }
+
+  @override
+  String get unassignedStaff => 'Người mới chưa có phòng';
+
+  @override
+  String unassignedCount(int count) {
+    return '$count người mới chưa có phòng ban';
+  }
+
+  @override
+  String get unassignedHint => 'Để AI gợi ý xếp phòng hoặc lập phòng mới';
+
+  @override
+  String get noUnassigned => 'Ai cũng đã có phòng ban';
+
+  @override
+  String get aiSuggestPlacement => 'AI gợi ý xếp phòng';
+
+  @override
+  String get aiThinking => 'AI đang xem xét...';
+
+  @override
+  String get suggestionByAi => 'Gợi ý do AI đưa ra, HR quyết định cuối cùng';
+
+  @override
+  String get suggestionByRules =>
+      'AI đang bận, gợi ý theo chức vụ trùng nhiều nhất';
+
+  @override
+  String suggestedDepartment(String name) {
+    return 'Gợi ý: $name';
+  }
+
+  @override
+  String get acceptSuggestion => 'Đồng ý';
+
+  @override
+  String get chooseOther => 'Chọn phòng khác';
+
+  @override
+  String get chooseDepartment => 'Chọn phòng ban';
+
+  @override
+  String get newDepartmentProposals => 'Đề xuất lập phòng mới';
+
+  @override
+  String get createDepartmentAndMove => 'Lập phòng và chuyển người';
+
+  @override
+  String get rankings => 'Nhân viên xuất sắc';
+
+  @override
+  String get rankingsHint => 'Xếp hạng theo giờ làm, đề cử thăng chức';
+
+  @override
+  String get rankingFormula =>
+      'Điểm = giờ thường + 1,5 × giờ tăng ca + 2 × số ngày công';
+
+  @override
+  String rankingDetail(String work, String overtime, int days) {
+    return '$work giờ · $overtime giờ tăng ca · $days ngày';
+  }
+
+  @override
+  String get points => 'điểm';
+
+  @override
+  String get noRankings => 'Chưa có dữ liệu chấm công trong khoảng này';
+
+  @override
+  String lastMonths(int count) {
+    return '$count tháng gần nhất';
+  }
+
+  @override
+  String get filterPeriod => 'Khoảng thời gian';
+
+  @override
+  String get filterDepartment => 'Phòng ban';
+
+  @override
+  String get filterPosition => 'Chức vụ';
+
+  @override
+  String get filterCompany => 'Công ty';
+
+  @override
+  String get filterRegion => 'Khu vực';
+
+  @override
+  String get statusWorking => 'Đang làm';
+
+  @override
+  String get statusArchived => 'Đã bảo lưu';
+
+  @override
+  String get viewProfile => 'Xem hồ sơ';
+
+  @override
+  String get nominatePromotion => 'Đề cử thăng chức';
+
+  @override
+  String nominateTitle(String name) {
+    return 'Đề cử $name';
+  }
+
+  @override
+  String get proposedPosition => 'Chức vụ đề xuất';
+
+  @override
+  String get raisePercent => 'Mức tăng lương';
+
+  @override
+  String get raisePercentInvalid => 'Nhập từ 0,1 đến 100';
+
+  @override
+  String get nominationReason => 'Lý do đề cử';
+
+  @override
+  String get sendToExecutives => 'Gửi Ban lãnh đạo';
+
+  @override
+  String get nominationSent => 'Đã gửi đề cử lên Ban lãnh đạo';
+
+  @override
+  String get nominations => 'Đề cử thăng chức';
+
+  @override
+  String get nominationsHint => 'Ban lãnh đạo duyệt, tăng chức và lương';
+
+  @override
+  String get noNominations => 'Không có đề cử nào';
+
+  @override
+  String raiseBy(String percent) {
+    return 'Tăng lương $percent%';
+  }
+
+  @override
+  String get approvePromotion => 'Duyệt thăng chức';
+
+  @override
+  String approvePromotionHint(String name, String position, String percent) {
+    return '$name sẽ lên $position và được tăng $percent% lương cơ bản.';
+  }
+
+  @override
+  String get promotionApproved => 'Đã duyệt: đổi chức vụ và tăng lương';
+
+  @override
+  String get promotionApprovedNoRaise =>
+      'Đã đổi chức vụ, tăng lương chưa xong, thử lại ở Lương';
+
+  @override
+  String get promotionRejected => 'Đã từ chối đề cử';
+
+  @override
+  String todoNominations(int count) {
+    return '$count đề cử thăng chức chờ duyệt';
+  }
+
+  @override
+  String get archiveProfile => 'Bảo lưu hồ sơ';
+
+  @override
+  String archiveTitle(String name) {
+    return 'Bảo lưu hồ sơ $name?';
+  }
+
+  @override
+  String archiveProjectsWarning(int count) {
+    return 'Người này đang ở $count dự án. Bảo lưu sẽ rút khỏi tất cả:';
+  }
+
+  @override
+  String get archiveNoProjects => 'Người này không ở dự án nào.';
+
+  @override
+  String get archiveKeepsPersonal =>
+      'Thông tin cá nhân vẫn được giữ, có thể khôi phục sau.';
+
+  @override
+  String get archiveReason => 'Lý do bảo lưu';
+
+  @override
+  String get archiveConfirm => 'Bảo lưu';
+
+  @override
+  String archiveDone(int count) {
+    return 'Đã bảo lưu, rút khỏi $count dự án';
+  }
+
+  @override
+  String profileArchivedBanner(String reason) {
+    return 'Hồ sơ đang bảo lưu. Lý do: $reason';
+  }
+
+  @override
+  String get restoreProfile => 'Khôi phục';
+
+  @override
+  String get restoreDone => 'Đã khôi phục hồ sơ';
+
+  @override
+  String get fieldRequired => 'Không được để trống';
+
+  @override
+  String get errIsHead =>
+      'Trưởng phòng phải giao lại cho người khác trước khi chuyển đi';
+
+  @override
+  String get errLastMember => 'Phòng ban phải còn ít nhất một người';
+
+  @override
+  String get errSameDepartment => 'Nhân viên đã ở phòng này rồi';
+
+  @override
+  String get errArchived => 'Hồ sơ đang bảo lưu, khôi phục trước đã';
+
+  @override
+  String get errNotArchived => 'Hồ sơ này không bảo lưu';
+
+  @override
+  String get errMembersRemaining => 'Phòng còn người, chọn phòng nhận lại họ';
+
+  @override
+  String get errNotMember => 'Người này không thuộc phòng ban';
+
+  @override
+  String get errPendingExists => 'Đã có một yêu cầu đang chờ duyệt';
+
+  @override
+  String get errServiceUnavailable =>
+      'Một phần hệ thống đang bận, thử lại sau ít phút';
+
+  @override
+  String nPromotionNominated(String employee, String position) {
+    return '$employee được đề cử lên $position, chờ duyệt';
+  }
+
+  @override
+  String nPromotionApproved(String position) {
+    return 'Chúc mừng! Bạn được thăng chức lên $position';
+  }
+
+  @override
+  String nPromotionRejected(String position) {
+    return 'Đề cử lên $position chưa được duyệt';
+  }
+
+  @override
+  String nPromotionApprovedHr(String employee) {
+    return 'Ban lãnh đạo đã duyệt thăng chức cho $employee';
+  }
+
+  @override
+  String nPromotionRejectedHr(String employee) {
+    return 'Ban lãnh đạo không duyệt thăng chức cho $employee';
+  }
+
+  @override
+  String get nEmployeeTransferred =>
+      'Bạn đã được điều chuyển sang phòng ban mới';
+
+  @override
+  String get nDepartmentHeadAssigned => 'Bạn được giao làm trưởng phòng';
+
+  @override
+  String memberHours(String hours) {
+    return '$hours giờ';
+  }
+
+  @override
+  String get stageInterviewed => 'Đã phỏng vấn';
+
+  @override
+  String get interviewAwaitingCandidate => 'Chờ ứng viên xác nhận';
+
+  @override
+  String get interviewAwaitingHr => 'Chờ HR xác nhận lại';
+
+  @override
+  String get interviewConfirmed => 'Đã xác nhận';
+
+  @override
+  String get interviewCancelled => 'Đã hủy';
+
+  @override
+  String get interviewSchedule => 'Lịch phỏng vấn';
+
+  @override
+  String minutesAttached(String name) {
+    return 'Biên bản: $name';
+  }
+
+  @override
+  String get chooseInterviewTime => 'Chọn ngày giờ';
+
+  @override
+  String get errTimeInPast => 'Giờ phỏng vấn phải sau thời điểm hiện tại';
+
+  @override
+  String get interviewLocation => 'Địa điểm hoặc link họp';
+
+  @override
+  String get send => 'Gửi';
+
+  @override
+  String get rejectCandidate => 'Từ chối';
+
+  @override
+  String rejectCandidateHint(String name) {
+    return 'Từ chối hồ sơ $name? Sau này vẫn xem xét lại được.';
+  }
+
+  @override
+  String get scheduleInterview => 'Hẹn phỏng vấn';
+
+  @override
+  String get scheduleAgain => 'Hẹn lại phỏng vấn';
+
+  @override
+  String get interviewSent => 'Đã gửi lịch, đang chờ bên kia xác nhận';
+
+  @override
+  String get proposeOtherTime => 'Đề xuất giờ khác';
+
+  @override
+  String get confirmTime => 'Xác nhận giờ này';
+
+  @override
+  String get interviewConfirmedDone => 'Đã xác nhận lịch phỏng vấn';
+
+  @override
+  String get uploadMinutes => 'Tải biên bản phỏng vấn';
+
+  @override
+  String get minutesUploaded =>
+      'Đã lưu biên bản, hồ sơ chuyển sang đã phỏng vấn';
+
+  @override
+  String get minutesAfterInterview =>
+      'Qua giờ phỏng vấn mới tải được biên bản (Word, Excel)';
+
+  @override
+  String get openMinutes => 'Mở biên bản';
+
+  @override
+  String get moveToScreening => 'Chuyển sang sàng lọc';
+
+  @override
+  String get reconsider => 'Xem xét lại';
+
+  @override
+  String get reconsidered => 'Hồ sơ đã quay về bước trước lúc từ chối';
+
+  @override
+  String get waitingCandidateReply =>
+      'Đang chờ ứng viên xác nhận hoặc đề xuất giờ khác';
+
+  @override
+  String get waitingHrReply => 'Đang chờ HR xác nhận giờ bạn đề xuất';
+
+  @override
+  String get hiredSalaryPending =>
+      'Chưa lưu được lương thỏa thuận, cần nhập lại ở màn Lương';
+
+  @override
+  String get offerFromAi => 'AI gợi ý';
+
+  @override
+  String get offerFromRules => 'Gợi ý theo dữ liệu';
+
+  @override
+  String get offerPeerMedian =>
+      'Lương ở giữa của những người cùng chức vụ, phòng có nhiều người cùng chức vụ nhất';
+
+  @override
+  String get offerRegionMedian =>
+      'Chưa có ai cùng chức vụ: lương ở giữa của khu vực, phòng đông người nhất';
+
+  @override
+  String get agreedSalary => 'Lương cơ bản thỏa thuận';
+
+  @override
+  String get currency => 'Tiền tệ';
+
+  @override
+  String get errInvalidStep =>
+      'Hồ sơ không thể chuyển như vậy ở bước hiện tại, tải lại để xem bước mới nhất';
+
+  @override
+  String get errNotScreened => 'Cần sàng lọc hồ sơ trước khi hẹn phỏng vấn';
+
+  @override
+  String get errInterviewNotConfirmed => 'Lịch phỏng vấn chưa được xác nhận';
+
+  @override
+  String get errNotInterviewed =>
+      'Cần tải biên bản phỏng vấn trước khi nhận việc';
+
+  @override
+  String get errNotRejected => 'Hồ sơ này chưa bị từ chối';
+
+  @override
+  String get errInvalidOffer =>
+      'Lương thỏa thuận phải lớn hơn 0 và có mã tiền tệ';
+
+  @override
+  String get errMinutesFile => 'Biên bản phải là tệp Word hoặc Excel';
+
+  @override
+  String nInterviewScheduled(String position, String time) {
+    return 'Lịch phỏng vấn $position lúc $time, mở để xác nhận';
+  }
+
+  @override
+  String nInterviewConfirmed(String time) {
+    return 'Lịch phỏng vấn lúc $time đã được xác nhận';
+  }
+
+  @override
+  String nInterviewConfirmedHr(String position, String time) {
+    return 'Ứng viên $position đã chốt lịch phỏng vấn lúc $time';
+  }
+
+  @override
+  String nInterviewProposed(String position, String time) {
+    return 'Ứng viên $position đề xuất phỏng vấn lúc $time';
+  }
+
+  @override
+  String get projectTier => 'Phân cấp';
+
+  @override
+  String get tierSmall => 'Cấp 1 · Nhỏ';
+
+  @override
+  String get tierMedium => 'Cấp 2 · Vừa';
+
+  @override
+  String get tierLarge => 'Cấp 3 · Lớn';
+
+  @override
+  String get tierStrategic => 'Cấp 4 · Trọng điểm';
+
+  @override
+  String tierRule(int months, int members) {
+    return 'Tối đa $months tháng, ít nhất $members người';
+  }
+
+  @override
+  String get warnRed => 'Còn ≤ 1 tháng';
+
+  @override
+  String get warnOrange => 'Còn ≤ 6 tháng';
+
+  @override
+  String get warnYellow => 'Còn ≤ 12 tháng';
+
+  @override
+  String get warnNotStarted => 'Chưa bắt đầu';
+
+  @override
+  String get warnAccepted => 'Đã nghiệm thu';
+
+  @override
+  String get warnNormal => 'Còn hơn 12 tháng';
+
+  @override
+  String get projectCharts => 'Biểu đồ dự án';
+
+  @override
+  String get chart2d => '2D';
+
+  @override
+  String get chart3d => '3D';
+
+  @override
+  String get chartTimeline => 'Thời gian';
+
+  @override
+  String get chartProgress => 'Tiến độ';
+
+  @override
+  String get chartMembers => 'Số người';
+
+  @override
+  String get chartValue => 'Giá trị';
+
+  @override
+  String get thousandUsd => 'nghìn USD';
+
+  @override
+  String get projectProposals => 'Đề xuất dự án';
+
+  @override
+  String get projectNew => 'Tạo dự án';
+
+  @override
+  String get wizardFiles => 'Hợp đồng và ảnh';
+
+  @override
+  String get wizardFilesHint =>
+      'Tải hợp đồng theo mẫu (PDF hoặc Word), AI sẽ đọc và điền sẵn thông tin; không có hợp đồng thì nhập tay ở bước sau.';
+
+  @override
+  String get wizardInfo => 'Thông tin dự án';
+
+  @override
+  String get wizardMembers => 'Nhân viên tham gia';
+
+  @override
+  String get wizardSend => 'Gửi Ban lãnh đạo';
+
+  @override
+  String get downloadContractTemplate => 'Tải mẫu hợp đồng';
+
+  @override
+  String get uploadContract => 'Tải hợp đồng lên';
+
+  @override
+  String get uploadProjectImage => 'Tải ảnh công trình';
+
+  @override
+  String get contractReadByAi =>
+      'AI đã đọc hợp đồng và điền sẵn, kiểm lại ở bước sau';
+
+  @override
+  String get contractReadManual =>
+      'Chưa đọc được hợp đồng tự động, vui lòng nhập tay ở bước sau';
+
+  @override
+  String get projectName => 'Tên dự án';
+
+  @override
+  String get customerName => 'Khách hàng';
+
+  @override
+  String get customerCompany => 'Doanh nghiệp';
+
+  @override
+  String get customerIndividual => 'Cá nhân';
+
+  @override
+  String get customerContact => 'Liên hệ khách hàng (email hoặc điện thoại)';
+
+  @override
+  String get contractType => 'Loại hợp đồng';
+
+  @override
+  String get contractValue => 'Giá trị hợp đồng';
+
+  @override
+  String get depositAmount => 'Tạm ứng';
+
+  @override
+  String get startDate => 'Bắt đầu';
+
+  @override
+  String get endDate => 'Kết thúc';
+
+  @override
+  String get acceptanceDate => 'Nghiệm thu';
+
+  @override
+  String get propErrName => 'Cần tên dự án';
+
+  @override
+  String get propErrCustomer => 'Cần tên khách hàng';
+
+  @override
+  String get propErrValue => 'Giá trị hợp đồng phải lớn hơn 0';
+
+  @override
+  String get propErrDeposit =>
+      'Tạm ứng không được âm hay lớn hơn giá trị hợp đồng';
+
+  @override
+  String get propErrDates => 'Cần ngày bắt đầu và ngày kết thúc';
+
+  @override
+  String get propErrStartPast => 'Ngày bắt đầu không được trước hôm nay';
+
+  @override
+  String get propErrEndBeforeStart => 'Ngày kết thúc phải sau ngày bắt đầu';
+
+  @override
+  String get propErrAcceptance =>
+      'Nghiệm thu phải từ ngày kết thúc tới 90 ngày sau';
+
+  @override
+  String get propErrTooLong => 'Dự án cấp này làm quá thời gian tối đa';
+
+  @override
+  String get propErrFewMembers => 'Chưa đủ số người tối thiểu của cấp này';
+
+  @override
+  String membersNeeded(int min, int picked) {
+    return 'Cần ít nhất $min người · đã chọn $picked';
+  }
+
+  @override
+  String get suggestMembers => 'AI gợi ý nhân viên';
+
+  @override
+  String activeProjects(int count) {
+    return '$count dự án đang làm';
+  }
+
+  @override
+  String get next => 'Tiếp';
+
+  @override
+  String get back => 'Quay lại';
+
+  @override
+  String get sendToExecutive => 'Gửi duyệt';
+
+  @override
+  String get proposalSent => 'Đã gửi đề xuất, chờ Ban lãnh đạo duyệt';
+
+  @override
+  String get noProposals => 'Chưa có đề xuất dự án';
+
+  @override
+  String proposalVersion(int version) {
+    return 'Bản $version';
+  }
+
+  @override
+  String get propAwaitingExecutive => 'Chờ Ban lãnh đạo';
+
+  @override
+  String get propAwaitingProposer => 'Chờ bên lập xác nhận';
+
+  @override
+  String get propApproved => 'Đã duyệt';
+
+  @override
+  String get propRejected => 'Đã từ chối';
+
+  @override
+  String get proposalEdit => 'Sửa đề xuất';
+
+  @override
+  String get proposalNoteHint => 'Lý do hoặc điều cần sửa';
+
+  @override
+  String proposalApprovedDone(String id) {
+    return 'Đã duyệt, dự án $id đã được tạo';
+  }
+
+  @override
+  String get acceptEdits => 'Đồng ý bản sửa';
+
+  @override
+  String get withdrawProposal => 'Rút đề xuất';
+
+  @override
+  String get waitingOtherSide => 'Đang chờ bên kia trả lời';
+
+  @override
+  String get openContract => 'Mở hợp đồng';
+
+  @override
+  String get openImage => 'Mở ảnh';
+
+  @override
+  String get openProject => 'Mở dự án';
+
+  @override
+  String get propActSubmitted => 'Gửi đề xuất';
+
+  @override
+  String get propActCounter => 'Sửa lại đề xuất';
+
+  @override
+  String get propActApprove => 'Đồng ý';
+
+  @override
+  String get propActReject => 'Từ chối';
+
+  @override
+  String get propActWithdraw => 'Rút đề xuất';
+
+  @override
+  String todoProposals(int count) {
+    return '$count đề xuất dự án chờ duyệt';
+  }
+
+  @override
+  String nProjectProposed(String name) {
+    return 'Đề xuất dự án mới cần duyệt: $name';
+  }
+
+  @override
+  String nProjectCountered(String name) {
+    return 'Ban lãnh đạo đã sửa đề xuất $name, cần bạn xác nhận';
+  }
+
+  @override
+  String nProjectApproved(String name) {
+    return 'Dự án $name đã được duyệt và tạo';
+  }
+
+  @override
+  String nProjectRejected(String name) {
+    return 'Đề xuất dự án $name bị từ chối';
+  }
+
+  @override
+  String get workCalendar => 'Lịch làm việc';
+
+  @override
+  String get clockStats => 'Biểu đồ chấm công';
+
+  @override
+  String shiftHours(String start, String end) {
+    return 'Ca $start–$end';
+  }
+
+  @override
+  String get errShiftEnded =>
+      'Đã qua giờ kết thúc ca nên không chấm vào được nữa';
+
+  @override
+  String get errTooManyFiles => 'Mỗi đơn chỉ đính kèm tối đa 5 tệp';
+
+  @override
+  String get errFileType =>
+      'Loại tệp không được nhận, hãy chọn đúng loại tệp yêu cầu';
+
+  @override
+  String get addEvidence => 'Thêm minh chứng';
+
+  @override
+  String viewOriginalLeave(int count) {
+    return 'Xem đơn gốc ($count)';
+  }
+
+  @override
+  String get evidenceUploaded => 'Đã thêm minh chứng, AI đang tóm tắt cho HR';
+
+  @override
+  String get noEvidence => 'Chưa có minh chứng';
+
+  @override
+  String get aiLeaveSummary => 'AI tóm tắt minh chứng';
+
+  @override
+  String get evidenceMatches => 'Khớp lý do nghỉ';
+
+  @override
+  String get evidenceCheck => 'Cần xem kỹ';
+
+  @override
+  String get calWorked => 'Đã làm';
+
+  @override
+  String get calLeave => 'Nghỉ phép';
+
+  @override
+  String get calHoliday => 'Ngày lễ';
+
+  @override
+  String get calAbsent => 'Vắng không phép';
+
+  @override
+  String get calScheduled => 'Có ca';
+
+  @override
+  String calLeaveOfType(String type) {
+    return 'Nghỉ: $type';
+  }
+
+  @override
+  String get noShiftThisDay => 'Không có ca ngày này';
+
+  @override
+  String estimatedDayPay(String amount) {
+    return 'Tiền ước tính hôm nay: $amount';
+  }
+
+  @override
+  String estimatedMonthPay(String amount) {
+    return 'Tiền ước tính theo giờ làm: $amount';
+  }
+
+  @override
+  String get payEstimateHint =>
+      'Tính theo lương cơ bản, 26 ngày công, tăng ca 150%; chưa trừ bảo hiểm, thuế';
+
+  @override
+  String get projectsThisDay => 'Dự án đang tham gia';
+
+  @override
+  String get statsScopeRegion => 'Cả khu vực';
+
+  @override
+  String get statsScopeMine => 'Của tôi';
+
+  @override
+  String get statsDays => 'Ngày đã chấm công';
+
+  @override
+  String get statsLate => 'Vào trễ';
+
+  @override
+  String get statsByWeekday => 'Theo thứ trong tuần';
+
+  @override
+  String get statsByHour => 'Giờ vào ca';
+
+  @override
+  String get statsByMonth => 'Ngày công và số lần trễ theo tháng';
+
+  @override
+  String get errPayrollTooEarly =>
+      'Kỳ lương này chưa tới hạn: lương tháng M chốt từ ngày 10 tháng M+1';
+
+  @override
+  String get errAmountLowered =>
+      'Mức đề xuất chỉ được giữ nguyên hoặc tăng, không được hạ';
+
+  @override
+  String get errNotHigher => 'Mức đề xuất phải cao hơn lương hiện tại';
+
+  @override
+  String get errNoSalary => 'Chưa có lương cơ bản trong hệ thống';
+
+  @override
+  String get errAwaitingAck =>
+      'Báo cáo trước đang chờ cấp trên xác nhận, chưa gửi bản mới được';
+
+  @override
+  String get acknowledge => 'Xác nhận';
+
+  @override
+  String get byDay => 'Ngày';
+
+  @override
+  String get byMonth => 'Tháng';
+
+  @override
+  String get byYear => 'Năm';
+
+  @override
+  String get costs => 'Chi phí';
+
+  @override
+  String get export => 'Xuất tệp';
+
+  @override
+  String get exportExcel => 'Xuất Excel';
+
+  @override
+  String get exportPdf => 'Xuất PDF';
+
+  @override
+  String exportedAt(String time) {
+    return 'Xuất lúc $time';
+  }
+
+  @override
+  String get exportId => 'Mã';
+
+  @override
+  String get exportPeriod => 'Kỳ';
+
+  @override
+  String get exportRank => 'Hạng';
+
+  @override
+  String get exportMargin => 'Biên lãi';
+
+  @override
+  String get exportCurrency => 'Tiền tệ';
+
+  @override
+  String get exportRevenueUsd => 'Doanh thu (USD)';
+
+  @override
+  String get exportCostUsd => 'Chi phí (USD)';
+
+  @override
+  String exportFinanceTitle(int year) {
+    return 'Thu chi năm $year';
+  }
+
+  @override
+  String get financeAnalytics => 'Phân tích';
+
+  @override
+  String get materialCost => 'Chi vật liệu';
+
+  @override
+  String get payrollCost => 'Chi lương';
+
+  @override
+  String get materialsUsed => 'Vật liệu đã dùng';
+
+  @override
+  String get revenueByStage => 'Doanh thu theo đợt';
+
+  @override
+  String get projectProfitRanking => 'Xếp hạng dự án theo lợi nhuận';
+
+  @override
+  String get projectSalaryShares => 'Lương dự án chia cho từng người';
+
+  @override
+  String get overtimePay => 'Tăng ca';
+
+  @override
+  String get insuranceDeduction => 'Bảo hiểm';
+
+  @override
+  String get incomeTax => 'Thuế thu nhập';
+
+  @override
+  String get salaryGrowth => 'Lương qua các kỳ';
+
+  @override
+  String salaryGrowthRate(String rate, int count) {
+    return 'Thực nhận $rate sau $count kỳ';
+  }
+
+  @override
+  String payrollOpensOn(String period, String date) {
+    return 'Kỳ $period mở chốt lương từ $date';
+  }
+
+  @override
+  String get raiseRequests => 'Đề xuất tăng lương';
+
+  @override
+  String get raiseRequestsHint => 'Gửi, chuyển lên, duyệt tăng lương';
+
+  @override
+  String get newRaiseRequest => 'Đề xuất tăng lương';
+
+  @override
+  String get noRaiseRequests => 'Chưa có đề xuất tăng lương';
+
+  @override
+  String get proposedSalary => 'Lương cơ bản đề xuất';
+
+  @override
+  String raiseMinimum(String amount) {
+    return 'Không thấp hơn $amount';
+  }
+
+  @override
+  String get raiseReason => 'Lý do (thành tích, trách nhiệm mới...)';
+
+  @override
+  String get raiseActionTitle => 'Mức lương và ghi chú';
+
+  @override
+  String get raiseSent => 'Đã gửi đề xuất tăng lương';
+
+  @override
+  String get raiseForwarded => 'Đã chuyển lên cấp duyệt';
+
+  @override
+  String get raiseApprovedDone => 'Đã duyệt, lương cơ bản đã tăng';
+
+  @override
+  String get raiseForward => 'Chuyển lên duyệt';
+
+  @override
+  String get raiseReturn => 'Trả lại';
+
+  @override
+  String get raiseEdit => 'Sửa mức đề xuất';
+
+  @override
+  String get raiseAwaitingHr => 'Chờ HR xem';
+
+  @override
+  String get raiseAwaitingApprover => 'Chờ cấp trên duyệt';
+
+  @override
+  String get raiseAwaitingEmployee => 'Trả lại cho nhân viên';
+
+  @override
+  String get raiseWithdrawn => 'Đã rút';
+
+  @override
+  String raiseRequestedFirst(String amount) {
+    return 'Ban đầu đề xuất $amount';
+  }
+
+  @override
+  String get reportSubmissions => 'Báo cáo gửi cấp trên';
+
+  @override
+  String get reportSubmissionsHint =>
+      'Báo cáo nhân sự, tài chính theo kỳ, chờ cấp trên xác nhận';
+
+  @override
+  String get reportHr => 'Nhân sự';
+
+  @override
+  String get reportFinance => 'Tài chính';
+
+  @override
+  String get noReports => 'Chưa gửi báo cáo nào';
+
+  @override
+  String get submitReport => 'Gửi báo cáo';
+
+  @override
+  String submitReportTitle(String period) {
+    return 'Gửi báo cáo kỳ $period';
+  }
+
+  @override
+  String get reportWaitingAck => 'Đang chờ xác nhận';
+
+  @override
+  String get reportSent => 'Đã gửi báo cáo lên cấp trên';
+
+  @override
+  String get reportAcknowledged => 'Đã xác nhận báo cáo';
+
+  @override
+  String get returnReport => 'Trả lại báo cáo';
+
+  @override
+  String get reportStatusSubmitted => 'Chờ xác nhận';
+
+  @override
+  String get reportStatusAcknowledged => 'Đã xác nhận';
+
+  @override
+  String get reportStatusReturned => 'Bị trả lại';
+
+  @override
+  String reportPeriod(String period) {
+    return 'Báo cáo kỳ $period';
+  }
+
+  @override
+  String reportHeadcount(int people, int departments) {
+    return '$people nhân viên, $departments phòng ban';
+  }
+
+  @override
+  String reportUnassigned(int count) {
+    return '$count người chưa có phòng ban';
+  }
+
+  @override
+  String reportNominations(int pending, int approved) {
+    return 'Đề cử thăng chức: $pending chờ, $approved đã duyệt';
+  }
+
+  @override
+  String get resignations => 'Xin thôi việc';
+
+  @override
+  String get resignationsHint => 'Gửi đơn nghỉ việc, theo dõi duyệt';
+
+  @override
+  String get newResignation => 'Gửi đơn';
+
+  @override
+  String get resignationLastDay => 'Ngày làm cuối';
+
+  @override
+  String resignationLastDayOn(String date) {
+    return 'Ngày làm cuối: $date';
+  }
+
+  @override
+  String get resignationReason => 'Lý do nghỉ việc';
+
+  @override
+  String resignationNotice(int days) {
+    return 'Báo trước ít nhất $days ngày';
+  }
+
+  @override
+  String get resignationSent => 'Đã gửi đơn thôi việc cho HR';
+
+  @override
+  String get noResignations => 'Chưa có đơn thôi việc nào';
+
+  @override
+  String get resignationPending => 'Chờ HR duyệt';
+
+  @override
+  String get resignationApproved => 'Đã duyệt, chờ ngày nghỉ';
+
+  @override
+  String get resignationCompleted => 'Đã nghỉ việc';
+
+  @override
+  String get resignationWithdrawn => 'Đã rút đơn';
+
+  @override
+  String get resignationWithdraw => 'Rút đơn';
+
+  @override
+  String get resignationComplete => 'Hoàn tất nghỉ việc';
+
+  @override
+  String resignationCompleteConfirm(String name) {
+    return 'Hồ sơ $name sẽ được bảo lưu và rút khỏi mọi dự án. Tiếp tục?';
+  }
+
+  @override
+  String get resignationCompletedDone =>
+      'Đã hoàn tất nghỉ việc, hồ sơ chuyển vào lưu trữ';
+
+  @override
+  String get errNoticeTooShort =>
+      'Ngày làm cuối phải cách hôm nay ít nhất 30 ngày';
+
+  @override
+  String get errBeforeLastDay => 'Chưa tới ngày làm cuối, chưa hoàn tất được';
+
+  @override
+  String get exportCsv => 'Xuất CSV';
+
+  @override
+  String get exportJson => 'Xuất JSON';
+
+  @override
+  String get auditCharts => 'Biểu đồ';
+
+  @override
+  String get auditFilter => 'Lọc chi tiết';
+
+  @override
+  String get auditService => 'Dịch vụ';
+
+  @override
+  String get auditEventType => 'Loại sự kiện';
+
+  @override
+  String get auditTime => 'Thời điểm';
+
+  @override
+  String get auditFromTime => 'Từ lúc';
+
+  @override
+  String get auditToTime => 'Đến lúc';
+
+  @override
+  String get anyTime => 'Bất kỳ';
+
+  @override
+  String get anomalyAny => 'Bất thường';
+
+  @override
+  String get anomalyAfterHours => 'Ngoài giờ (22h–6h)';
+
+  @override
+  String get anomalyFailure => 'Thất bại, từ chối';
+
+  @override
+  String get auditTotal => 'Tổng sự kiện';
+
+  @override
+  String get auditByRegion => 'Theo khu vực';
+
+  @override
+  String get auditByHour => 'Theo giờ địa phương (đỏ là ngoài giờ)';
+
+  @override
+  String get auditByDay => 'Theo ngày';
+
+  @override
+  String get auditByType => 'Loại sự kiện nhiều nhất';
+
+  @override
+  String get auditByService => 'Theo dịch vụ';
+
+  @override
+  String get clearFilters => 'Xóa bộ lọc';
+
+  @override
+  String get auditSignedExport => 'Xuất CSV có mã SHA-256';
+
+  @override
+  String get approvalInbox => 'Hộp duyệt chung';
+
+  @override
+  String get approvalInboxHint =>
+      'Dự án, thăng chức, tăng lương chờ duyệt ở 6 khu vực';
+
+  @override
+  String get approvalKindProject => 'Dự án';
+
+  @override
+  String get approvalKindPromotion => 'Thăng chức';
+
+  @override
+  String get approvalKindRaise => 'Tăng lương';
+
+  @override
+  String get noApprovals => 'Không còn đề xuất nào chờ duyệt';
+
+  @override
+  String approvalWaiting(int count) {
+    return '$count đề xuất chờ duyệt';
+  }
+
+  @override
+  String approvalRegionsDown(String regions) {
+    return 'Chưa lấy được dữ liệu của: $regions';
+  }
+
+  @override
+  String get approvalByRegion => 'Chờ duyệt theo khu vực';
+
+  @override
+  String approvalPromotionLine(String position, String percent) {
+    return 'Lên $position, tăng $percent% lương';
+  }
+
+  @override
+  String get approvalDone => 'Đã ghi quyết định';
+
+  @override
+  String approvalConfirm(String title) {
+    return 'Duyệt $title?';
+  }
+
+  @override
+  String approvalRejectConfirm(String title) {
+    return 'Từ chối $title?';
+  }
+
+  @override
+  String get approvalColKind => 'Loại';
+
+  @override
+  String get approvalColTitle => 'Nội dung';
+
+  @override
+  String get approvalColDetail => 'Chi tiết';
+
+  @override
+  String get approvalColUpdated => 'Cập nhật';
+
+  @override
+  String get jobPositions => 'Vị trí tuyển dụng';
+
+  @override
+  String get jobPositionsHint =>
+      'Mở vị trí, số người cần tuyển, xem ứng viên theo điểm AI';
+
+  @override
+  String get newJobPosition => 'Mở vị trí';
+
+  @override
+  String get editJobPosition => 'Sửa vị trí';
+
+  @override
+  String get noJobPositions => 'Chưa mở vị trí tuyển dụng nào';
+
+  @override
+  String get positionTitle => 'Tên vị trí';
+
+  @override
+  String get positionDepartment => 'Phòng ban';
+
+  @override
+  String get positionHeadcount => 'Số người cần tuyển';
+
+  @override
+  String get positionDescription => 'Mô tả công việc';
+
+  @override
+  String get positionRequirements => 'Yêu cầu';
+
+  @override
+  String get positionRequirementsHint =>
+      'AI dựa vào phần này để chấm mức phù hợp của CV';
+
+  @override
+  String get positionOpen => 'Đang tuyển';
+
+  @override
+  String get positionFilled => 'Đã đủ người';
+
+  @override
+  String get positionClosed => 'Đã đóng';
+
+  @override
+  String get closePosition => 'Đóng vị trí';
+
+  @override
+  String get reopenPosition => 'Mở lại';
+
+  @override
+  String get positionSaved => 'Đã lưu vị trí tuyển dụng';
+
+  @override
+  String get positionApplicants => 'Ứng viên (điểm AI cao trước)';
+
+  @override
+  String positionProgress(int hired, int headcount, int applicants) {
+    return 'Đã tuyển $hired/$headcount · $applicants ứng viên';
+  }
+
+  @override
+  String positionSlotsLeft(int count) {
+    return 'Còn $count chỗ';
+  }
+
+  @override
+  String get choosePositions => 'Chọn vị trí ứng tuyển';
+
+  @override
+  String get choosePositionsHint => 'Bấm để chọn';
+
+  @override
+  String choosePositionsHelper(int max) {
+    return 'Chọn một hoặc nhiều vị trí, tối đa $max';
+  }
+
+  @override
+  String positionsChosen(int count) {
+    return 'Xong ($count vị trí)';
+  }
+
+  @override
+  String get positionMatchTitle => 'Mức phù hợp với vị trí (AI)';
+
+  @override
+  String get positionMatchPending => 'AI đang so khớp';
+
+  @override
+  String get positionMatchNone => 'Chưa so khớp';
+
+  @override
+  String get positionMatchStrengths => 'Đáp ứng';
+
+  @override
+  String get positionMatchGaps => 'Còn thiếu';
+
+  @override
+  String bestMatch(int score) {
+    return 'Phù hợp $score%';
+  }
+
+  @override
+  String get errNoPosition => 'Chọn ít nhất một vị trí ứng tuyển';
+
+  @override
+  String get errTooManyPositions => 'Chỉ chọn tối đa 5 vị trí';
+
+  @override
+  String get errPositionUnavailable =>
+      'Vị trí này đã đóng hoặc đã đủ người, chọn vị trí khác';
+
+  @override
+  String get errPositionTitleExists => 'Đã có vị trí đang tuyển cùng tên';
+
+  @override
+  String get errInvalidHeadcount => 'Số người cần tuyển từ 1 đến 500';
+
+  @override
+  String errHeadcountBelowHired(int hired) {
+    return 'Đã tuyển $hired người, không thể đặt thấp hơn';
+  }
+
+  @override
+  String get errInvalidPosition => 'Nhập tên vị trí và số người cần tuyển';
+
+  @override
+  String nRaiseRequested(String employee) {
+    return '$employee gửi đề xuất tăng lương';
+  }
+
+  @override
+  String nRaiseForwarded(String employee) {
+    return 'HR chuyển đề xuất tăng lương của $employee, cần bạn duyệt';
+  }
+
+  @override
+  String get nRaiseApproved => 'Đề xuất tăng lương của bạn đã được duyệt';
+
+  @override
+  String get nRaiseRejected => 'Đề xuất tăng lương của bạn bị từ chối';
+
+  @override
+  String get nRaiseReturned =>
+      'Đề xuất tăng lương được trả lại, mời bạn xem và sửa';
+
+  @override
+  String nReportSubmitted(String report, String period) {
+    return 'Có báo cáo $report kỳ $period gửi lên cần xác nhận';
+  }
+
+  @override
+  String nReportAcknowledged(String report, String period) {
+    return 'Báo cáo $report kỳ $period đã được xác nhận';
+  }
+
+  @override
+  String nReportReturned(String report, String period) {
+    return 'Báo cáo $report kỳ $period bị trả lại, xem ghi chú';
+  }
+
+  @override
+  String nResignationRequested(String employee, String date) {
+    return '$employee xin thôi việc, ngày làm cuối $date';
+  }
+
+  @override
+  String nResignationApproved(String date) {
+    return 'Đơn thôi việc của bạn đã được duyệt, ngày làm cuối $date';
+  }
+
+  @override
+  String get nResignationRejected => 'Đơn thôi việc của bạn không được duyệt';
+
+  @override
+  String nResignationWithdrawn(String employee) {
+    return '$employee đã rút đơn thôi việc';
+  }
+
+  @override
+  String get reportKindHr => 'nhân sự';
+
+  @override
+  String get reportKindFinance => 'tài chính';
+
+  @override
+  String get openFullPage => 'Mở màn đầy đủ';
+
+  @override
+  String get requestAlreadyHandled => 'Đơn này đã được xử lý';
+
+  @override
+  String get requestFrom => 'Người gửi';
+
+  @override
+  String get waitingSuperior => 'Chờ cấp trên duyệt';
+
+  @override
+  String get signupTitle => 'Đăng ký tài khoản ứng viên';
+
+  @override
+  String get signupHint =>
+      'Nhập thông tin thật của bạn. Mã xác nhận 6 số sẽ gửi về email này.';
+
+  @override
+  String get sendCode => 'Gửi mã xác nhận';
+
+  @override
+  String codeSentTo(String email) {
+    return 'Đã gửi mã tới $email, kiểm tra cả thư mục Spam';
+  }
+
+  @override
+  String get verificationCode => 'Mã xác nhận (6 số)';
+
+  @override
+  String get newPassword => 'Mật khẩu';
+
+  @override
+  String get passwordRule => 'Ít nhất 8 ký tự, có cả chữ và số';
+
+  @override
+  String get confirmPassword => 'Nhập lại mật khẩu';
+
+  @override
+  String get createAccount => 'Xác nhận và tạo tài khoản';
+
+  @override
+  String get resendCode => 'Gửi lại mã';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Gửi lại mã sau $seconds giây';
+  }
+
+  @override
+  String get editDetails => 'Sửa họ tên, email, số điện thoại';
+
+  @override
+  String get signupDone => 'Đã tạo tài khoản, mời bạn đăng nhập';
+
+  @override
+  String get changePassword => 'Đổi mật khẩu';
+
+  @override
+  String get passwordChanged => 'Đã đổi mật khẩu';
+
+  @override
+  String get profileViewed => 'Hồ sơ của bạn đã được xem';
+
+  @override
+  String get profileViewedHint =>
+      'HR đã mở xem hồ sơ nên bạn không sửa thông tin, đổi CV được nữa';
+
+  @override
+  String get cvRequired => 'Đính kèm CV (PDF) để lưu hồ sơ';
+
+  @override
+  String get accountDetails => 'Thông tin từ tài khoản đăng ký';
+
+  @override
+  String get errInvalidEmail => 'Email không hợp lệ';
+
+  @override
+  String get errInvalidName => 'Họ tên từ 2 đến 80 ký tự';
+
+  @override
+  String get errInvalidPhone => 'Số điện thoại không hợp lệ';
+
+  @override
+  String get errWeakPassword => 'Mật khẩu cần ít nhất 8 ký tự, có cả chữ và số';
+
+  @override
+  String get errEmailTaken => 'Email này đã có tài khoản, hãy đăng nhập';
+
+  @override
+  String get errCodeTooSoon => 'Vừa gửi mã, chờ 60 giây rồi gửi lại';
+
+  @override
+  String get errCodeExpired =>
+      'Mã đã hết hạn hoặc nhập sai quá nhiều lần, hãy gửi lại mã';
+
+  @override
+  String get errWrongCode => 'Mã xác nhận không đúng';
+
+  @override
+  String get errSignupUnavailable =>
+      'Chưa gửi được email lúc này, thử lại sau ít phút';
+
+  @override
+  String get projectTime => 'Thời gian';
+
+  @override
+  String get me => 'Tôi';
+
+  @override
+  String myProjectPay(String amount) {
+    return 'Tiền dự án của tôi: $amount';
+  }
+
+  @override
+  String get mySchedule => 'Lịch làm việc của tôi';
+
+  @override
+  String myScheduleHint(int days) {
+    return 'Tháng này đã đi làm $days buổi trong thời gian dự án';
+  }
+
+  @override
+  String myScheduleEarned(String amount) {
+    return 'Tiền ước tính theo các buổi đi làm: $amount';
+  }
+
+  @override
+  String get notCheckedIn => 'Chưa chấm công';
+
+  @override
+  String get contractRequired =>
+      'Bắt buộc tải hợp đồng (PDF, Word) để AI đọc ra thông tin dự án';
+
+  @override
+  String get attachedBonuses => 'Thưởng phạt 12 tháng qua (gửi kèm đề xuất)';
+
+  @override
+  String bonusNet(String amount) {
+    return 'Cộng dồn: $amount';
+  }
+
+  @override
+  String moreItems(int count) {
+    return 'và $count khoản khác';
+  }
+
+  @override
+  String get orgTree => 'Sơ đồ tổ chức';
+
+  @override
+  String get orgTreeSearch => 'Tìm người, chức vụ (gõ không dấu cũng được)';
+
+  @override
+  String orgTreeSummary(int departments, int people) {
+    return '$departments phòng ban · $people người';
+  }
+
+  @override
+  String get orgTreeToggle => 'Thu gọn hoặc mở tất cả';
+
+  @override
+  String get level1 => 'Nhân viên';
+
+  @override
+  String get level2 => 'Chuyên viên, kỹ sư';
+
+  @override
+  String get level3 => 'Chỉ huy, phó phòng';
+
+  @override
+  String get level4 => 'Trưởng phòng, quản lý';
+
+  @override
+  String get level5 => 'Giám đốc khối';
+
+  @override
+  String get level6 => 'Ban lãnh đạo';
+
+  @override
+  String get noHigherPosition =>
+      'Người này đã ở cấp cao nhất trong cây chức vụ';
+
+  @override
+  String get errNotHigherPosition =>
+      'Chỉ đề cử lên chức vụ cấp cao hơn hiện tại';
+
+  @override
+  String get errUnknownPosition => 'Chọn chức vụ trong danh sách';
+
+  @override
+  String overtimeApprovedToday(String hours, String until) {
+    return 'Tăng ca đã duyệt $hours giờ: làm tới $until vẫn được tính';
+  }
+
+  @override
+  String overtimePendingToday(String hours) {
+    return 'Đơn tăng ca $hours giờ đang chờ duyệt: chưa được tính cho tới khi duyệt';
+  }
+
+  @override
+  String get overtimeNoneToday =>
+      'Chưa có đơn tăng ca được duyệt: làm quá giờ ca sẽ không được tính';
+
+  @override
+  String get viewZoomIn => 'Phóng to';
+
+  @override
+  String get viewZoomOut => 'Thu nhỏ';
+
+  @override
+  String get viewFromTop => 'Nhìn từ trên xuống';
+
+  @override
+  String get viewFromBottom => 'Nhìn từ dưới lên';
+
+  @override
+  String get viewRotateLeft => 'Xoay trái';
+
+  @override
+  String get viewRotateRight => 'Xoay phải';
+
+  @override
+  String get viewReset => 'Về góc nhìn ban đầu';
+
+  @override
+  String get sectionGroup => 'Tập đoàn';
+
+  @override
+  String get sectionAdmin => 'Quản trị';
+
+  @override
+  String get roleGroup => 'Cấp tập đoàn';
+
+  @override
+  String get groupOverview => 'Tổng quan tập đoàn';
+
+  @override
+  String get groupOverviewHint =>
+      'Số liệu từng nước, bấm vào một nước để xem chi tiết';
+
+  @override
+  String get adminConsole => 'Quản trị dữ liệu';
+
+  @override
+  String get adminConsoleHint =>
+      'Tài khoản, lịch làm việc, chức vụ, thống kê, sao lưu, SQL';
+
+  @override
+  String viewingRegion(String region) {
+    return 'Đang xem: $region';
+  }
+
+  @override
+  String get chooseRegion => 'Chọn khu vực cần xem';
+
+  @override
+  String get approvalKindLeave => 'Đơn nghỉ';
+
+  @override
+  String get approvalKindOvertime => 'Tăng ca';
+
+  @override
+  String get approvalKindProfile => 'Sửa hồ sơ';
+
+  @override
+  String get approvalKindResignation => 'Thôi việc';
+
+  @override
+  String get groupTotals => 'Toàn tập đoàn';
+
+  @override
+  String get groupEmployees => 'Nhân viên';
+
+  @override
+  String get groupRevenueYtd => 'Doanh thu năm nay (USD)';
+
+  @override
+  String get groupCostYtd => 'Chi phí năm nay (USD)';
+
+  @override
+  String get groupRegionDown =>
+      'Chưa lấy được số liệu của nước này, kéo xuống để thử lại';
+
+  @override
+  String get execActions => 'Làm thẳng';
+
+  @override
+  String get execChangePosition => 'Thăng chức, đổi chức vụ';
+
+  @override
+  String get execPromote => 'Thăng chức';
+
+  @override
+  String get execChangeOnly => 'Đổi chức vụ';
+
+  @override
+  String get execNewPosition => 'Chức vụ mới';
+
+  @override
+  String get execNoHigherPosition => 'Không còn chức vụ cấp cao hơn để thăng';
+
+  @override
+  String get execReason => 'Lý do (ghi vào sổ kiểm toán)';
+
+  @override
+  String get execReasonRequired => 'Lý do (bắt buộc)';
+
+  @override
+  String get execSalary => 'Đổi lương cơ bản';
+
+  @override
+  String execCurrentSalary(String amount) {
+    return 'Lương cơ bản hiện tại: $amount';
+  }
+
+  @override
+  String get execNewSalary => 'Lương cơ bản mới';
+
+  @override
+  String get execBonus => 'Thưởng, phạt';
+
+  @override
+  String get execBonusKind => 'Thưởng';
+
+  @override
+  String get execPenaltyKind => 'Phạt';
+
+  @override
+  String get execAmount => 'Số tiền (theo tiền lương của nhân viên)';
+
+  @override
+  String get execApply => 'Áp dụng ngay';
+
+  @override
+  String get execAuditNote =>
+      'Có hiệu lực ngay, không qua ai duyệt; ghi vào sổ kiểm toán kèm tên người thực hiện.';
+
+  @override
+  String get execApplied => 'Đã áp dụng và ghi vào sổ kiểm toán';
+
+  @override
+  String get nominationScope => 'Phạm vi';
+
+  @override
+  String get nominationScopeRegion => 'Thăng chức trong nước';
+
+  @override
+  String get nominationScopeGroupHr => 'Lên Nhân sự tập đoàn';
+
+  @override
+  String get nominationScopeGroupFinance => 'Lên Tài chính tập đoàn';
+
+  @override
+  String get nominationGroupNote =>
+      'Văn phòng quản lý tập đoàn duyệt; duyệt xong người này làm việc được ở mọi khu vực.';
+
+  @override
+  String get nominationToGroup => 'Lên cấp tập đoàn';
+
+  @override
+  String get adminTabOverview => 'Tổng quan';
+
+  @override
+  String get adminTabAccounts => 'Tài khoản';
+
+  @override
+  String get adminTabCalendar => 'Lịch làm việc';
+
+  @override
+  String get adminTabPositions => 'Chức vụ';
+
+  @override
+  String get adminTabData => 'Dữ liệu';
+
+  @override
+  String get adminAccountsByRole => 'Tài khoản theo vai trò';
+
+  @override
+  String adminAccountsTotal(int n) {
+    return '$n tài khoản';
+  }
+
+  @override
+  String get adminDatabases => 'Cơ sở dữ liệu';
+
+  @override
+  String adminDbLine(int tables, String rows, String size) {
+    return '$tables bảng · $rows dòng · $size';
+  }
+
+  @override
+  String get adminActivity => 'Hoạt động 14 ngày qua (số sự kiện)';
+
+  @override
+  String get adminRowsByDb => 'Số dòng theo cơ sở dữ liệu';
+
+  @override
+  String get adminDbUnavailable => 'Chưa đọc được cơ sở dữ liệu này';
+
+  @override
+  String get adminSearchAccounts => 'Tìm tên, email, tên đăng nhập';
+
+  @override
+  String get adminAccountDisabled => 'Đã khóa';
+
+  @override
+  String adminEditAccount(String name) {
+    return 'Sửa tài khoản $name';
+  }
+
+  @override
+  String get adminAccountEnabled => 'Cho phép đăng nhập';
+
+  @override
+  String get adminRoles => 'Vai trò';
+
+  @override
+  String get adminSaved => 'Đã lưu và ghi vào sổ kiểm toán';
+
+  @override
+  String get adminHolidays => 'Ngày lễ';
+
+  @override
+  String get adminAddHoliday => 'Thêm ngày lễ';
+
+  @override
+  String get adminHolidayName => 'Tên ngày lễ';
+
+  @override
+  String adminHolidayRemove(String name) {
+    return 'Bỏ ngày lễ $name?';
+  }
+
+  @override
+  String get adminNoHolidays => 'Năm này chưa có ngày lễ nào';
+
+  @override
+  String get adminShift => 'Giờ ca làm';
+
+  @override
+  String get adminShiftHint =>
+      'Đổi giờ vào, giờ ra cho mọi ca trong khoảng ngày (chỉ từ hôm nay trở đi, công đã chấm giữ nguyên)';
+
+  @override
+  String get adminShiftChange => 'Đổi giờ ca';
+
+  @override
+  String get adminShiftStart => 'Giờ vào';
+
+  @override
+  String get adminShiftEnd => 'Giờ ra';
+
+  @override
+  String get adminShiftRange => 'Khoảng ngày';
+
+  @override
+  String adminShiftDone(int n) {
+    return 'Đã đổi giờ cho $n ca làm';
+  }
+
+  @override
+  String get adminAddPosition => 'Thêm chức vụ';
+
+  @override
+  String get adminEditPosition => 'Sửa chức vụ';
+
+  @override
+  String get adminPositionName => 'Tên chức vụ';
+
+  @override
+  String get adminPositionLevel => 'Cấp';
+
+  @override
+  String get adminCoefficient => 'Hệ số lương';
+
+  @override
+  String adminHolders(int n) {
+    return '$n người đang giữ';
+  }
+
+  @override
+  String get adminDeletePosition => 'Xóa chức vụ';
+
+  @override
+  String get adminSql => 'Truy vấn SQL';
+
+  @override
+  String get adminSqlHint =>
+      'Mặc định chỉ đọc; mỗi lần chạy đều được ghi vào sổ kiểm toán';
+
+  @override
+  String get adminSqlWrite => 'Cho phép ghi (INSERT, UPDATE, DELETE)';
+
+  @override
+  String get adminSqlWriteConfirm =>
+      'Câu lệnh sẽ sửa dữ liệu thật và được ghi vào sổ kiểm toán. Chạy?';
+
+  @override
+  String get adminSqlRun => 'Chạy';
+
+  @override
+  String adminSqlRows(int n) {
+    return '$n dòng';
+  }
+
+  @override
+  String adminSqlAffected(int n) {
+    return 'Đã tác động $n dòng';
+  }
+
+  @override
+  String get adminSqlTruncated => 'Chỉ hiện 500 dòng đầu';
+
+  @override
+  String get adminTechnical => 'Chi tiết kỹ thuật';
+
+  @override
+  String get adminBackups => 'Sao lưu';
+
+  @override
+  String get adminBackupNow => 'Sao lưu ngay';
+
+  @override
+  String get adminBackupDone => 'Đã sao lưu toàn bộ dữ liệu khu vực';
+
+  @override
+  String get adminBackupNone => 'Chưa có bản sao lưu';
+
+  @override
+  String get adminDownload => 'Tải về';
+
+  @override
+  String get errGroupOnly =>
+      'Chỉ văn phòng quản lý tập đoàn duyệt được đề cử này';
+
+  @override
+  String get errSamePosition => 'Nhân viên đang giữ chức vụ này rồi';
+
+  @override
+  String get errInUse => 'Còn người giữ chức vụ này nên chưa xóa được';
+
+  @override
+  String get errReadOnly =>
+      'Câu lệnh có ghi dữ liệu; bật Cho phép ghi nếu thật sự muốn sửa';
+
+  @override
+  String get errSqlError =>
+      'Câu lệnh không chạy được, xem chi tiết kỹ thuật bên dưới';
+
+  @override
+  String get errUnknownDatabase => 'Chọn cơ sở dữ liệu trong danh sách';
+
+  @override
+  String get errEmptySql => 'Nhập câu lệnh SQL';
+
+  @override
+  String get errStorageUnavailable => 'Kho lưu trữ chưa sẵn sàng, thử lại sau';
+
+  @override
+  String get errIdentityUnavailable =>
+      'Chưa kết nối được dịch vụ tài khoản, thử lại sau';
+
+  @override
+  String get errOtherRegion => 'Tài khoản này thuộc khu vực khác';
+
+  @override
+  String get errRoleNotAllowed => 'Bạn không được gán hoặc gỡ vai trò này';
+
+  @override
+  String get errSelfChange => 'Không tự sửa tài khoản của chính mình';
+
+  @override
+  String get errInvalidShift => 'Giờ ca không hợp lệ: giờ ra phải sau giờ vào';
+
+  @override
+  String get errInvalidRange => 'Khoảng ngày không hợp lệ (tối đa một năm)';
+
+  @override
+  String get adminRemove => 'Bỏ';
+
+  @override
+  String get evClockedIn => 'Chấm công vào ca';
+
+  @override
+  String get evClockedOut => 'Chấm công ra ca';
+
+  @override
+  String get evLeaveRequested => 'Gửi đơn nghỉ phép';
+
+  @override
+  String get evLeaveApproved => 'Duyệt đơn nghỉ phép';
+
+  @override
+  String get evLeaveRejected => 'Từ chối đơn nghỉ phép';
+
+  @override
+  String get evOvertimeRequested => 'Gửi đơn tăng ca';
+
+  @override
+  String get evOvertimeApproved => 'Duyệt đơn tăng ca';
+
+  @override
+  String get evOvertimeRejected => 'Từ chối đơn tăng ca';
+
+  @override
+  String get evHolidayAdded => 'Thêm ngày lễ';
+
+  @override
+  String get evHolidayRemoved => 'Bỏ ngày lễ';
+
+  @override
+  String get evShiftChanged => 'Đổi giờ ca làm';
+
+  @override
+  String get evCandidateApplied => 'Ứng viên nộp hồ sơ';
+
+  @override
+  String get evCandidateAnalyzed => 'AI đã đọc CV ứng viên';
+
+  @override
+  String get evCandidateCvUploaded => 'Ứng viên tải CV lên';
+
+  @override
+  String get evCandidateProfileUpdated => 'Ứng viên sửa hồ sơ';
+
+  @override
+  String get evCandidateStatusChanged => 'Chuyển bước hồ sơ ứng viên';
+
+  @override
+  String get evCandidateHired => 'Nhận ứng viên vào làm';
+
+  @override
+  String get evInterviewScheduled => 'Hẹn lịch phỏng vấn';
+
+  @override
+  String get evInterviewConfirmed => 'Ứng viên xác nhận lịch phỏng vấn';
+
+  @override
+  String get evInterviewProposed => 'Ứng viên đề xuất giờ phỏng vấn khác';
+
+  @override
+  String get evPayslipIssued => 'Phát phiếu lương';
+
+  @override
+  String get evPayrollRunCompleted => 'Chốt lương xong';
+
+  @override
+  String get evPayrollRunFailed => 'Chốt lương lỗi';
+
+  @override
+  String get evPayrollRunNeedsAttention => 'Chốt lương cần xử lý';
+
+  @override
+  String get evPayrollExpenseRecorded => 'Ghi chi phí lương vào sổ tài chính';
+
+  @override
+  String get evPayoutLogged => 'Ghi nhận chuyển lương';
+
+  @override
+  String get evSalaryAgreed => 'Chốt mức lương nhận việc';
+
+  @override
+  String get evSalaryRaised => 'Tăng lương';
+
+  @override
+  String get evSalaryChanged => 'Văn phòng quản lý đổi lương cơ bản';
+
+  @override
+  String get evBonusGranted => 'Thưởng';
+
+  @override
+  String get evPenaltyApplied => 'Phạt';
+
+  @override
+  String get evRaiseRequested => 'Gửi đề xuất tăng lương';
+
+  @override
+  String get evRaiseForwarded => 'HR chuyển đề xuất tăng lương lên';
+
+  @override
+  String get evRaiseApproved => 'Duyệt tăng lương';
+
+  @override
+  String get evRaiseRejected => 'Từ chối tăng lương';
+
+  @override
+  String get evRaiseReturned => 'Trả lại đề xuất tăng lương';
+
+  @override
+  String get evRaiseWithdrawn => 'Rút đề xuất tăng lương';
+
+  @override
+  String get evPromotionNominated => 'Đề cử thăng chức';
+
+  @override
+  String get evPromotionApproved => 'Duyệt thăng chức';
+
+  @override
+  String get evPromotionRejected => 'Từ chối thăng chức';
+
+  @override
+  String get evEmployeePromoted => 'Văn phòng quản lý thăng chức';
+
+  @override
+  String get evPositionChanged => 'Văn phòng quản lý đổi chức vụ';
+
+  @override
+  String get evPositionCreated => 'Thêm chức vụ';
+
+  @override
+  String get evPositionUpdated => 'Sửa chức vụ';
+
+  @override
+  String get evPositionDeleted => 'Xóa chức vụ';
+
+  @override
+  String get evEmployeeHired => 'Thêm nhân viên mới';
+
+  @override
+  String get evEmployeeTransferred => 'Điều chuyển phòng ban';
+
+  @override
+  String get evEmployeeArchived => 'Bảo lưu hồ sơ nhân viên';
+
+  @override
+  String get evEmployeeRestored => 'Mở lại hồ sơ nhân viên';
+
+  @override
+  String get evDepartmentCreated => 'Thành lập phòng ban';
+
+  @override
+  String get evDepartmentDissolved => 'Giải thể phòng ban';
+
+  @override
+  String get evDepartmentHeadChanged => 'Đổi trưởng phòng';
+
+  @override
+  String get evProfileChangeRequested => 'Đề xuất sửa hồ sơ';
+
+  @override
+  String get evProfileChangeApproved => 'Duyệt sửa hồ sơ';
+
+  @override
+  String get evProfileChangeRejected => 'Từ chối sửa hồ sơ';
+
+  @override
+  String get evResignationRequested => 'Gửi đơn thôi việc';
+
+  @override
+  String get evResignationApproved => 'Duyệt đơn thôi việc';
+
+  @override
+  String get evResignationRejected => 'Từ chối đơn thôi việc';
+
+  @override
+  String get evResignationWithdrawn => 'Rút đơn thôi việc';
+
+  @override
+  String get evResignationCompleted => 'Hoàn tất thôi việc';
+
+  @override
+  String get evReportSubmitted => 'Gửi báo cáo lên cấp trên';
+
+  @override
+  String get evReportAcknowledged => 'Cấp trên xác nhận báo cáo';
+
+  @override
+  String get evReportReturned => 'Cấp trên trả lại báo cáo';
+
+  @override
+  String get evProjectCreated => 'Tạo dự án';
+
+  @override
+  String get evProjectProposed => 'Gửi đề xuất dự án';
+
+  @override
+  String get evProjectProposalApproved => 'Duyệt đề xuất dự án';
+
+  @override
+  String get evProjectProposalRejected => 'Từ chối đề xuất dự án';
+
+  @override
+  String get evProjectProposalCountered => 'Đề xuất dự án được sửa qua lại';
+
+  @override
+  String get evProjectAccepted => 'Nghiệm thu dự án';
+
+  @override
+  String get evProjectMembersRemoved => 'Rút nhân viên khỏi dự án';
+
+  @override
+  String get evAcceptanceRevenueRecorded => 'Ghi doanh thu nghiệm thu';
+
+  @override
+  String get evMaterialPurchased => 'Mua vật liệu';
+
+  @override
+  String get evSupplierPaid => 'Trả tiền nhà cung cấp';
+
+  @override
+  String get evFinancePeriodClosed => 'Chốt sổ tài chính tháng';
+
+  @override
+  String get evAdminSqlRead => 'Quản trị chạy truy vấn SQL (chỉ đọc)';
+
+  @override
+  String get evAdminSqlWrite => 'Quản trị sửa dữ liệu bằng SQL';
+
+  @override
+  String get evBackupCreated => 'Sao lưu dữ liệu';
+
+  @override
+  String get evAccountChanged => 'Đổi tài khoản, vai trò';
+
+  @override
+  String nAuditLog(String event, String by) {
+    return 'Nhật ký mới: $event$by';
+  }
+
+  @override
+  String nAuditLogBy(String by) {
+    return ' (bởi $by)';
+  }
+
+  @override
+  String nPositionChanged(String position) {
+    return 'Chức vụ của bạn đã đổi thành $position';
+  }
+
+  @override
+  String nSalaryChanged(String amount) {
+    return 'Lương cơ bản mới của bạn: $amount';
+  }
+
+  @override
+  String nBonusGranted(String amount, String reason) {
+    return 'Bạn được thưởng $amount: $reason';
+  }
+
+  @override
+  String nPenaltyApplied(String amount, String reason) {
+    return 'Bạn bị phạt $amount: $reason';
+  }
+
+  @override
+  String get errProtectedDatabase =>
+      'Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây';
 }

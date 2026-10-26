@@ -33,7 +33,9 @@ Future<Response> onRequest(RequestContext context) async {
       } on Object {
         return apiError(400, 'invalid_json', 'Body must be a JSON object');
       }
-      final fullName = (body['fullName'] as String?)?.trim() ?? '';
+      // Tài khoản đã xác nhận email: thông tin cá nhân lấy từ lúc đăng ký
+      final fullName =
+          (claims.fullName ?? body['fullName'] as String?)?.trim() ?? '';
       if (fullName.isEmpty) {
         return apiError(400, 'invalid_name', 'fullName required');
       }
@@ -44,10 +46,17 @@ Future<Response> onRequest(RequestContext context) async {
           Platform.environment['COUNTRY_CODE'] ?? 'VN',
           CandidateProfileInput(
             fullName: fullName,
-            email: (body['email'] as String?)?.trim(),
-            phone: (body['phone'] as String?)?.trim(),
+            email: (claims.email ?? body['email'] as String?)?.trim(),
+            phone: (claims.phone ?? body['phone'] as String?)?.trim(),
             appliedPosition: (body['appliedPosition'] as String?)?.trim(),
             consentAi: body['consentAi'] == true,
+            positionIds: switch (body['positionIds']) {
+              final List<dynamic> ids => [
+                for (final id in ids)
+                  if (int.tryParse('$id') case final n?) n,
+              ],
+              _ => null,
+            },
           ),
         );
       } on CandidateRuleViolation catch (e) {

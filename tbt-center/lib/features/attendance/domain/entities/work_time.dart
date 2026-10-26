@@ -21,11 +21,19 @@ class ClockToday {
     this.checkOut,
     this.totalHours,
     this.overtimeHours,
+    this.shiftStart,
+    this.shiftEnd,
+    this.approvedOvertime = 0,
+    this.pendingOvertime = 0,
   });
 
   final DateTime workDate;
   final bool hasShift;
   final String? shiftNote;
+
+  /// Giờ ca `HH:mm`; qua [shiftEnd] mà chưa vào ca thì không chấm vào được
+  final String? shiftStart;
+  final String? shiftEnd;
 
   /// Hệ số lương của ngày (ngày thường, chủ nhật, ngày lễ), R34.
   final double? coefficient;
@@ -35,6 +43,10 @@ class ClockToday {
   final String? checkOut;
   final double? totalHours;
   final double? overtimeHours;
+
+  /// Giờ tăng ca hôm nay: chỉ phần đã duyệt mới được tính khi ra ca
+  final double approvedOvertime;
+  final double pendingOvertime;
 
   bool get done => checkOut != null;
 }

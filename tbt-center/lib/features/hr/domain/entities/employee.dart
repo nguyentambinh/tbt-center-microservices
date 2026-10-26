@@ -54,6 +54,9 @@ class EmployeeDetail {
     this.health = const {},
     this.insurance = const {},
     this.relatives = const [],
+    this.departmentId,
+    this.status = 'active',
+    this.archivedReason,
   });
 
   final EmployeeSummary summary;
@@ -67,6 +70,30 @@ class EmployeeDetail {
   final Map<String, Object?> health;
   final Map<String, Object?> insurance;
   final List<Relative> relatives;
+  final String? departmentId;
+
+  /// active hoặc archived (bảo lưu)
+  final String status;
+  final String? archivedReason;
+
+  bool get archived => status == 'archived';
+}
+
+/// Bộ lọc hồ sơ: phòng ban, chức vụ, công ty, trạng thái (đang làm/bảo lưu)
+class EmployeeFilter {
+  const EmployeeFilter({this.departmentId, this.positionId, this.companyId, this.status});
+
+  final String? departmentId;
+  final String? positionId;
+  final String? companyId;
+  final String? status;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EmployeeFilter && other.departmentId == departmentId && other.positionId == positionId && other.companyId == companyId && other.status == status;
+
+  @override
+  int get hashCode => Object.hash(departmentId, positionId, companyId, status);
 }
 
 class EmployeePage {

@@ -17,7 +17,7 @@ String stageName(AppLocalizations l10n, String stage) => switch (stage) {
       'analyzed' => l10n.stageAnalyzed,
       'screening' => l10n.stageScreening,
       'interview' => l10n.stageInterview,
-      'offered' => l10n.stageOffered,
+      'interviewed' => l10n.stageInterviewed,
       'hired' => l10n.stageHired,
       'rejected' => l10n.stageRejected,
       _ => l10n.stageSubmitted,
@@ -31,7 +31,7 @@ class StageChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (stage) {
-      'offered' || 'hired' => context.tbt.success,
+      'interviewed' || 'hired' => context.tbt.success,
       'rejected' => context.tbt.danger,
       _ => context.tbt.brandGold,
     };

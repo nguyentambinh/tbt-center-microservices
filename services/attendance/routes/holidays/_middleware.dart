@@ -6,15 +6,14 @@
  * Ngày:   2026-10-15
  */
 
+import 'package:attendance_service/src/holidays_cache.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:tbt_common/tbt_common.dart';
-
-final _cache = RedisCache.fromEnvironment();
 
 /// Ngày lễ ít đổi, cache 1 giờ
 Handler middleware(Handler handler) => handler.use(
   cachedGet(
-    _cache,
+    holidaysCache,
     namespace: 'attendance:holidays',
     ttl: const Duration(hours: 1),
   ),

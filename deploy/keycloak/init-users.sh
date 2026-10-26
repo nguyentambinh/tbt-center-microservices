@@ -17,6 +17,24 @@ $KC add-roles -r tbt --rname default-roles-tbt --rolename candidate
 $KC update realms/tbt -s internationalizationEnabled=true \
   -s 'supportedLocales=["vi","en","de","pt-BR"]' -s defaultLocale=en
 
+# Đăng ký chỉ một ô "Họ và tên" (firstName); lastName ẩn, chỉ quản trị sửa
+$KC update users/profile -r tbt -f /scripts/user-profile.json
+$KC create realms/tbt/localization/vi -s 'fullName=Họ và tên'
+$KC create realms/tbt/localization/en -s 'fullName=Full name'
+$KC create realms/tbt/localization/de -s 'fullName=Vollständiger Name'
+$KC create realms/tbt/localization/pt-BR -s 'fullName=Nome completo'
+
+# Đăng ký qua app (mã 6 số gửi email), tắt trang tự đăng ký của Keycloak
+$KC update realms/tbt -s registrationAllowed=false
+
+# Số điện thoại khai lúc đăng ký đi vào token (phone_number) cho app, recruitment
+mobile=$($KC get clients -r tbt -q clientId=tbt-mobile --fields id --format csv --noquotes)
+if [ -n "$mobile" ] && ! $KC get "clients/$mobile/protocol-mappers/models" -r tbt | grep -q '"name" : "phone"'; then
+  $KC create "clients/$mobile/protocol-mappers/models" -r tbt -s name=phone -s protocol=openid-connect \
+    -s protocolMapper=oidc-usermodel-attribute-mapper \
+    -s 'config={"user.attribute":"phone","claim.name":"phone_number","jsonType.label":"String","id.token.claim":"true","access.token.claim":"true","userinfo.token.claim":"true"}'
+fi
+
 # Client cho recruitment cấp tài khoản nhân viên mới
 if [ -n "$KEYCLOAK_IDENTITY_SECRET" ]; then
   if [ -z "$($KC get clients -r tbt -q clientId=tbt-identity --fields id --format csv --noquotes)" ]; then
@@ -31,6 +49,10 @@ fi
 # Vai trò kiểm toán (R88), thêm sau khi realm đã import.
 $KC get roles/auditor -r tbt >/dev/null 2>&1 || \
   $KC create roles -r tbt -s name=auditor -s 'description=Kiểm toán, chỉ đọc sổ kiểm toán'
+
+# Cấp tập đoàn: đi kèm executive, admin, hr, finance; làm việc với mọi khu vực
+$KC get roles/group -r tbt >/dev/null 2>&1 || \
+  $KC create roles -r tbt -s name=group -s 'description=Cấp tập đoàn, xem và làm việc ở mọi khu vực'
 
 # Realm tạo trước khi có claim employee_id, access_until thì thêm mapper vào hai client.
 for client in tbt-mobile tbt-dev-cli; do
@@ -58,9 +80,12 @@ create_user() {
     echo "Đã tạo $user"
   fi
   # Ghi lại thông tin mỗi lần chạy để tài khoản tạo từ trước cũng có employee_id.
+  # Tài khoản văn phòng, quản trị không phải một nhân viên: employee là "-"
+  local employee_attr="[\"$employee\"]"
+  [ "$employee" = "-" ] && employee_attr="[]"
   $KC update "users/$id" -r tbt -s email="$user@tbt.local" -s firstName="$first" -s lastName="$last" \
     -s "attributes.region=[\"$region\"]" -s "attributes.country_code=[\"$country\"]" \
-    -s "attributes.employee_id=[\"$employee\"]"
+    -s "attributes.employee_id=$employee_attr"
   for role in "$@"; do
     $KC add-roles -r tbt --uusername "$user" --rolename "$role"
   done
@@ -75,7 +100,19 @@ not_candidate() {
 }
 
 # Mã nhân viên lấy từ dữ liệu mẫu (deploy/seed) của khu vực tương ứng.
-create_user anonymous1606 Binh Nguyen vn VN Binh2657Y executive admin
+# Cấp tập đoàn: văn phòng quản lý (chỉ duyệt và làm thẳng), quản trị cấu hình,
+# HR và tài chính tập đoàn; region vn là nơi đặt Hub
+create_user anonymous1606 Binh Nguyen vn VN Binh2657Y executive group
+$KC remove-roles -r tbt --uusername anonymous1606 --rolename admin >/dev/null 2>&1 || true
+create_user admin "Quản trị" "Tập đoàn" vn VN - admin group
+create_user hr.group "Nhân sự" "Tập đoàn" vn VN - hr group
+create_user finance.group "Tài chính" "Tập đoàn" vn VN - finance group
+
+# Mỗi nước: văn phòng quản lý và quản trị cấu hình riêng
+for kv in vn:VN us:US de:DE br:BR za:ZA au:AU; do
+  create_user "executive.${kv%%:*}" "Văn phòng quản lý" "${kv#*:}" "${kv%%:*}" "${kv#*:}" - executive
+  create_user "admin.${kv%%:*}" "Quản trị" "${kv#*:}" "${kv%%:*}" "${kv#*:}" - admin
+done
 create_user hr.vn Nhan Su vn VN ANH98191KH hr employee
 create_user finance.vn Tai Chinh vn VN BAO11031CF finance employee
 create_user employee.vn Nhan Vien vn VN Anh8715OP employee

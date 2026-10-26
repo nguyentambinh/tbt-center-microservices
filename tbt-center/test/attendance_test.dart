@@ -12,10 +12,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tbtcenter/app.dart';
 import 'package:tbtcenter/core/error/app_failure.dart';
 import 'package:tbtcenter/features/attendance/domain/entities/attendance.dart';
+import 'package:tbtcenter/features/attendance/domain/entities/work_calendar.dart';
 import 'package:tbtcenter/features/attendance/domain/entities/work_time.dart';
 import 'package:tbtcenter/features/attendance/domain/repositories/attendance_repository.dart';
 import 'package:tbtcenter/features/attendance/domain/repositories/work_time_repository.dart';
 import 'package:tbtcenter/features/attendance/presentation/providers/attendance_providers.dart';
+import 'package:tbtcenter/features/payroll/domain/entities/payroll.dart';
+import 'package:tbtcenter/features/payroll/presentation/providers/payroll_providers.dart';
+import 'package:tbtcenter/features/project_contract/domain/entities/project.dart';
+import 'package:tbtcenter/features/project_contract/presentation/providers/project_providers.dart';
 import 'package:tbtcenter/l10n/app_localizations_vi.dart';
 
 import 'helpers.dart';
@@ -28,6 +33,12 @@ final _pending = LeaveRequest(
   days: 3,
   leaveType: 'Nghỉ phép năm',
   status: LeaveStatus.pending,
+  fileCount: 1,
+  aiSummary: const {
+    'summary': 'Giấy khám bệnh ghi nghỉ 3 ngày do sốt xuất huyết',
+    'keyPoints': ['Bệnh viện quận 1', 'Nghỉ từ 28/12 tới 30/12'],
+    'matchesRequest': true,
+  },
 );
 
 class FakeAttendanceRepository implements AttendanceRepository {
@@ -61,13 +72,43 @@ class FakeAttendanceRepository implements AttendanceRepository {
     decisions[id] = approve;
     return _pending;
   }
+
+  @override
+  Future<List<CalendarDay>> calendar({required DateTime from, required DateTime to}) async => [
+        for (var d = from; !d.isAfter(to); d = d.add(const Duration(days: 1)))
+          d.day == 5
+              ? CalendarDay(date: d, shiftStart: '08:00', shiftEnd: '17:00', checkIn: '08:00', checkOut: '17:30', workHours: 8, overtimeHours: 0.5, totalHours: 8.5)
+              : CalendarDay(date: d),
+      ];
+
+  @override
+  Future<ClockStats> stats({int months = 3}) async => ClockStats(
+        byWeekday: const [20, 19, 21, 20, 18, 2, 0],
+        byCheckInHour: [for (var h = 0; h < 24; h++) h == 7 ? 60 : (h == 8 ? 20 : 0)],
+        byMonth: const [(month: '2026-10', days: 80, hours: 640, late: 6)],
+        totalDays: 80,
+        lateDays: 6,
+      );
+
+  @override
+  Future<List<LeaveFile>> leaveFiles(String leaveId) async => const [LeaveFile(id: 'F1', fileName: 'giay-kham-benh.jpg', mimeType: 'image/jpeg')];
+
+  final uploads = <String>[];
+
+  @override
+  Future<List<LeaveFile>> uploadLeaveFile(String leaveId, {required String fileName, required List<int> bytes, required String language}) async {
+    uploads.add(fileName);
+    return leaveFiles(leaveId);
+  }
 }
 
 /// Giả lập server chấm công: lượt đầu vào ca, lượt sau ra ca.
 class FakeWorkTimeRepository implements WorkTimeRepository {
-  FakeWorkTimeRepository({this.hasShift = true});
+  FakeWorkTimeRepository({this.hasShift = true, this.approvedOvertime = 0, this.pendingOvertime = 0});
 
   final bool hasShift;
+  final double approvedOvertime;
+  final double pendingOvertime;
   String? checkIn;
   String? checkOut;
   final decisions = <String, bool>{};
@@ -90,6 +131,10 @@ class FakeWorkTimeRepository implements WorkTimeRepository {
         checkIn: checkIn,
         checkOut: checkOut,
         totalHours: checkOut == null ? null : 8.75,
+        shiftStart: '08:00',
+        shiftEnd: '17:00',
+        approvedOvertime: approvedOvertime,
+        pendingOvertime: pendingOvertime,
       );
 
   @override
@@ -132,6 +177,8 @@ Future<FakeAttendanceRepository> pumpAttendance(
       ...overrides,
       attendanceRepositoryProvider.overrideWithValue(repository),
       workTimeRepositoryProvider.overrideWithValue(workTime ?? FakeWorkTimeRepository()),
+      myPayrollProvider.overrideWith((ref) async => const PayrollSummary(baseSalary: 20800000, currency: 'VND')),
+      myProjectsProvider.overrideWith((ref) async => [MyProject(projectId: 'DA1', name: 'Cầu Rạch Chiếc', hours: 40, startDate: DateTime(2026), endDate: DateTime(2027))]),
     ],
     child: const TbtApp(),
   ));
@@ -173,7 +220,7 @@ void main() {
 
   testWidgets('một nút chấm công: lần đầu vào ca, lần hai ra ca và hiện tổng giờ', (tester) async {
     await pumpAttendance(tester, ['employee']);
-    expect(find.text('Thi công công trình'), findsOneWidget);
+    expect(find.textContaining('Thi công công trình'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, 'Vào ca'));
     await tester.pumpAndSettle();
@@ -188,11 +235,67 @@ void main() {
     expect(done.onPressed, isNull);
   });
 
+  testWidgets('tăng ca chỉ tính theo đơn đã duyệt: thẻ chấm công báo trước', (tester) async {
+    await pumpAttendance(tester, ['employee'], workTime: FakeWorkTimeRepository(pendingOvertime: 2));
+    expect(find.text('Đơn tăng ca 2 giờ đang chờ duyệt: chưa được tính cho tới khi duyệt'), findsOneWidget);
+  });
+
+  testWidgets('có đơn tăng ca đã duyệt thì báo giờ được tính tới', (tester) async {
+    await pumpAttendance(tester, ['employee'], workTime: FakeWorkTimeRepository(approvedOvertime: 1.5));
+    expect(find.text('Tăng ca đã duyệt 1,5 giờ: làm tới 18:30 vẫn được tính'), findsOneWidget);
+  });
+
   testWidgets('không có ca thì báo rõ và không cho bấm chấm công', (tester) async {
     await pumpAttendance(tester, ['employee'], workTime: FakeWorkTimeRepository(hasShift: false));
     expect(find.text('Hôm nay bạn không có ca làm việc, không chấm công được'), findsOneWidget);
     final button = tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Vào ca'));
     expect(button.onPressed, isNull);
+  });
+
+  testWidgets('HR thấy AI tóm tắt minh chứng và nút xem đơn gốc', (tester) async {
+    await pumpAttendance(tester, ['hr']);
+    await tester.tap(find.text('Duyệt đơn'));
+    await tester.pumpAndSettle();
+    expect(find.text('AI tóm tắt minh chứng'), findsOneWidget);
+    expect(find.text('Khớp lý do nghỉ'), findsOneWidget);
+    expect(find.text('• Bệnh viện quận 1'), findsOneWidget);
+    await tester.tap(find.text('Xem đơn gốc (1)'));
+    await tester.pumpAndSettle();
+    expect(find.text('giay-kham-benh.jpg'), findsOneWidget);
+  });
+
+  testWidgets('người gửi thêm minh chứng cho đơn đang chờ, không thấy bản AI tóm tắt', (tester) async {
+    await pumpAttendance(tester, ['employee']);
+    await tester.tap(find.text('Nghỉ phép'));
+    await tester.pumpAndSettle();
+    expect(find.text('Thêm minh chứng'), findsOneWidget);
+    expect(find.text('AI tóm tắt minh chứng'), findsNothing);
+  });
+
+  testWidgets('lịch làm việc: bấm ngày xem giờ vào ra, dự án, tiền ước tính', (tester) async {
+    await pumpAttendance(tester, ['employee']);
+    await tester.tap(find.byTooltip('Lịch làm việc'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('5'));
+    await tester.pumpAndSettle();
+    expect(find.text('Vào 08:00 · Ra 17:30'), findsOneWidget);
+    expect(find.text('Cầu Rạch Chiếc'), findsOneWidget);
+    // 20.800.000 / 26 / 8 = 100.000 đ/giờ: 8 giờ + 0,5 giờ × 150%
+    expect(find.textContaining('875.000'), findsOneWidget);
+  });
+
+  testWidgets('biểu đồ chấm công của HR là cả khu vực', (tester) async {
+    await pumpAttendance(tester, ['hr']);
+    await tester.tap(find.byTooltip('Biểu đồ chấm công'));
+    await tester.pumpAndSettle();
+    expect(find.text('Cả khu vực'), findsOneWidget);
+    expect(find.text('80'), findsWidgets);
+    expect(find.text('6 · 8%'), findsOneWidget);
+  });
+
+  test('tiền một ngày: giờ thường + tăng ca 150%, nhân hệ số ngày lễ', () {
+    final day = CalendarDay(date: DateTime(2026, 9, 2), workHours: 8, overtimeHours: 2, coefficient: 3);
+    expect(estimatedDayPay(day, 20800000), (800000 + 300000) * 3);
   });
 
   testWidgets('ứng viên không thấy thẻ chấm công', (tester) async {

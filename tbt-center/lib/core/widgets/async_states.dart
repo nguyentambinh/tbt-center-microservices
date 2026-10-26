@@ -68,27 +68,43 @@ class EmptyView extends StatelessWidget {
 
 /// Chữ cái đầu của tên trong vòng tròn viền vàng, dùng khi chưa có ảnh.
 class InitialsAvatar extends StatelessWidget {
-  const InitialsAvatar({super.key, required this.initials, this.radius = 22});
+  const InitialsAvatar({super.key, required this.initials, this.radius = 22, this.photoUrl});
 
   final String initials;
   final double radius;
 
+  /// Ảnh nhân viên (URL ký sẵn của Garage); chưa có hoặc tải lỗi thì hiện chữ viết tắt
+  final String? photoUrl;
+
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.primary;
+    final size = radius * 2;
+    final letters = Text(
+      initials.toUpperCase(),
+      style: TextStyle(color: color, fontFamily: 'serif', fontSize: radius * 0.75, fontWeight: FontWeight.w600),
+    );
     return Container(
-      width: radius * 2,
-      height: radius * 2,
+      width: size,
+      height: size,
       alignment: Alignment.center,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: context.tbt.glass,
         border: Border.all(color: context.tbt.brandGold.withValues(alpha: 0.7)),
       ),
-      child: Text(
-        initials.toUpperCase(),
-        style: TextStyle(color: color, fontFamily: 'serif', fontSize: radius * 0.75, fontWeight: FontWeight.w600),
-      ),
+      child: photoUrl == null
+          ? letters
+          : Image.network(
+              photoUrl!,
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              cacheWidth: (size * MediaQuery.devicePixelRatioOf(context)).round(),
+              loadingBuilder: (context, child, progress) => progress == null ? child : letters,
+              errorBuilder: (_, _, _) => letters,
+            ),
     );
   }
 }

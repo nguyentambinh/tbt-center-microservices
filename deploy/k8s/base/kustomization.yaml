@@ -1,0 +1,21 @@
+# Bộ manifest dùng chung cho mọi khu vực; mỗi khu vực một overlay (deploy/k8s/<khu vực>)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - data.yaml
+  - services.yaml
+  - gateway.yaml
+  - monitoring.yaml
+  - autoscaling.yaml
+
+# Biến chung cho service Dart: tên host trong cụm và địa chỉ các thành phần ở Hub
+configMapGenerator:
+  - name: service-env
+    literals:
+      - DB_PRIMARY_HOST=postgres-primary
+      - DB_REPLICA_HOST=postgres-replica
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - JWT_JWKS_URL=http://host.docker.internal:8180/realms/tbt/protocol/openid-connect/certs
+      - JWT_ISSUER=http://localhost:8180/realms/tbt
+      - ELASTICSEARCH_URL=http://host.docker.internal:9201

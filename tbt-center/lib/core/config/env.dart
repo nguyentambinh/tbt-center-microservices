@@ -16,7 +16,18 @@ abstract final class Env {
   static const regions = ['vn', 'de', 'us', 'br', 'za', 'au'];
   static const _kongPorts = {'vn': 8000, 'de': 8100, 'us': 8200, 'br': 8300, 'za': 8400, 'au': 8500};
 
-  static String kongUrl(String region) => 'http://localhost:${_kongPorts[region] ?? 8000}';
+  /// Mẫu địa chỉ Kong khi chạy máy chủ thật, ví dụ `https://{region}.tbt.example`
+  static const _kongTemplate = String.fromEnvironment('KONG_URL');
+
+  static String kongUrl(String region) => _kongTemplate.isEmpty ? 'http://localhost:${_kongPorts[region] ?? 8000}' : _kongTemplate.replaceAll('{region}', region);
+
+  /// Tiền tệ mặc định của khu vực
+  static String currencyOf(String? region) => const {'vn': 'VND', 'de': 'EUR', 'us': 'USD', 'br': 'BRL', 'za': 'ZAR', 'au': 'AUD'}[region] ?? 'USD';
+
+  /// Thư mục tệp mẫu (mẫu hợp đồng); để trống thì app ẩn nút tải mẫu
+  static const filesUrl = String.fromEnvironment('FILES_URL');
+
+  static String get contractTemplateUrl => '$filesUrl/hop-dong-mau.docx';
 
   /// Chỉ request tới Kong mới được gắn token, không bao giờ gửi token cho trang bên ngoài.
   static bool isKongUrl(Uri uri) => regions.any((region) => uri.toString().startsWith(kongUrl(region)));

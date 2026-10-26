@@ -1,0 +1,38 @@
+# Khu vực Đức trên Kubernetes. Dựng bằng: bash deploy/k8s/cluster.sh de up
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: tbt-de
+resources:
+  - namespace.yaml
+  - ../base
+labels:
+  - pairs: {region: de}
+    includeSelectors: false
+
+configMapGenerator:
+  - name: region
+    envs: [../../regions/de.env]
+    literals: [S3_PUBLIC_ENDPOINT=http://localhost:3910]
+  - name: kong-config
+    files: [../../kong/kong.yml]
+  - name: postgres-scripts
+    files: [../../postgres/primary-init.sh, ../../postgres/replica-entrypoint.sh]
+  - name: garage-config
+    files: [../../garage/garage.toml]
+  - name: prometheus-config
+    files: [prometheus.yml=../base/prometheus.yml, ../../prometheus/alerts.yml]
+
+# Khóa lấy thẳng từ deploy/secrets (không lên git), mỗi khu vực chỉ nhận khóa của mình
+secretGenerator:
+  - {name: postgres, envs: [../../secrets/postgres.env]}
+  - {name: internal, envs: [../../secrets/internal.env]}
+  - {name: sync, envs: [../../secrets/sync.env]}
+  - {name: rabbitmq, envs: [../../secrets/rabbitmq.env]}
+  - {name: anthropic, envs: [../../secrets/anthropic.env]}
+  - {name: gemini, envs: [../../secrets/gemini.env]}
+  - {name: garage, envs: [../../secrets/garage.env]}
+  - {name: identity, envs: [../../secrets/identity.env]}
+  - {name: payos, envs: [../../secrets/payos-de.env]}
+  - {name: datakey, envs: [../../secrets/datakey-de.env]}
+  - {name: firebase, files: [../../secrets/firebase-sa.json]}
+  - {name: firestore, files: [firestore.json=../../secrets/firestore-region-reader.json]}

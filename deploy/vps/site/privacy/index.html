@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TBT Center: Chính sách quyền riêng tư / Privacy Policy</title>
+<style>
+  :root { --ink: #1d1c21; --muted: #5b5965; --line: #e4e1ea; --accent: #7a5c12; --bg: #fbfaf7; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 1.9rem; line-height: 1.25; margin: 0 0 4px; }
+  h2 { font-size: 1.2rem; margin: 32px 0 8px; color: var(--accent); }
+  .meta { color: var(--muted); font-size: .95rem; margin-bottom: 24px; }
+  nav a { color: var(--accent); margin-right: 16px; font-weight: 600; }
+  ul { padding-left: 1.2rem; }
+  li { margin: 4px 0; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 48px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f2efe6; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Chính sách quyền riêng tư của TBT Center</h1>
+  <p class="meta">Ứng dụng: TBT Center (com.tbtcenter.tbtcenter) · Cập nhật: 25/10/2026</p>
+  <nav><a href="#vi">Tiếng Việt</a><a href="#en">English</a></nav>
+
+  <section id="vi">
+    <p>TBT Center là ứng dụng quản lý nhân sự và tài chính nội bộ cho một tập đoàn xây dựng đa quốc gia, được xây dựng làm đồ án môn học tại Đại học Thủ Dầu Một. Trang này cho biết ứng dụng thu thập dữ liệu gì, dùng để làm gì và bạn có quyền gì với dữ liệu của mình.</p>
+
+    <h2>1. Dữ liệu chúng tôi xử lý</h2>
+    <table>
+      <tr><th>Loại dữ liệu</th><th>Dùng để</th></tr>
+      <tr><td>Tài khoản: tên đăng nhập, họ tên, email, vai trò, khu vực</td><td>Đăng nhập và phân quyền đúng chức năng</td></tr>
+      <tr><td>Hồ sơ nhân viên, chấm công, đơn nghỉ, tăng ca, phiếu lương</td><td>Nghiệp vụ nhân sự, tính lương của công ty bạn làm việc</td></tr>
+      <tr><td>Hồ sơ ứng tuyển và tệp CV (PDF) bạn tự tải lên</td><td>Xét tuyển; nội dung CV có thể được gửi tới dịch vụ AI để tóm tắt cho bộ phận nhân sự</td></tr>
+      <tr><td>Địa chỉ IP công khai</td><td>Xác định quốc gia để chọn khu vực lưu dữ liệu và ngôn ngữ mặc định</td></tr>
+      <tr><td>Mã thiết bị nhận thông báo (Firebase Cloud Messaging)</td><td>Gửi thông báo như đơn được duyệt, lương đã phát</td></tr>
+      <tr><td>Nhật ký truy cập (thời điểm, đường dẫn, mã kết quả)</td><td>Bảo mật, phát hiện lỗi và kiểm toán</td></tr>
+    </table>
+    <p>Ứng dụng <strong>không</strong> truy cập vị trí GPS, danh bạ, camera, micro hay ảnh của bạn. Ứng dụng chỉ đọc tệp khi bạn chủ động chọn tệp để tải lên. Ứng dụng không hiển thị quảng cáo và không bán dữ liệu.</p>
+
+    <h2>2. Nơi lưu và cách bảo vệ</h2>
+    <ul>
+      <li>Dữ liệu cá nhân được lưu tại máy chủ của khu vực bạn thuộc về (ví dụ Việt Nam, Đức); chỉ sự kiện nghiệp vụ và bản sao đã mã hóa theo từng quốc gia được gửi về hệ thống trung tâm.</li>
+      <li>Mọi kết nối dùng HTTPS; đăng nhập qua Keycloak theo chuẩn OpenID Connect (PKCE); mật khẩu không lưu trong ứng dụng.</li>
+      <li>Mỗi vai trò chỉ xem được phần dữ liệu được phân quyền; người ở khu vực khác không đọc được dữ liệu khu vực của bạn.</li>
+    </ul>
+
+    <h2>3. Bên thứ ba</h2>
+    <ul>
+      <li>Google Firebase: gửi thông báo đẩy.</li>
+      <li>Anthropic (Claude) hoặc Google (Gemini): tóm tắt CV và trả lời câu hỏi trong kho tri thức nội bộ, chỉ khi tính năng đó được dùng.</li>
+      <li>ipify: trả về địa chỉ IP công khai để chọn khu vực.</li>
+      <li>payOS: thực hiện chi lương khi công ty bật kênh chi hộ.</li>
+    </ul>
+
+    <h2>4. Thời gian lưu</h2>
+    <p>Nhật ký request được giữ 7 ngày. Dữ liệu nhân sự, lương và sổ kiểm toán được giữ theo yêu cầu quản lý của công ty. Hồ sơ ứng tuyển được giữ trong thời gian tuyển dụng.</p>
+
+    <h2>5. Quyền của bạn</h2>
+    <p>Bạn có thể yêu cầu xem, sửa hoặc xóa dữ liệu cá nhân của mình, hoặc rút hồ sơ ứng tuyển, bằng cách liên hệ bộ phận nhân sự của công ty hoặc nhóm phát triển qua email bên dưới.</p>
+
+    <h2>6. Trẻ em</h2>
+    <p>Ứng dụng dành cho nhân viên và ứng viên từ 18 tuổi trở lên.</p>
+
+    <h2>7. Liên hệ</h2>
+    <p>Nhóm phát triển TBT Center · Email: <a href="mailto:2324801030003@student.tdmu.edu.vn">2324801030003@student.tdmu.edu.vn</a></p>
+  </section>
+
+  <hr>
+
+  <section id="en" lang="en">
+    <h1>TBT Center Privacy Policy</h1>
+    <p class="meta">App: TBT Center (com.tbtcenter.tbtcenter) · Last updated: 25 October 2026</p>
+    <p>TBT Center is an internal HR and finance app for a multinational construction group, built as a university project at Thu Dau Mot University. This page explains what data the app processes, why, and your rights.</p>
+
+    <h2>1. Data we process</h2>
+    <table>
+      <tr><th>Data</th><th>Purpose</th></tr>
+      <tr><td>Account: username, name, email, role, region</td><td>Sign-in and role-based access</td></tr>
+      <tr><td>Employee profile, attendance, leave, overtime, payslips</td><td>HR operations and payroll of your employer</td></tr>
+      <tr><td>Job applications and CV files (PDF) you upload</td><td>Recruitment; CV text may be sent to an AI service to produce a summary for HR</td></tr>
+      <tr><td>Public IP address</td><td>Detect your country to choose the data region and default language</td></tr>
+      <tr><td>Push notification token (Firebase Cloud Messaging)</td><td>Notifications such as approved requests or paid salaries</td></tr>
+      <tr><td>Access logs (time, path, result code)</td><td>Security, troubleshooting and audit</td></tr>
+    </table>
+    <p>The app does <strong>not</strong> access your GPS location, contacts, camera, microphone or photos. Files are read only when you choose one to upload. The app shows no ads and does not sell data.</p>
+
+    <h2>2. Storage and security</h2>
+    <ul>
+      <li>Personal data is stored on servers in your own region (for example Vietnam or Germany); only business events and per-country encrypted copies reach the central system.</li>
+      <li>All connections use HTTPS; sign-in uses Keycloak with OpenID Connect (PKCE); passwords are never stored in the app.</li>
+      <li>Each role sees only the data it is permitted to; users from other regions cannot read your region's data.</li>
+    </ul>
+
+    <h2>3. Third parties</h2>
+    <ul>
+      <li>Google Firebase: push notifications.</li>
+      <li>Anthropic (Claude) or Google (Gemini): CV summaries and answers in the internal knowledge base, only when those features are used.</li>
+      <li>ipify: returns your public IP address for region detection.</li>
+      <li>payOS: salary payouts when the employer enables it.</li>
+    </ul>
+
+    <h2>4. Retention</h2>
+    <p>Request logs are kept for 7 days. HR, payroll and audit records are kept as required by your employer. Applications are kept for the duration of recruitment.</p>
+
+    <h2>5. Your rights</h2>
+    <p>You may ask to access, correct or delete your personal data, or withdraw an application, by contacting your employer's HR department or the development team at the email below.</p>
+
+    <h2>6. Children</h2>
+    <p>The app is intended for employees and applicants aged 18 and over.</p>
+
+    <h2>7. Contact</h2>
+    <p>TBT Center development team · Email: <a href="mailto:2324801030003@student.tdmu.edu.vn">2324801030003@student.tdmu.edu.vn</a></p>
+  </section>
+</main>
+</body>
+</html>

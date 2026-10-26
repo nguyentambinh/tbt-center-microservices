@@ -21,6 +21,7 @@ import 'core/theme/theme_mode.dart';
 import 'core/theme/role_gem.dart';
 import 'core/widgets/back_gestures.dart';
 import 'core/widgets/connection_banner.dart';
+import 'core/widgets/floating_notice.dart';
 import 'features/notification/presentation/providers/notification_providers.dart';
 import 'l10n/app_localizations.dart';
 
@@ -48,11 +49,10 @@ class _TbtAppState extends ConsumerState<TbtApp> {
       }
     }, fireImmediately: true);
     _subscriptions
-      ..add(push.foreground.listen((body) {
+      // FCM lúc app đang mở: hỏi hộp thư ngay để hiện thông báo nổi
+      ..add(push.foreground.listen((_) {
         ref.invalidate(inboxProvider);
-        if (body.isNotEmpty) {
-          scaffoldMessengerKey.currentState?.showSnackBar(SnackBar(content: Text(body)));
-        }
+        floatingNoticeRefresh.add(null);
       }))
       ..add(push.opened.listen((_) => ref.read(appRouterProvider).push(Routes.notifications)));
   }
@@ -83,7 +83,7 @@ class _TbtAppState extends ConsumerState<TbtApp> {
       routerConfig: router,
       builder: (context, child) => BackGestures(
         navigatorKey: router.routerDelegate.navigatorKey,
-        child: ConnectionShell(child: child!),
+        child: FloatingNoticeHost(child: ConnectionShell(child: child!)),
       ),
     );
   }

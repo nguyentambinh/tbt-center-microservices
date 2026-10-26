@@ -6,6 +6,7 @@
  * Ngày:   2026-10-15
  */
 
+import 'package:attendance_service/src/data/clock_repository.dart';
 import 'package:attendance_service/src/data/period_lock.dart';
 import 'package:attendance_service/src/domain/leave_request.dart';
 import 'package:postgres/postgres.dart';
@@ -150,6 +151,7 @@ class PostgresOvertimeRepository implements OvertimeRepository {
         },
       );
       final request = _json(rows.first.toColumnMap());
+      await recountOvertime(tx, current['employee_id'] as String, day);
       await addOutboxEvent(
         tx,
         aggregate: 'overtime_request',

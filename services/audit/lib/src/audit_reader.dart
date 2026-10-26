@@ -37,11 +37,22 @@ AuditFilter? filterFrom(Map<String, String> query) {
       (query['to'] != null && to == null)) {
     return null;
   }
+  final anomaly = query['anomaly'];
+  if (anomaly != null && !{'after_hours', 'failure', 'any'}.contains(anomaly)) {
+    return null;
+  }
   return AuditFilter(
     region: query['region'],
     eventType: query['type'],
+    service: query['service'],
+    anomaly: anomaly,
     from: from,
     to: to,
+    // Có giờ phút (2026-10-25T08:30) thì lọc đúng thời điểm
+    exactTime: [
+      query['from'],
+      query['to'],
+    ].any((v) => v?.contains('T') ?? false),
   );
 }
 

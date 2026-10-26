@@ -9,7 +9,10 @@
 import 'package:dart_frog/dart_frog.dart';
 import 'package:knowledge_service/src/qa/answer_models.dart';
 import 'package:knowledge_service/src/qa/answer_service.dart';
+import 'package:knowledge_service/src/qa/personal_data.dart';
 import 'package:tbt_common/tbt_common.dart';
+
+final _personal = PersonalData.fromEnvironment();
 
 /// Mỗi người tối đa 10 câu hỏi một phút, gọi AI tốn tiền
 const questionsPerMinute = 10;
@@ -56,6 +59,14 @@ Future<Response> onRequest(RequestContext context) async {
       username: claims.username,
       roles: claims.roles.toList()..sort(),
       country: claims.countryCode,
+      employeeId: claims.employeeId,
+      // Nhân viên hỏi về chính mình: AI tra API khu vực bằng token của họ
+      personal: claims.employeeId == null
+          ? null
+          : _personal.forUser(
+              claims.region ?? 'vn',
+              context.request.headers['authorization'] ?? '',
+            ),
       // Giữ 4 lượt gần nhất là đủ hiểu câu hỏi nối tiếp
       history: history.length > 4
           ? history.sublist(history.length - 4)

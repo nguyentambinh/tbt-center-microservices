@@ -10,6 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/error/app_failure.dart';
 import '../../../../core/error/error_reporter.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -17,8 +18,18 @@ import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/candidate.dart';
+import '../../domain/entities/job_position.dart';
 import '../providers/candidate_providers.dart';
+import '../widgets/interview_widgets.dart';
+import '../widgets/position_widgets.dart';
 import '../widgets/stage_widgets.dart';
+
+/// Chọn một tệp PDF trên máy (test thay bằng tệp giả)
+final pickPdfProvider = Provider<Future<({String name, List<int> bytes})?> Function()>((ref) => () async {
+      final picked = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['pdf']);
+      if (picked == null) return null;
+      return (name: picked.name, bytes: await picked.readAsBytes());
+    });
 
 /// Màn của ứng viên: chưa nộp thì hiện form, đã nộp thì hiện hồ sơ và tiến trình.
 class MyApplicationPage extends ConsumerStatefulWidget {
@@ -72,14 +83,30 @@ class _ApplicationView extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          [candidate.appliedPosition, candidate.email, candidate.phone].whereType<String>().join(' · '),
+          [if (candidate.positions.isEmpty) candidate.appliedPosition, candidate.email, candidate.phone].whereType<String>().join(' · '),
           style: TextStyle(color: context.tbt.textSecondary),
         ),
+        if (candidate.positions.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: [for (final p in candidate.positions) Chip(label: Text(p.title), visualDensity: VisualDensity.compact)]),
+        ],
         const SizedBox(height: 16),
-        if (candidate.editable)
+        if (candidate.viewedAt != null) ...[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Chip(
+              avatar: Icon(Icons.visibility, size: 16, color: context.tbt.info),
+              label: Text(l10n.profileViewed),
+              side: BorderSide(color: context.tbt.info),
+              labelStyle: TextStyle(color: context.tbt.info, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Text(l10n.profileViewedHint, style: TextStyle(color: context.tbt.textSecondary)),
+        ] else if (candidate.editable)
           OutlinedButton.icon(onPressed: onEdit, icon: const Icon(Icons.edit_outlined), label: Text(l10n.editProfile))
         else
           Text(l10n.profileLockedHint, style: TextStyle(color: context.tbt.textSecondary)),
+        if (candidate.interview case final interview? when candidate.status == 'interview') _MyInterview(interview: interview),
         const SizedBox(height: 16),
         _CvCard(candidate: candidate),
         const Divider(height: 32),
@@ -90,6 +117,59 @@ class _ApplicationView extends StatelessWidget {
   }
 }
 
+
+/// Ứng viên xác nhận giờ HR hẹn hoặc đề xuất giờ khác
+class _MyInterview extends ConsumerStatefulWidget {
+  const _MyInterview({required this.interview});
+
+  final Interview interview;
+
+  @override
+  ConsumerState<_MyInterview> createState() => _MyInterviewState();
+}
+
+class _MyInterviewState extends ConsumerState<_MyInterview> {
+  bool _busy = false;
+
+  Future<void> _respond(String action, {DateTime? at, String? note}) async {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _busy = true);
+    try {
+      await ref.read(candidateRepositoryProvider).respondMyInterview(action: action, at: at, note: note);
+      ref.invalidate(myApplicationProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(action == 'confirm' ? l10n.interviewConfirmedDone : l10n.interviewSent), behavior: SnackBarBehavior.floating),
+        );
+      }
+    } on Object catch (e) {
+      reportFailure(e);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _propose() async {
+    final picked = await showInterviewDialog(context, title: AppLocalizations.of(context).proposeOtherTime, initial: widget.interview.scheduledAt);
+    if (picked != null) await _respond('propose', at: picked.at, note: picked.note);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final i = widget.interview;
+    return InterviewCard(
+      interview: i,
+      actions: [
+        if (i.state == 'awaiting_candidate')
+          FilledButton.icon(onPressed: _busy ? null : () => _respond('confirm'), icon: const Icon(Icons.check), label: Text(l10n.confirmTime)),
+        if (i.state == 'awaiting_candidate' || i.confirmed)
+          OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),
+        if (i.state == 'awaiting_hr') Text(l10n.waitingHrReply, style: TextStyle(color: context.tbt.textSecondary)),
+      ],
+    );
+  }
+}
 
 class _CvCard extends ConsumerStatefulWidget {
   const _CvCard({required this.candidate});
@@ -180,6 +260,8 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
   late final _phone = TextEditingController(text: widget.current?.phone);
   late final _position = TextEditingController(text: widget.current?.appliedPosition);
   late bool _consent = widget.current?.consentAi ?? false;
+  late Set<int> _positions = {for (final p in widget.current?.positions ?? const []) p.id};
+  bool _positionMissing = false;
   bool _saving = false;
   String? _error;
 
@@ -198,9 +280,9 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
   }
 
   Future<void> _pickCv() async {
-    final picked = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['pdf']);
+    final picked = await ref.read(pickPdfProvider)();
     if (picked == null) return;
-    final bytes = await picked.readAsBytes();
+    final bytes = picked.bytes;
     if (!mounted) return;
     if (bytes.length > _maxCvBytes) {
       setState(() => _error = AppLocalizations.of(context).errCvTooLarge);
@@ -214,17 +296,27 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
 
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context);
+    final account = ref.read(authControllerProvider).value;
+    // Khu vực đã mở vị trí thì phải tick ít nhất một
+    final open = ref.read(openPositionsProvider).value ?? const [];
+    final usePicker = open.isNotEmpty || _positions.isNotEmpty;
+    if (usePicker && _positions.isEmpty) {
+      setState(() => _positionMissing = true);
+      return;
+    }
     setState(() {
       _saving = true;
       _error = null;
+      _positionMissing = false;
     });
     try {
       await ref.read(candidateRepositoryProvider).saveMyApplication(CandidateInput(
-            fullName: _name.text.trim(),
-            email: _email.text.trim(),
-            phone: _phone.text.trim(),
-            appliedPosition: _position.text.trim(),
+            fullName: account?.fullName ?? _name.text.trim(),
+            email: account?.claims['email'] as String? ?? _email.text.trim(),
+            phone: account?.claims['phone_number'] as String? ?? _phone.text.trim(),
+            appliedPosition: usePicker ? null : _position.text.trim(),
             consentAi: _consent,
+            positionIds: usePicker ? _positions.toList() : null,
           ));
       if (_cv case final cv?) {
         await ref.read(candidateRepositoryProvider).uploadCv(cv.bytes);
@@ -255,13 +347,45 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
           EmptyView(message: l10n.notAppliedYet, icon: Icons.work_outline),
           const SizedBox(height: 16),
         ],
-        TextField(controller: _name, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
-        const SizedBox(height: 12),
-        TextField(controller: _email, decoration: field(l10n.fieldEmail), keyboardType: TextInputType.emailAddress),
-        const SizedBox(height: 12),
-        TextField(controller: _phone, decoration: field(l10n.fieldPhone), keyboardType: TextInputType.phone),
-        const SizedBox(height: 12),
-        TextField(controller: _position, decoration: field(l10n.appliedPosition)),
+        if (ref.watch(authControllerProvider).value case final account?) ...[
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.accountDetails, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
+                  const SizedBox(height: 6),
+                  Text(account.fullName ?? account.username, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  if (account.claims['email'] case final String email) Text(email),
+                  if (account.claims['phone_number'] case final String phone) Text(phone),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ] else ...[
+          TextField(controller: _name, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
+          const SizedBox(height: 12),
+        ],
+        switch (ref.watch(openPositionsProvider)) {
+          // Vị trí đã chọn mà nay đã đủ người vẫn hiện để giữ lại được
+          AsyncValue(:final value?) when value.isNotEmpty || _positions.isNotEmpty => PositionPicker(
+              positions: [
+                ...value,
+                for (final p in widget.current?.positions ?? const <PositionMatch>[])
+                  if (!value.any((o) => o.id == p.id)) JobPosition(id: p.id, title: p.title, headcount: 1, status: 'closed'),
+              ],
+              selected: _positions,
+              errorText: _positionMissing ? l10n.errNoPosition : null,
+              onChanged: (v) => setState(() {
+                _positions = v;
+                _positionMissing = false;
+              }),
+            ),
+          AsyncValue(isLoading: true) => const LinearProgressIndicator(),
+          _ => TextField(controller: _position, decoration: field(l10n.appliedPosition)),
+        },
         const SizedBox(height: 8),
         OutlinedButton.icon(
           onPressed: _saving ? null : _pickCv,
@@ -277,8 +401,10 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
         ),
         if (_error case final error?) Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         const SizedBox(height: 12),
+        if (_cv == null && widget.current?.hasCv != true)
+          Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(l10n.cvRequired, style: TextStyle(color: context.tbt.caution))),
         FilledButton(
-          onPressed: _saving || _name.text.trim().isEmpty ? null : _save,
+          onPressed: _saving || (_cv == null && widget.current?.hasCv != true) || (ref.watch(authControllerProvider).value?.fullName == null && _name.text.trim().isEmpty) ? null : _save,
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
           child: _saving
               ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))

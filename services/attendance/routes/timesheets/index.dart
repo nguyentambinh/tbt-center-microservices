@@ -9,6 +9,7 @@
 import 'package:attendance_service/src/access.dart';
 import 'package:attendance_service/src/data/attendance_repository.dart';
 import 'package:attendance_service/src/domain/leave_request.dart';
+import 'package:attendance_service/src/region_time.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -22,7 +23,7 @@ Future<Response> onRequest(RequestContext context) async {
   final employee = resolveEmployee(context, query['employee']);
   if (employee is Response) return employee;
 
-  final today = DateTime.now();
+  final today = await regionNow(context);
   final to = parseDate(query['to']) ?? today;
   final from =
       parseDate(query['from']) ?? to.subtract(const Duration(days: 30));

@@ -19,7 +19,7 @@ Handler middleware(Handler handler) {
       .use(cachedGet(cache, namespace: employeesCache))
       .use(
         requireClaims(
-          anyRole: const {'executive', 'admin', 'hr', 'finance'},
+          anyRole: const {'executive', 'hr', 'finance'},
           region: Platform.environment['REGION'],
         ),
       );

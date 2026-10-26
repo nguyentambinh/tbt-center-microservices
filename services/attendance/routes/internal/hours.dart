@@ -11,12 +11,24 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 /// GET /internal/hours?period=2026-10  tổng giờ công, tăng ca của từng nhân
-/// viên trong kỳ. Bước "lấy giờ công" của Saga chốt lương.
+/// viên trong kỳ (bước "lấy giờ công" của Saga chốt lương);
+/// hoặc ?from=YYYY-MM-DD&to=YYYY-MM-DD cho khoảng ngày bất kỳ.
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.get) {
     return apiError(405, 'method_not_allowed', 'GET only');
   }
-  final period = context.request.uri.queryParameters['period'] ?? '';
+  final query = context.request.uri.queryParameters;
+  // Khoảng ngày tùy ý (xếp hạng, thứ tự trong phòng ban theo tổng giờ làm)
+  final from = DateTime.tryParse(query['from'] ?? '');
+  final to = DateTime.tryParse(query['to'] ?? '');
+  if (from != null && to != null) {
+    final items = await context.read<AttendanceRepository>().hoursByEmployee(
+      from: from,
+      to: to,
+    );
+    return Response.json(body: {'items': items});
+  }
+  final period = query['period'] ?? '';
   final month = DateTime.tryParse('$period-01');
   if (month == null || period.length != 7) {
     return apiError(400, 'invalid_period', 'period must be YYYY-MM');

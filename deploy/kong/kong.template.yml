@@ -22,11 +22,26 @@ services:
     routes:
       - name: recruitment
         paths: [/recruitment]
+      # Đăng ký tài khoản ứng viên: chưa có token, đi bằng consumer ẩn danh
+      - name: recruitment-public
+        paths: [/recruitment/public]
+        plugins:
+          - name: jwt
+            config:
+              key_claim_name: iss
+              claims_to_verify: [exp]
+              uri_param_names: []
+              anonymous: anonymous
   - name: finance
     url: http://finance:8080
     routes:
       - name: finance
         paths: [/finance]
+  - name: admin
+    url: http://admin:8080
+    routes:
+      - name: admin
+        paths: [/admin]
   - name: project_contract
     url: http://project-contract:8080
     routes:
@@ -118,6 +133,7 @@ routes:
           message: Not found
 
 consumers:
+  - username: anonymous
   - username: keycloak-tbt
     jwt_secrets:
       - key: __ISSUER__

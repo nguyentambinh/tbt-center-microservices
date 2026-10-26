@@ -45,6 +45,9 @@ class LeaveRequest {
     required this.status,
     this.reason,
     this.approvedBy,
+    this.aiSummary,
+    this.aiSource,
+    this.fileCount = 0,
   });
 
   final String id;
@@ -56,4 +59,9 @@ class LeaveRequest {
   final LeaveStatus status;
   final String? reason;
   final String? approvedBy;
+
+  /// AI tóm tắt minh chứng cho HR (summary, keyPoints, matchesRequest, concerns)
+  final Map<String, dynamic>? aiSummary;
+  final String? aiSource;
+  final int fileCount;
 }

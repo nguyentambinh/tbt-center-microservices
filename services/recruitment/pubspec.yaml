@@ -11,6 +11,7 @@ dependencies:
   archive: ^4.0.0
   crypto: ^3.0.7
   dart_frog: ^1.1.0
+  mailer: ^7.2.0
   postgres: ^3.5.20
   tbt_common:
     path: ../../packages/common

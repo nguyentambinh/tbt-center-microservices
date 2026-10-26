@@ -117,7 +117,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 12),
                         OutlinedButton(
-                          onPressed: _busy ? null : () => _signIn(register: true),
+                          onPressed: _busy ? null : () => context.push(Routes.signup),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
                             foregroundColor: context.tbt.textMain,

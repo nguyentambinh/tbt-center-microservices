@@ -91,7 +91,7 @@ const syncCatalog = [
   SyncTable(
     'payroll_db',
     'bonuses_penalties',
-    [_emp, 'occurred_on'],
+    ['id'],
     {_emp, 'amount_original', 'total_original', 'amount_base'},
   ),
   SyncTable('payroll_db', 'coefficients', ['id']),

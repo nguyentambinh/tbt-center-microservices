@@ -18,9 +18,16 @@ Future<Response> onRequest(RequestContext context, String id) async {
   if (!context.read<Claims>().hasAnyRole(recruiterRoles)) {
     return apiError(403, 'forbidden', 'HR only');
   }
-  final candidate = await context.read<CandidateRepository>().findById(id);
+  final repository = context.read<CandidateRepository>();
+  final candidate = await repository.findById(id);
   if (candidate == null) {
     return apiError(404, 'not_found', 'Candidate $id not found');
+  }
+  // HR mở xem thì khóa hồ sơ, ứng viên thấy nhãn "đã được xem"
+  if (candidate['viewedAt'] == null) {
+    await repository.markViewed(id);
+    final now = DateTime.now().toUtc().toIso8601String();
+    return Response.json(body: {...candidate, 'viewedAt': now});
   }
   return Response.json(body: candidate);
 }

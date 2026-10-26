@@ -24,9 +24,13 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   final String baseUrl;
 
   @override
-  Future<EmployeePage> search({String query = '', int page = 1}) async {
+  Future<EmployeePage> search({String query = '', int page = 1, EmployeeFilter filter = const EmployeeFilter()}) async {
     final response = await _get('/hr/employees', {
       if (query.isNotEmpty) 'q': query,
+      'departmentId': ?filter.departmentId,
+      'positionId': ?filter.positionId,
+      'companyId': ?filter.companyId,
+      'status': ?filter.status,
       'page': page,
       'size': pageSize,
     });

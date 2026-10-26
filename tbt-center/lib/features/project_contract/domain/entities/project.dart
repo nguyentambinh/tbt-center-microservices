@@ -17,6 +17,13 @@ class ProjectSummary {
     this.members = 0,
     this.status = 'in_progress',
     this.acceptedOn,
+    this.imageUrl,
+    this.tier = 1,
+    this.progress = 0,
+    this.warning = 'normal',
+    this.startDate,
+    this.endDate,
+    this.valueUsd,
   });
 
   final String id;
@@ -33,23 +40,48 @@ class ProjectSummary {
   final String status;
   final DateTime? acceptedOn;
 
+  /// Ảnh công trình (URL ký sẵn của Garage khu vực), có thể không có
+  final String? imageUrl;
+
+  /// Cấp 1..4 theo giá trị quy USD
+  final int tier;
+
+  /// Tiến độ theo thời gian (0..1), đã nghiệm thu là 1
+  final double progress;
+
+  /// accepted, not_started, red, orange, yellow, normal
+  final String warning;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final double? valueUsd;
+
   bool get accepted => status == 'accepted';
 }
 
 class ProjectContract {
-  const ProjectContract({required this.contractId, this.name, this.startDate, this.expectedEndDate, this.endDate});
+  const ProjectContract({required this.contractId, this.name, this.type, this.startDate, this.expectedEndDate, this.endDate, this.summary, this.fileUrl});
 
   final String contractId;
   final String? name;
+  final String? type;
   final DateTime? startDate;
   final DateTime? expectedEndDate;
   final DateTime? endDate;
+
+  /// Điều khoản chính: phạm vi, thanh toán, tiến độ, bảo hành
+  final String? summary;
+
+  /// File hợp đồng (Word, PDF), link ký sẵn có hạn
+  final String? fileUrl;
 }
 
 class ProjectMember {
-  const ProjectMember({required this.employeeId, required this.hours, this.projectSalary});
+  const ProjectMember({required this.hours, this.employeeId, this.name, this.isMe = false, this.projectSalary});
 
-  final String employeeId;
+  /// Chỉ người quản lý mới nhận mã nhân viên
+  final String? employeeId;
+  final String? name;
+  final bool isMe;
   final double hours;
   final double? projectSalary;
 }
@@ -90,11 +122,12 @@ class ProjectDetail {
 
 /// Một dự án mình đang tham gia (R38).
 class MyProject {
-  const MyProject({required this.projectId, required this.hours, this.name, this.startDate, this.endDate});
+  const MyProject({required this.projectId, required this.hours, this.name, this.startDate, this.endDate, this.imageUrl});
 
   final String projectId;
   final String? name;
   final double hours;
   final DateTime? startDate;
   final DateTime? endDate;
+  final String? imageUrl;
 }

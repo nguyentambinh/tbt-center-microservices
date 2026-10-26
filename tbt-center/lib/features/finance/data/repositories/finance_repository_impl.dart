@@ -89,6 +89,65 @@ class FinanceRepositoryImpl implements FinanceRepository {
   @override
   Future<void> closePeriod(String period) => _call(() => _dio.post<Map<String, dynamic>>('$_root/periods/$period/close'));
 
+  @override
+  Future<FinanceSeries> analytics(String granularity) async {
+    final d = await _call(() => _dio.get<Map<String, dynamic>>('$_root/analytics', queryParameters: {'granularity': granularity}));
+    return FinanceSeries(
+      granularity: granularity,
+      currency: d['currency'] as String,
+      points: [
+        for (final p in d['items'] as List)
+          FinancePoint(
+            bucket: (p as Map<String, dynamic>)['bucket'] as String,
+            revenue: (p['revenue'] as num).toDouble(),
+            material: (p['material'] as num).toDouble(),
+            payroll: (p['payroll'] as num).toDouble(),
+            profit: (p['profit'] as num).toDouble(),
+          ),
+      ],
+    );
+  }
+
+  @override
+  Future<List<ProjectFinance>> projectRanking() async {
+    final d = await _call(() => _dio.get<Map<String, dynamic>>('$_root/project-finance'));
+    return [
+      for (final p in d['items'] as List)
+        ProjectFinance(
+          projectId: (p as Map<String, dynamic>)['projectId'] as String,
+          rank: p['rank'] as int,
+          revenue: (p['revenue'] as num).toDouble(),
+          cost: (p['cost'] as num).toDouble(),
+          profit: (p['profit'] as num).toDouble(),
+          margin: (p['margin'] as num?)?.toDouble(),
+        ),
+    ];
+  }
+
+  @override
+  Future<ProjectFinanceDetail> projectFinance(String projectId) async {
+    final d = await _call(() => _dio.get<Map<String, dynamic>>('$_root/project-finance/${Uri.encodeComponent(projectId)}'));
+    return ProjectFinanceDetail(
+      projectId: projectId,
+      currency: d['currency'] as String,
+      revenue: (d['revenue'] as num).toDouble(),
+      cost: (d['cost'] as num).toDouble(),
+      revenues: [
+        for (final r in d['revenues'] as List)
+          (date: DateTime.parse((r as Map<String, dynamic>)['date'] as String), amount: (r['amount'] as num).toDouble(), kind: r['kind'] as String),
+      ],
+      materials: [
+        for (final m in d['materials'] as List)
+          (
+            name: (m as Map<String, dynamic>)['name'] as String,
+            date: DateTime.parse(m['date'] as String),
+            supplier: m['supplier'] as String?,
+            amount: (m['amount'] as num).toDouble(),
+          ),
+      ],
+    );
+  }
+
   Future<Map<String, dynamic>> _call(Future<Response<Map<String, dynamic>>> Function() send) async {
     try {
       return (await send()).data ?? const {};

@@ -7,6 +7,7 @@
  */
 
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/error/app_failure.dart';
 import '../../../../core/network/api_client.dart';
@@ -23,9 +24,25 @@ class AuditRepositoryImpl implements AuditRepository {
   // Kiểm toán phải thấy số liệu thật lúc này, không dùng bản lưu cũ khi mất mạng.
   static final _live = Options(extra: {noCache: true});
 
+  /// Ngày trọn thì gửi `yyyy-MM-dd`, có giờ phút thì gửi mốc UTC
+  static String? _time(DateTime? t) => switch (t) {
+        null => null,
+        final t when t.hour == 0 && t.minute == 0 => DateFormat('yyyy-MM-dd').format(t),
+        final t => t.toUtc().toIso8601String(),
+      };
+
+  static Map<String, Object> _params(AuditQuery q) => {
+        'region': ?q.region,
+        'type': ?q.type,
+        'service': ?q.service,
+        'anomaly': ?q.anomaly,
+        'from': ?_time(q.from),
+        'to': ?_time(q.to),
+      };
+
   @override
-  Future<List<AuditEvent>> events({String? region}) async {
-    final d = await _get<Map<String, dynamic>>(_root, {'limit': 200, 'region': ?region});
+  Future<List<AuditEvent>> events(AuditQuery query) async {
+    final d = await _get<Map<String, dynamic>>(_root, {'limit': 200, ..._params(query)});
     return [
       for (final e in d['items'] as List)
         AuditEvent(
@@ -36,8 +53,27 @@ class AuditRepositoryImpl implements AuditRepository {
           aggregateId: e['aggregateId'] as String,
           occurredAt: DateTime.parse(e['occurredAt'] as String).toLocal(),
           hash: e['hash'] as String,
+          anomalies: [for (final a in e['anomalies'] as List? ?? const []) '$a'],
         ),
     ];
+  }
+
+  @override
+  Future<AuditStats> stats(AuditQuery query) async {
+    final d = await _get<Map<String, dynamic>>('$_root/stats', _params(query));
+    List<AuditCount> counts(String key) => [
+          for (final c in d[key] as List? ?? const []) (key: '${(c as Map)['key']}', count: (c['count'] as num).toInt()),
+        ];
+    return AuditStats(
+      total: (d['total'] as num? ?? 0).toInt(),
+      afterHours: (d['afterHours'] as num? ?? 0).toInt(),
+      failures: (d['failures'] as num? ?? 0).toInt(),
+      byType: counts('byType'),
+      byRegion: counts('byRegion'),
+      byService: counts('byService'),
+      byDay: counts('byDay'),
+      byLocalHour: [for (final n in d['byLocalHour'] as List? ?? List.filled(24, 0)) (n as num).toInt()],
+    );
   }
 
   @override
@@ -47,11 +83,11 @@ class AuditRepositoryImpl implements AuditRepository {
   }
 
   @override
-  Future<AuditExport> export({String? region}) async {
+  Future<AuditExport> export(AuditQuery query) async {
     try {
       final response = await _dio.get<String>(
         '$_root/export',
-        queryParameters: {'region': ?region},
+        queryParameters: _params(query),
         options: Options(responseType: ResponseType.plain, extra: {noCache: true}),
       );
       return AuditExport(

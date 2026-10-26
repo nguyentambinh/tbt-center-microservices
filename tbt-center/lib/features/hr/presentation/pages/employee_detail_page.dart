@@ -10,14 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/locale/hometowns.dart';
 import '../../../../core/auth/auth_controller.dart';
+import '../../../../core/error/error_reporter.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../core/widgets/gem_heading.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../organization/presentation/providers/organization_providers.dart';
+import '../../../organization/presentation/widgets/org_actions.dart';
 import '../../domain/entities/employee.dart';
 import '../providers/employee_providers.dart';
+import '../widgets/executive_actions.dart';
 
 class EmployeeDetailPage extends ConsumerWidget {
   const EmployeeDetailPage({super.key, required this.employeeId});
@@ -26,11 +31,40 @@ class EmployeeDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final detail = ref.watch(employeeDetailProvider(employeeId));
+    final roles = ref.watch(authControllerProvider).value?.roles ?? const <String>[];
+    final canManage = roles.contains('hr');
+    // Văn phòng quản lý: thăng chức, đổi lương, thưởng phạt có hiệu lực ngay
+    final executive = roles.contains('executive');
+    final value = detail.value;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          if (executive && value != null && !value.archived)
+            ExecutiveActionsMenu(
+              employeeId: value.summary.id,
+              name: value.summary.fullName(familyFirst: ref.watch(authControllerProvider).value?.region == 'vn'),
+              onDone: () {
+                ref.invalidate(employeeDetailProvider(employeeId));
+                ref.invalidate(employeeListProvider);
+              },
+            ),
+          if (canManage && value != null) _ManageMenu(employee: value),
+        ],
+      ),
       body: switch (detail) {
-        AsyncValue(:final value?) => _DetailBody(employee: value),
+        AsyncValue(:final value?) when value.archived => Column(
+            children: [
+              MaterialBanner(
+                leading: Icon(Icons.inventory_2_outlined, color: Theme.of(context).colorScheme.error),
+                content: Text(l10n.profileArchivedBanner(value.archivedReason ?? '-')),
+                actions: [if (canManage) TextButton(onPressed: () => _restore(context, ref, employeeId), child: Text(l10n.restoreProfile)) else const SizedBox.shrink()],
+              ),
+              Expanded(child: EmployeeProfileBody(employee: value)),
+            ],
+          ),
+        AsyncValue(:final value?) => EmployeeProfileBody(employee: value),
         AsyncValue(:final error?) => ErrorView(
             error: error,
             onRetry: () => ref.invalidate(employeeDetailProvider(employeeId)),
@@ -41,8 +75,68 @@ class EmployeeDetailPage extends ConsumerWidget {
   }
 }
 
-class _DetailBody extends ConsumerWidget {
-  const _DetailBody({required this.employee});
+Future<void> _restore(BuildContext context, WidgetRef ref, String id) async {
+  final l10n = AppLocalizations.of(context);
+  try {
+    await ref.read(organizationRepositoryProvider).restore(id);
+    ref.invalidate(employeeDetailProvider(id));
+    ref.invalidate(employeeListProvider);
+    showDone(l10n.restoreDone);
+  } on Object catch (e) {
+    reportFailure(e);
+  }
+}
+
+/// HR: điều chuyển, đề cử thăng chức, bảo lưu hồ sơ
+class _ManageMenu extends ConsumerWidget {
+  const _ManageMenu({required this.employee});
+
+  final EmployeeDetail employee;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final s = employee.summary;
+    final name = s.fullName(familyFirst: ref.watch(authControllerProvider).value?.region == 'vn');
+    void refresh() {
+      ref.invalidate(employeeDetailProvider(s.id));
+      ref.invalidate(employeeListProvider);
+    }
+
+    return PopupMenuButton<String>(
+      onSelected: (v) async {
+        switch (v) {
+          case 'move':
+            if (await transferEmployee(context, ref, s.id, fromDepartment: employee.departmentId)) refresh();
+          case 'nominate':
+            await nominateEmployee(context, ref, employeeId: s.id, name: name);
+          case 'archive':
+            if (await archiveEmployee(context, ref, employeeId: s.id, name: name)) refresh();
+          case 'restore':
+            await _restore(context, ref, s.id);
+        }
+      },
+      itemBuilder: (context) => [
+        if (!employee.archived) ...[
+          PopupMenuItem(value: 'move', child: ListTile(leading: const Icon(Icons.drive_file_move_outline), title: Text(l10n.moveToDepartment))),
+          PopupMenuItem(value: 'nominate', child: ListTile(leading: const Icon(Icons.workspace_premium_outlined), title: Text(l10n.nominatePromotion))),
+          PopupMenuItem(
+            value: 'archive',
+            child: ListTile(
+              leading: Icon(Icons.inventory_2_outlined, color: Theme.of(context).colorScheme.error),
+              title: Text(l10n.archiveProfile, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            ),
+          ),
+        ] else
+          PopupMenuItem(value: 'restore', child: ListTile(leading: const Icon(Icons.unarchive_outlined), title: Text(l10n.restoreProfile))),
+      ],
+    );
+  }
+}
+
+/// Nội dung hồ sơ nhân viên, dùng ở màn chi tiết (HR) và mục Cá nhân
+class EmployeeProfileBody extends ConsumerWidget {
+  const EmployeeProfileBody({super.key, required this.employee});
 
   final EmployeeDetail employee;
 
@@ -65,7 +159,7 @@ class _DetailBody extends ConsumerWidget {
       children: [
         Row(
           children: [
-            InitialsAvatar(initials: s.initials, radius: 36),
+            InitialsAvatar(initials: s.initials, radius: 36, photoUrl: s.photoUrl),
             const SizedBox(width: 16),
             Expanded(
               child: gem == null
@@ -102,7 +196,7 @@ class _DetailBody extends ConsumerWidget {
           l10n.fieldEmail: s.email,
           l10n.fieldPhone: employee.contact['phone']?.toString(),
           l10n.fieldAddress: employee.contact['address']?.toString(),
-          l10n.fieldHometown: employee.contact['hometownCode']?.toString(),
+          l10n.fieldHometown: hometownName(employee.contact['hometownCode']),
         }),
         _Section(title: l10n.sectionHealth, rows: {
           l10n.fieldHeight: _unit(employee.health['heightCm'], 'cm'),

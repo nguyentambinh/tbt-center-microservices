@@ -8,14 +8,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/error/error_reporter.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
+import '../../../../core/widgets/remote_image.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../attendance/domain/entities/work_calendar.dart';
+import '../../../attendance/presentation/providers/attendance_providers.dart';
+import '../../../payroll/presentation/providers/payroll_providers.dart';
 import '../../domain/entities/project.dart';
 import '../providers/project_providers.dart';
 
@@ -89,13 +96,13 @@ class ProjectDetailPage extends ConsumerWidget {
   }
 }
 
-class _DetailView extends StatelessWidget {
+class _DetailView extends ConsumerWidget {
   const _DetailView({required this.project});
 
   final ProjectDetail project;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final text = Theme.of(context).textTheme;
@@ -129,6 +136,8 @@ class _DetailView extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        RemotePhoto(url: s.imageUrl),
+        const SizedBox(height: 16),
         Text(s.name ?? s.id, style: text.headlineSmall),
         const SizedBox(height: 8),
         Chip(
@@ -141,10 +150,12 @@ class _DetailView extends StatelessWidget {
             style: text.bodySmall?.copyWith(color: context.tbt.textSecondary),
           ),
         const SizedBox(height: 12),
-        section(l10n.projectMoney, [
-          row(l10n.deposit, amount(s.deposit)),
-          row(l10n.expectedAcceptance, amount(s.expectedAcceptance)),
-        ]),
+        // Nhân viên thường không được xem tiền dự án: server không trả hai trường này
+        if (s.deposit != null || s.expectedAcceptance != null)
+          section(l10n.projectMoney, [
+            row(l10n.deposit, amount(s.deposit)),
+            row(l10n.expectedAcceptance, amount(s.expectedAcceptance)),
+          ]),
         if (customer != null)
           section(l10n.customer, [
             row(l10n.fullName, customer.name),
@@ -156,24 +167,106 @@ class _DetailView extends StatelessWidget {
         section(l10n.contracts, [
           if (project.contracts.isEmpty) Text(l10n.noData),
           for (final c in project.contracts)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(c.name ?? c.contractId),
-              subtitle: Text('${day(c.startDate)} – ${day(c.endDate ?? c.expectedEndDate)}'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(c.name ?? c.contractId, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text('${c.contractId} · ${day(c.startDate)} – ${day(c.endDate ?? c.expectedEndDate)}', style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
+                  if (c.summary case final summary? when summary.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 6), child: Text(summary)),
+                  if (c.fileUrl case final url?)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        icon: const Icon(Icons.description_outlined),
+                        label: Text(l10n.openContract),
+                        onPressed: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+                      ),
+                    ),
+                ],
+              ),
             ),
         ]),
+        if (project.members.any((m) => m.isMe)) _MySchedule(project: s),
         section(l10n.projectMembers, [
           if (project.members.isEmpty) Text(l10n.noData),
-          for (final m in project.members)
+          for (final m in [...project.members]..sort((a, b) => (b.isMe ? 1 : 0) - (a.isMe ? 1 : 0)))
             ListTile(
               dense: true,
               contentPadding: EdgeInsets.zero,
-              title: Text(m.employeeId),
-              subtitle: m.projectSalary == null ? null : Text(amount(m.projectSalary)),
+              leading: CircleAvatar(
+                radius: 16,
+                backgroundColor: m.isMe ? Theme.of(context).colorScheme.primary : null,
+                child: Icon(Icons.person, size: 18, color: m.isMe ? Theme.of(context).colorScheme.onPrimary : null),
+              ),
+              title: Text(m.isMe ? l10n.me : (m.name ?? m.employeeId ?? '-'), style: TextStyle(fontWeight: m.isMe ? FontWeight.bold : null)),
+              // Mã nhân viên chỉ người quản lý thấy
+              subtitle: Text(
+                [
+                  ?m.employeeId,
+                  if (m.projectSalary != null) m.isMe ? l10n.myProjectPay(amount(m.projectSalary)) : amount(m.projectSalary),
+                ].join(' · '),
+              ),
               trailing: Text(l10n.hoursValue(NumberFormat.decimalPattern(locale).format(m.hours))),
             ),
         ]),
       ],
+    );
+  }
+}
+
+/// Lịch làm việc của tôi trong tháng này, trong thời gian của dự án: ngày, giờ vào ra, tiền ước tính
+class _MySchedule extends ConsumerWidget {
+  const _MySchedule({required this.project});
+
+  final ProjectSummary project;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final now = DateTime.now();
+    final month = DateTime(now.year, now.month);
+    final days = ref.watch(calendarProvider(month)).value ?? const <CalendarDay>[];
+    final salary = ref.watch(myPayrollProvider).value;
+    final money = NumberFormat.simpleCurrency(locale: locale, name: salary?.currency ?? project.currency);
+    final start = project.startDate;
+    final end = project.endDate;
+    final inProject = [
+      for (final d in days)
+        if (d.hasShift && (start == null || !d.date.isBefore(start)) && (end == null || !d.date.isAfter(end))) d,
+    ];
+    final shown = inProject.where((d) => !d.date.isAfter(now)).toList().reversed.take(7).toList();
+    final base = salary?.baseSalary;
+    final total = base == null ? null : inProject.fold<double>(0, (s, d) => s + estimatedDayPay(d, base));
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.mySchedule, style: Theme.of(context).textTheme.titleLarge),
+            Text(l10n.myScheduleHint(inProject.where((d) => d.worked).length), style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
+            if (total != null) Text(l10n.myScheduleEarned(money.format(total)), style: TextStyle(color: context.tbt.success, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            if (shown.isEmpty) Text(l10n.noData, style: TextStyle(color: context.tbt.textSecondary)),
+            for (final d in shown)
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(DateFormat.MMMEd(locale).format(d.date)),
+                subtitle: Text(d.worked ? '${d.checkIn} – ${d.checkOut ?? '...'} · ${l10n.hoursValue(NumberFormat.decimalPattern(locale).format(d.totalHours))}' : (d.onLeave ? (d.leaveType ?? '') : l10n.notCheckedIn)),
+                trailing: base == null || !d.worked ? null : Text(money.format(estimatedDayPay(d, base))),
+              ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(onPressed: () => context.push(Routes.workCalendar), child: Text(l10n.openFullPage)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

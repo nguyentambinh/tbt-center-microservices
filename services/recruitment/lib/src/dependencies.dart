@@ -15,7 +15,12 @@ import 'package:recruitment_service/src/ai/gemini_client.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
 import 'package:recruitment_service/src/identity/hiring.dart';
 import 'package:recruitment_service/src/identity/keycloak_admin.dart';
+import 'package:recruitment_service/src/identity/signup.dart';
 import 'package:recruitment_service/src/imports/import_repository.dart';
+import 'package:recruitment_service/src/interviews.dart';
+import 'package:recruitment_service/src/mail_sender.dart';
+import 'package:recruitment_service/src/offer.dart';
+import 'package:recruitment_service/src/positions.dart';
 import 'package:recruitment_service/src/storage/cv_storage.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -23,20 +28,46 @@ import 'package:tbt_common/tbt_common.dart';
 /// tạo một lần cho cả tiến trình.
 final database = Database.fromEnvironment();
 final candidateRepository = PostgresCandidateRepository(database);
+final positionRepository = PostgresPositionRepository(database);
 final importRepository = PostgresImportRepository(database);
 final cvStorage = CvStorage.fromEnvironment();
+final interviewRepository = PostgresInterviewRepository(
+  database,
+  candidateRepository,
+);
+
+final _hr = InternalClient(
+  'hr',
+  Uri.parse(Platform.environment['HR_URL'] ?? 'http://hr:8080'),
+);
+final _payroll = InternalClient(
+  'payroll',
+  Uri.parse(Platform.environment['PAYROLL_URL'] ?? 'http://payroll:8080'),
+);
 
 final hiring = Hiring(
   candidates: candidateRepository,
   identity: KeycloakAdmin.fromEnvironment(),
-  createEmployee: hrEmployees(
-    InternalClient(
-      'hr',
-      Uri.parse(Platform.environment['HR_URL'] ?? 'http://hr:8080'),
-    ),
-  ),
+  createEmployee: hrEmployees(_hr),
   region: Platform.environment['REGION'] ?? 'vn',
+  setSalary: payrollSetSalary(_payroll),
+  mail: queueMail(database),
 );
+
+final signup = Signup(
+  database,
+  identity: KeycloakAdmin.fromEnvironment(),
+  send: smtp,
+);
+
+final offerAdvisor = OfferAdvisor(
+  placement: hrPlacement(_hr),
+  salaries: payrollSalaries(_payroll),
+  ai: StructuredAi.fromEnvironment(),
+);
+
+/// Gửi email phỏng vấn; null khi chưa có `deploy/secrets/smtp.env`
+final smtp = smtpFromEnvironment();
 final claudeClient = ClaudeClient(
   Platform.environment['ANTHROPIC_API_KEY'] ?? '',
 );
@@ -68,16 +99,24 @@ final cvSummarizer = FallbackSummarizer(
   primary: AiProvider(
     model: claudeModel,
     configured: claudeClient.configured,
-    summarize: (pdf, language) => claudeBreaker.call(
-      () => claudeClient.summarizeCv(pdf, language: language),
+    summarize: (pdf, language, positions) => claudeBreaker.call(
+      () => claudeClient.summarizeCv(
+        pdf,
+        language: language,
+        positions: positions,
+      ),
       isFailure: isAiOutage,
     ),
   ),
   fallback: AiProvider(
     model: geminiClient.model,
     configured: geminiClient.configured,
-    summarize: (pdf, language) => geminiBreaker.call(
-      () => geminiClient.summarizeCv(pdf, language: language),
+    summarize: (pdf, language, positions) => geminiBreaker.call(
+      () => geminiClient.summarizeCv(
+        pdf,
+        language: language,
+        positions: positions,
+      ),
       isFailure: isAiOutage,
     ),
   ),

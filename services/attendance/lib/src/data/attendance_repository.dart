@@ -6,6 +6,8 @@
  * Ngày:   2026-10-15
  */
 
+import 'dart:convert';
+
 import 'package:attendance_service/src/data/period_lock.dart';
 import 'package:attendance_service/src/domain/leave_request.dart';
 import 'package:postgres/postgres.dart';
@@ -57,7 +59,9 @@ class PostgresAttendanceRepository implements AttendanceRepository {
 
   static const _leaveColumns =
       'id::text, employee_id, from_date, to_date, leave_type, status, reason, '
-      'approved_by, created_at';
+      'approved_by, created_at, ai_summary, ai_source, '
+      '(select count(*)::int from leave_attachments a '
+      'where a.leave_id = leave_requests.id) as file_count';
 
   @override
   Future<List<Map<String, dynamic>>> timesheets(
@@ -262,6 +266,13 @@ class PostgresAttendanceRepository implements AttendanceRepository {
     reason: r['reason'] as String?,
     approvedBy: r['approved_by'] as String?,
     createdAt: r['created_at'] as DateTime?,
+    aiSummary: switch (r['ai_summary']) {
+      final Map<String, dynamic> m => m,
+      final String s => jsonDecode(s) as Map<String, dynamic>,
+      _ => null,
+    },
+    aiSource: r['ai_source'] as String?,
+    fileCount: r['file_count'] as int? ?? 0,
   );
 
   String _date(DateTime d) => d.toIso8601String().substring(0, 10);

@@ -39,6 +39,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<void> markAllRead() => _call(() => _dio.post<Map<String, dynamic>>('$_root/read', data: const {}));
 
+  @override
+  Future<void> markRead(List<String> ids) => _call(() => _dio.post<Map<String, dynamic>>('$_root/read', data: {'ids': ids}));
+
   Future<Map<String, dynamic>> _call(Future<Response<Map<String, dynamic>>> Function() request) async {
     try {
       return (await request()).data ?? const {};

@@ -1,0 +1,309 @@
+# Tầng dữ liệu của một khu vực: PostgreSQL primary + replica, Redis, Garage (S3).
+# Dữ liệu nằm trên node control-plane (/var/lib/tbt/*), gắn vào pod qua PersistentVolume hostPath.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tbt-pg-primary
+spec:
+  capacity: {storage: 5Gi}
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: tbt-local
+  hostPath: {path: /var/lib/tbt/pg-primary, type: Directory}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - {key: node-role.kubernetes.io/control-plane, operator: In, values: ["true"]}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tbt-pg-replica
+spec:
+  capacity: {storage: 5Gi}
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: tbt-local
+  hostPath: {path: /var/lib/tbt/pg-replica, type: Directory}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - {key: node-role.kubernetes.io/control-plane, operator: In, values: ["true"]}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tbt-garage-meta
+spec:
+  capacity: {storage: 1Gi}
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: tbt-local
+  hostPath: {path: /var/lib/tbt/garage-meta, type: Directory}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - {key: node-role.kubernetes.io/control-plane, operator: In, values: ["true"]}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tbt-garage-data
+spec:
+  capacity: {storage: 2Gi}
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: tbt-local
+  hostPath: {path: /var/lib/tbt/garage-data, type: Directory}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - {key: node-role.kubernetes.io/control-plane, operator: In, values: ["true"]}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-primary
+spec:
+  storageClassName: tbt-local
+  volumeName: tbt-pg-primary
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 5Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-replica
+spec:
+  storageClassName: tbt-local
+  volumeName: tbt-pg-replica
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 5Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage-meta
+spec:
+  storageClassName: tbt-local
+  volumeName: tbt-garage-meta
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 1Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: garage-data
+spec:
+  storageClassName: tbt-local
+  volumeName: tbt-garage-data
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 2Gi}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-primary
+spec:
+  serviceName: postgres-primary
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres-primary}
+  template:
+    metadata:
+      labels: {app: postgres-primary, tier: data}
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          args: ["-c", "wal_keep_size=256MB"]
+          envFrom:
+            - secretRef: {name: postgres}
+          env:
+            - name: SERVICE_DATABASES
+              value: hr_db attendance_db payroll_db finance_db project_contract_db recruitment_db currency_db notification_db integration_db mirror_db
+          ports:
+            - {name: pg, containerPort: 5432}
+          readinessProbe:
+            exec: {command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\""]}
+            periodSeconds: 5
+          livenessProbe:
+            exec: {command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\""]}
+            periodSeconds: 15
+            failureThreshold: 4
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {memory: 512Mi}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+            - {name: scripts, mountPath: /docker-entrypoint-initdb.d/01-init.sh, subPath: primary-init.sh}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: pg-primary}
+        - name: scripts
+          configMap: {name: postgres-scripts}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-replica
+spec:
+  serviceName: postgres-replica
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres-replica}
+  template:
+    metadata:
+      labels: {app: postgres-replica, tier: data}
+    spec:
+      securityContext: {runAsUser: 999, runAsGroup: 999}
+      containers:
+        - name: postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["bash", "/scripts/replica-entrypoint.sh"]
+          envFrom:
+            - secretRef: {name: postgres}
+          ports:
+            - {name: pg, containerPort: 5432}
+          readinessProbe:
+            exec: {command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\""]}
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {memory: 384Mi}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+            - {name: scripts, mountPath: /scripts}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: pg-replica}
+        - name: scripts
+          configMap: {name: postgres-scripts}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-primary
+spec:
+  selector: {app: postgres-primary}
+  ports:
+    - {name: pg, port: 5432, targetPort: pg}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-replica
+spec:
+  selector: {app: postgres-replica}
+  ports:
+    - {name: pg, port: 5432, targetPort: pg}
+---
+# Mở primary ra máy dev (pgAdmin, script nạp dữ liệu) qua cổng node
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-external
+spec:
+  type: NodePort
+  selector: {app: postgres-primary}
+  ports:
+    - {name: pg, port: 5432, targetPort: pg, nodePort: 30543}
+---
+# Redis chỉ làm cache: 64 MB, đầy thì bỏ key ít dùng, không lưu xuống đĩa
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: redis}
+  template:
+    metadata:
+      labels: {app: redis, tier: data}
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.4-alpine
+          imagePullPolicy: IfNotPresent
+          args: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--save", "", "--appendonly", "no"]
+          ports:
+            - {name: redis, containerPort: 6379}
+          readinessProbe:
+            exec: {command: ["redis-cli", "ping"]}
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 20m, memory: 32Mi}
+            limits: {memory: 96Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector: {app: redis}
+  ports:
+    - {name: redis, port: 6379, targetPort: redis}
+---
+# Lưu CV của ứng viên trong khu vực (chuẩn S3); app tải lên qua URL ký sẵn
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: garage
+spec:
+  serviceName: garage
+  replicas: 1
+  selector:
+    matchLabels: {app: garage}
+  template:
+    metadata:
+      labels: {app: garage, tier: data}
+    spec:
+      containers:
+        - name: garage
+          image: dxflrs/garage:v2.3.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef: {name: garage}
+          ports:
+            - {name: s3, containerPort: 3900}
+          resources:
+            requests: {cpu: 20m, memory: 32Mi}
+            limits: {memory: 256Mi}
+          volumeMounts:
+            - {name: config, mountPath: /etc/garage.toml, subPath: garage.toml}
+            - {name: meta, mountPath: /var/lib/garage/meta}
+            - {name: data, mountPath: /var/lib/garage/data}
+      volumes:
+        - name: config
+          configMap: {name: garage-config}
+        - name: meta
+          persistentVolumeClaim: {claimName: garage-meta}
+        - name: data
+          persistentVolumeClaim: {claimName: garage-data}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: garage
+spec:
+  selector: {app: garage}
+  ports:
+    - {name: s3, port: 3900, targetPort: s3}
+---
+# App trên điện thoại tải CV thẳng lên Garage bằng URL ký sẵn
+apiVersion: v1
+kind: Service
+metadata:
+  name: garage-external
+spec:
+  type: NodePort
+  selector: {app: garage}
+  ports:
+    - {name: s3, port: 3900, targetPort: s3, nodePort: 30900}

@@ -14,7 +14,7 @@ import 'package:payroll_service/src/saga/payroll_saga.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 /// Vai trò được chốt lương.
-const payrollRunnerRoles = {'finance', 'admin', 'executive'};
+const payrollRunnerRoles = {'finance', 'executive'};
 
 /// GET  /payroll-runs                     các đợt chốt lương gần đây
 /// POST /payroll-runs {"period":"2026-10"}  bắt đầu Saga chốt lương kỳ đó
@@ -44,6 +44,13 @@ Future<Response> onRequest(RequestContext context) async {
           DateTime.tryParse('$period-01') == null) {
         return apiError(400, 'invalid_period', 'period must be YYYY-MM');
       }
+      if (!canRunPeriod(period, DateTime.now())) {
+        return apiError(
+          409,
+          'payroll_too_early',
+          'Payroll for $period opens on ${_day(earliestRunDate(period))}',
+        );
+      }
 
       final run = await repository.createRun(period, claims.username);
       if (!run.created) {
@@ -64,3 +71,5 @@ Future<Response> onRequest(RequestContext context) async {
       return apiError(405, 'method_not_allowed', 'GET, POST only');
   }
 }
+
+String _day(DateTime d) => d.toIso8601String().substring(0, 10);

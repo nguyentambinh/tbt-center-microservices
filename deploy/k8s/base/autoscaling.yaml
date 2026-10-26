@@ -1,0 +1,47 @@
+# Tự co giãn theo CPU (metrics-server có sẵn trong k3s): hr, attendance chịu tải nhiều nhất giờ chấm công
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hr
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: hr}
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 70}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: attendance
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: attendance}
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 70}
+---
+# Khi cập nhật hoặc dọn node, luôn giữ ít nhất 1 bản hr, attendance trả lời
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: hr
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: hr}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: attendance
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: attendance}

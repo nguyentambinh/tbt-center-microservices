@@ -1,0 +1,91 @@
+# Cổng vào duy nhất từ Internet: Caddy tự lấy chứng chỉ Let's Encrypt cho từng tên miền, chuyển vào cổng nội bộ.
+# DOMAIN lấy từ deploy/vps/vps.env (ví dụ 203-0-113-10.sslip.io: tên nào cũng trỏ về IP đó).
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+}
+
+# Keycloak (qua WAF), geo (qua WAF)
+auth.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8180
+}
+geo.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8190
+}
+
+# Kong từng khu vực (qua WAF): VN, US, BR, ZA, AU chạy Docker Compose, DE chạy k3s (NodePort của Service waf)
+vn.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8000
+}
+de.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:30800
+}
+us.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8200
+}
+br.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8300
+}
+za.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8400
+}
+au.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:8500
+}
+
+# Garage S3 từng khu vực: app tải CV lên bằng URL ký sẵn, giữ nguyên Host để chữ ký khớp
+s3-vn.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:3900
+}
+s3-de.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:30900
+}
+s3-us.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:3920
+}
+s3-br.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:3930
+}
+s3-za.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:3940
+}
+s3-au.{$DOMAIN} {
+	reverse_proxy 127.0.0.1:3950
+}
+
+# Trang tĩnh: chính sách quyền riêng tư cho kho ứng dụng
+privacy.{$DOMAIN} {
+	import common
+	root * /srv/site/privacy
+	file_server
+}
+
+# Tệp mẫu tải về từ app (mẫu hợp đồng dự án)
+files.{$DOMAIN} {
+	import common
+	root * /srv/site/files
+	file_server
+}
+
+# Grafana (có đăng nhập)
+grafana.{$DOMAIN} {
+	import common
+	reverse_proxy 127.0.0.1:3000
+}
+
+# Prometheus DE nằm trong k3s; mở lại ở cổng cũ cho Grafana, Prometheus Hub (chỉ trong máy, cổng 9190 không mở ra Internet)
+http://:9190 {
+	bind 172.17.0.1
+	reverse_proxy 127.0.0.1:30909
+}

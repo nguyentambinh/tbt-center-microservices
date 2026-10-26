@@ -24,6 +24,7 @@ workspace:
   - services/sync_worker
   - services/datastore
   - services/knowledge
+  - services/admin
   - tools/legacy_import
 
 dev_dependencies:

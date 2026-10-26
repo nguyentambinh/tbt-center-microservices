@@ -6,10 +6,13 @@
  * Ngày:   2026-10-15
  */
 
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tbtcenter/app.dart';
 import 'package:tbtcenter/core/theme/role_gem.dart';
+import 'package:tbtcenter/core/widgets/isometric_bars.dart';
 import 'package:tbtcenter/features/audit/domain/entities/audit.dart';
 import 'package:tbtcenter/features/audit/domain/repositories/audit_repository.dart';
 import 'package:tbtcenter/features/audit/presentation/providers/audit_providers.dart';
@@ -18,10 +21,12 @@ import 'helpers.dart';
 
 class FakeAuditRepository implements AuditRepository {
   final regionsAsked = <String?>[];
+  final queries = <AuditQuery>[];
 
   @override
-  Future<List<AuditEvent>> events({String? region}) async {
-    regionsAsked.add(region);
+  Future<List<AuditEvent>> events(AuditQuery query) async {
+    regionsAsked.add(query.region);
+    queries.add(query);
     return [
       AuditEvent(
         id: 20,
@@ -31,15 +36,28 @@ class FakeAuditRepository implements AuditRepository {
         aggregateId: '2025-05',
         occurredAt: DateTime(2026, 10, 15, 11),
         hash: 'ab' * 32,
+        anomalies: const ['after_hours'],
       ),
     ];
   }
 
   @override
+  Future<AuditStats> stats(AuditQuery query) async => AuditStats(
+        total: 40,
+        afterHours: 3,
+        failures: 2,
+        byType: const [(key: 'FinancePeriodClosed', count: 12)],
+        byRegion: const [(key: 'vn', count: 30), (key: 'de', count: 10)],
+        byService: const [(key: 'finance', count: 40)],
+        byDay: const [(key: '2026-10-14', count: 15), (key: '2026-10-15', count: 25)],
+        byLocalHour: List.filled(24, 1),
+      );
+
+  @override
   Future<ChainCheck> verify() async => const ChainCheck(checked: 26);
 
   @override
-  Future<AuditExport> export({String? region}) async =>
+  Future<AuditExport> export(AuditQuery query) async =>
       AuditExport(rowCount: 23, checksum: '9fffd22d' * 8, csv: 'id,region\n');
 
   @override
@@ -85,7 +103,7 @@ void main() {
     await tester.tap(find.text('Đóng'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Xuất cho kiểm toán'));
+    await tester.tap(find.byTooltip('Xuất CSV có mã SHA-256'));
     await tester.pumpAndSettle();
     expect(find.text('Đã xuất 23 dòng'), findsOneWidget);
     expect(find.text('9fffd22d' * 8), findsOneWidget);
@@ -95,6 +113,23 @@ void main() {
     await tester.tap(find.text('Đức'));
     await tester.pumpAndSettle();
     expect(audit.regionsAsked, [null, 'de']);
+  });
+
+  testWidgets('lọc bất thường, xem biểu đồ 2D rồi 3D', (tester) async {
+    final audit = await _pump(tester, ['auditor']);
+    await openHomeCard(tester, 'Sổ kiểm toán');
+    await tester.tap(find.text('Ngoài giờ (22h–6h)'));
+    await tester.pumpAndSettle();
+    expect(audit.queries.last.anomaly, 'after_hours');
+    expect(find.byIcon(Icons.nightlight_outlined), findsOneWidget);
+    await tester.tap(find.text('Biểu đồ'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tổng sự kiện'), findsOneWidget);
+    expect(find.text('40'), findsOneWidget);
+    expect(find.byType(BarChart), findsWidgets);
+    await tester.tap(find.text('3D'));
+    await tester.pumpAndSettle();
+    expect(find.byWidgetPredicate((w) => w is CustomPaint && w.painter is IsometricBarsPainter), findsWidgets);
   });
 
   testWidgets('lãnh đạo xem được ai đã truy cập sổ', (tester) async {

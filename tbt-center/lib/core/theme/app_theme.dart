@@ -31,6 +31,8 @@ class TbtColors extends ThemeExtension<TbtColors> {
     required this.success,
     required this.danger,
     required this.warning,
+    required this.caution,
+    required this.info,
   });
 
   final Color background;
@@ -55,6 +57,10 @@ class TbtColors extends ThemeExtension<TbtColors> {
   final Color danger;
   final Color warning;
 
+  /// Vàng (nhắc sớm) và xanh dương (chưa bắt đầu) của cảnh báo dự án
+  final Color caution;
+  final Color info;
+
   static const dark = TbtColors(
     background: Color(0xFF000000),
     card: Color(0xFF16151A),
@@ -71,6 +77,8 @@ class TbtColors extends ThemeExtension<TbtColors> {
     success: Color(0xFF3FCF8E),
     danger: Color(0xFFFF4D79),
     warning: Color(0xFFFFA726),
+    caution: Color(0xFFFFD54F),
+    info: Color(0xFF64B5F6),
   );
 
   static const light = TbtColors(
@@ -89,6 +97,8 @@ class TbtColors extends ThemeExtension<TbtColors> {
     success: Color(0xFF1B7A4C),
     danger: Color(0xFFB3264A),
     warning: Color(0xFF8F5400),
+    caution: Color(0xFF6E5A00),
+    info: Color(0xFF1F5FA8),
   );
 
   @override
@@ -114,6 +124,8 @@ class TbtColors extends ThemeExtension<TbtColors> {
       success: l(success, other.success),
       danger: l(danger, other.danger),
       warning: l(warning, other.warning),
+      caution: l(caution, other.caution),
+      info: l(info, other.info),
     );
   }
 }
@@ -173,7 +185,8 @@ ThemeData buildTheme(RoleGem gem, {Brightness brightness = Brightness.dark}) {
     cardTheme: CardThemeData(
       color: c.glass,
       elevation: 0,
-      margin: EdgeInsets.zero,
+      // Thẻ trong danh sách luôn tách nhau
+      margin: const EdgeInsets.symmetric(vertical: 6),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),

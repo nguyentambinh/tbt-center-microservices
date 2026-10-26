@@ -8,11 +8,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
+import '../../../../core/widgets/remote_image.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/project_providers.dart';
 
@@ -38,15 +41,25 @@ class MyProjectsPage extends ConsumerWidget {
               children: [
                 for (final p in value)
                   Card(
-                    child: ListTile(
-                      title: Text(p.name ?? p.projectId),
-                      subtitle: Text(
-                        '${p.projectId} · ${day(p.startDate)} – ${day(p.endDate)}',
-                        style: TextStyle(color: context.tbt.textSecondary),
-                      ),
-                      trailing: Text(
-                        l10n.hoursValue(NumberFormat.decimalPattern(locale).format(p.hours)),
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => context.push('${Routes.myProjects}/${Uri.encodeComponent(p.projectId)}'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          RemotePhoto(url: p.imageUrl, aspectRatio: 16 / 7, radius: 0),
+                          ListTile(
+                            title: Text(p.name ?? p.projectId),
+                            subtitle: Text(
+                              '${p.projectId} · ${day(p.startDate)} – ${day(p.endDate)}',
+                              style: TextStyle(color: context.tbt.textSecondary),
+                            ),
+                            trailing: Text(
+                              l10n.hoursValue(NumberFormat.decimalPattern(locale).format(p.hours)),
+                              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

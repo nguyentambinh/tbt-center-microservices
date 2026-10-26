@@ -21,7 +21,7 @@ x-service-env: &service-env
   DB_PORT: "5432"
   # Service tự kiểm chữ ký, hạn token bằng khóa công khai của Keycloak (ADR 0014).
   JWT_JWKS_URL: http://host.docker.internal:8180/realms/tbt/protocol/openid-connect/certs
-  JWT_ISSUER: http://localhost:8180/realms/tbt
+  JWT_ISSUER: ${JWT_ISSUER:-http://localhost:8180/realms/tbt}
   REDIS_HOST: redis
   # Đăng ký với Eureka, gửi log request về Elasticsearch ở Hub (ADR 0029)
   EUREKA_URL: http://host.docker.internal:8762/eureka/
@@ -116,9 +116,14 @@ services:
       context: ..
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: hr}
+    # Ảnh trong bucket tbt-media của Garage khu vực, trả URL ký sẵn; identity để cấp vai trò tập đoàn
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/anthropic.env, secrets/gemini.env, secrets/garage.env, secrets/identity.env]
     environment:
       <<: *service-env
       DB_NAME: hr_db
+      KEYCLOAK_ADMIN_URL: http://host.docker.internal:8180
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:${S3_PORT}}
+      S3_MEDIA_BUCKET: tbt-media
 
   attendance:
     <<: *service
@@ -130,9 +135,14 @@ services:
       context: ..
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: attendance}
+    # Minh chứng đơn nghỉ trong bucket tbt-media, AI tóm tắt cho HR
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/garage.env, secrets/anthropic.env, secrets/gemini.env]
     environment:
       <<: *service-env
       DB_NAME: attendance_db
+      S3_INTERNAL_ENDPOINT: http://garage:3900
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:${S3_PORT}}
+      S3_MEDIA_BUCKET: tbt-media
 
   payroll:
     <<: *service
@@ -163,9 +173,15 @@ services:
       context: ..
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: project_contract}
+    # Ảnh trong bucket tbt-media của Garage khu vực, trả URL ký sẵn
+    # AI đọc hợp đồng, gợi ý nhân viên cho đề xuất dự án
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/garage.env, secrets/anthropic.env, secrets/gemini.env]
     environment:
       <<: *service-env
       DB_NAME: project_contract_db
+      S3_INTERNAL_ENDPOINT: http://garage:3900
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:${S3_PORT}}
+      S3_MEDIA_BUCKET: tbt-media
     # Tên có dấu gạch dưới không hợp lệ làm hostname cho Kong, thêm tên gạch ngang.
     networks:
       default:
@@ -205,6 +221,23 @@ services:
       <<: *service-env
       DB_NAME: currency_db
 
+  # Quản trị dữ liệu khu vực: tài khoản (Keycloak ở Hub), thống kê, SQL, sao lưu lên Garage
+  admin:
+    <<: *service
+    image: tbt/admin
+    build:
+      context: ..
+      dockerfile: deploy/docker/service.Dockerfile
+      args: {SERVICE: admin}
+    env_file: [secrets/postgres.env, secrets/internal.env, secrets/garage.env, secrets/identity.env]
+    environment:
+      <<: *service-env
+      DB_NAME: admin_db
+      KEYCLOAK_ADMIN_URL: http://host.docker.internal:8180
+      S3_INTERNAL_ENDPOINT: http://garage:3900
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:${S3_PORT}}
+      S3_MEDIA_BUCKET: tbt-media
+
   # Cổng ra ngân hàng, có Circuit Breaker. Không có database.
   integration:
     image: tbt/integration
@@ -234,12 +267,22 @@ services:
       context: ..
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: recruitment}
-    env_file: [secrets/postgres.env, secrets/internal.env, secrets/anthropic.env, secrets/gemini.env, secrets/garage.env, secrets/identity.env]
+    env_file:
+      - secrets/postgres.env
+      - secrets/internal.env
+      - secrets/anthropic.env
+      - secrets/gemini.env
+      - secrets/garage.env
+      - secrets/identity.env
+      # Gửi email phỏng vấn qua SMTP (SMTP_USER, SMTP_PASSWORD); không có file thì email nằm chờ
+      - path: secrets/smtp.env
+        required: false
     environment:
       <<: *service-env
       DB_NAME: recruitment_db
+      PAYROLL_URL: http://payroll:8080
       S3_INTERNAL_ENDPOINT: http://garage:3900
-      S3_PUBLIC_ENDPOINT: http://localhost:${S3_PORT}
+      S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:${S3_PORT}}
       S3_BUCKET: tbt-cv
       CANDIDATE_SHEET_URL: ""
       # Keycloak ở Hub, để cấp tài khoản cho nhân viên mới tuyển.
@@ -284,7 +327,7 @@ services:
       REGION: ${REGION}
       DB_PRIMARY_HOST: postgres-primary
       DB_PORT: "5432"
-      SYNC_SERVICES: attendance,payroll,recruitment,finance,project_contract
+      SYNC_SERVICES: hr,attendance,payroll,recruitment,finance,project_contract,admin
       HUB_AUDIT_URL: http://host.docker.internal:8195/events
       DATASTORE_URL: http://host.docker.internal:8197/internal/ingest
       FIRESTORE_SA: /run/secrets/firestore.json

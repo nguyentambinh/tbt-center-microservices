@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/locale/l10n_names.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/locale/locale_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode.dart';
@@ -31,6 +32,8 @@ class SettingsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings)),
+      // Mở từ màn đăng nhập thì chưa có thanh điều hướng
+      bottomNavigationBar: ref.watch(authControllerProvider).value == null ? null : const TbtBottomNav(current: Routes.settings),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

@@ -12,7 +12,11 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
 import 'package:recruitment_service/src/dependencies.dart';
 import 'package:recruitment_service/src/identity/hiring.dart';
+import 'package:recruitment_service/src/identity/signup.dart';
 import 'package:recruitment_service/src/imports/import_repository.dart';
+import 'package:recruitment_service/src/interviews.dart';
+import 'package:recruitment_service/src/offer.dart';
+import 'package:recruitment_service/src/positions.dart';
 import 'package:recruitment_service/src/storage/cv_storage.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -35,14 +39,20 @@ Handler middleware(Handler handler) {
 
   return ((RequestContext context) {
         final uri = context.request.uri;
-        if (uri.path == '/') return handler(context);
+        if (uri.path == '/' || uri.path.startsWith('/signup/')) {
+          return handler(context);
+        }
         if (isInternalPath(uri)) return internal(context);
         return protected(context);
       })
       .use(provider<CandidateRepository>((_) => candidateRepository))
+      .use(provider<PositionRepository>((_) => positionRepository))
+      .use(provider<Signup>((_) => signup))
       .use(provider<ImportRepository>((_) => importRepository))
       .use(provider<CvStorage>((_) => cvStorage))
       .use(provider<Hiring>((_) => hiring))
+      .use(provider<InterviewRepository>((_) => interviewRepository))
+      .use(provider<OfferAdvisor>((_) => offerAdvisor))
       .use(correlationAndErrors())
       .use(metrics('recruitment'))
       .use(serviceRegistry('recruitment'));

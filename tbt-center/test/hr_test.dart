@@ -28,7 +28,7 @@ class FakeEmployeeRepository implements EmployeeRepository {
   bool failDetail = false;
 
   @override
-  Future<EmployeePage> search({String query = '', int page = 1}) async {
+  Future<EmployeePage> search({String query = '', int page = 1, EmployeeFilter filter = const EmployeeFilter()}) async {
     queries.add(query);
     final items = [_an, _binh].where((e) => query.isEmpty || e.givenName.contains(query)).toList();
     return EmployeePage(items: items, total: items.length, page: page);

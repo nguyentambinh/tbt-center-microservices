@@ -42,7 +42,7 @@ class _LeaveFormState extends ConsumerState<_LeaveForm> {
   }
 
   Future<void> _pickDates() async {
-    final now = DateTime.now();
+    final now = ref.read(regionTodayProvider);
     final picked = await showDateRangePicker(
       context: context,
       firstDate: now.subtract(const Duration(days: 30)),

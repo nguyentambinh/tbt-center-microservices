@@ -29,7 +29,7 @@ class StaffAccount {
   final String employeeId;
 }
 
-/// Mật khẩu tạm chỉ có khi vừa tạo tài khoản
+/// Mật khẩu ngẫu nhiên cấp lúc nhận việc, gửi email cho nhân viên
 typedef GrantedAccount = ({String subject, String? temporaryPassword});
 
 class IdentityException implements Exception {
@@ -44,8 +44,18 @@ class IdentityException implements Exception {
 abstract interface class IdentityAdmin {
   bool get configured;
 
-  /// Đổi ứng viên thành nhân viên
+  /// Đổi ứng viên thành nhân viên, cấp mật khẩu ngẫu nhiên mới
   Future<GrantedAccount> grantEmployee(StaffAccount account, {String? subject});
+
+  Future<bool> emailTaken(String email);
+
+  /// Tài khoản ứng viên sau khi đã xác nhận email
+  Future<void> createCandidate({
+    required String email,
+    required String fullName,
+    required String phone,
+    required String password,
+  });
 }
 
 /// Keycloak Admin API qua client tbt-identity
@@ -83,11 +93,16 @@ class KeycloakAdmin implements IdentityAdmin {
     String? subject,
   }) async {
     final token = await _token();
-    String? temporaryPassword;
+    final password = _randomPassword();
     var id = subject ?? await _findByEmail(token, account.email);
     if (id == null) {
-      temporaryPassword = _randomPassword();
-      id = await _create(token, account, temporaryPassword);
+      id = await _create(token, account, password);
+    } else {
+      await _send('PUT', 'users/$id/reset-password', token, {
+        'type': 'password',
+        'value': password,
+        'temporary': false,
+      });
     }
 
     final user = await _object('users/$id', token);
@@ -124,7 +139,35 @@ class KeycloakAdmin implements IdentityAdmin {
     if (drop.isNotEmpty) {
       await _send('DELETE', 'users/$id/role-mappings/realm', token, drop);
     }
-    return (subject: id, temporaryPassword: temporaryPassword);
+    return (subject: id, temporaryPassword: password);
+  }
+
+  @override
+  Future<bool> emailTaken(String email) async =>
+      await _findByEmail(await _token(), email) != null;
+
+  @override
+  Future<void> createCandidate({
+    required String email,
+    required String fullName,
+    required String phone,
+    required String password,
+  }) async {
+    final token = await _token();
+    // Tạo bằng Admin API thì vai trò mặc định (candidate) tự gán
+    await _send('POST', 'users', token, {
+      'username': email,
+      'email': email,
+      'enabled': true,
+      'emailVerified': true,
+      'firstName': fullName,
+      'attributes': {
+        'phone': [phone],
+      },
+      'credentials': [
+        {'type': 'password', 'value': password, 'temporary': false},
+      ],
+    });
   }
 
   // Chỉ gửi id, tên vai trò; mô tả dạng ${role_...} làm WAF chặn nhầm
@@ -154,7 +197,7 @@ class KeycloakAdmin implements IdentityAdmin {
       'enabled': true,
       'emailVerified': true,
       'credentials': [
-        {'type': 'password', 'value': password, 'temporary': true},
+        {'type': 'password', 'value': password, 'temporary': false},
       ],
     });
     final id = await _findByEmail(token, account.email);

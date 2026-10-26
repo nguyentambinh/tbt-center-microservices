@@ -1235,5 +1235,1637 @@
     }
   },
   "manualIpCleared": "Đã dùng lại IP thật",
-  "manualIpReset": "Dùng IP thật"
+  "manualIpReset": "Dùng IP thật",
+  "moreNotifications": "và {count} thông báo khác",
+  "@moreNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterAll": "Tất cả",
+  "filterStatus": "Trạng thái",
+  "filterType": "Loại",
+  "filterRead": "Đã đọc",
+  "filterUnread": "Chưa đọc",
+  "profileTab": "Cá nhân",
+  "myProfile": "Thông tin cá nhân",
+  "proposeChange": "Đề xuất sửa thông tin",
+  "proposeChangeHint": "Chỉ sửa ô cần đổi. HR duyệt xong thông tin mới được cập nhật.",
+  "changeReason": "Lý do (không bắt buộc)",
+  "sendRequest": "Gửi đề xuất",
+  "changeRequestSent": "Đã gửi đề xuất, chờ HR duyệt",
+  "changeRequestPending": "Bạn đang có một đề xuất chờ HR duyệt",
+  "changeRequestNoChange": "Bạn chưa sửa ô nào",
+  "changeHistory": "Lịch sử đề xuất",
+  "changeRequests": "Đề xuất sửa hồ sơ",
+  "changeRequestsHint": "Nhân viên đề xuất sửa thông tin cá nhân",
+  "pendingChangeRequests": "{count} đề xuất sửa hồ sơ",
+  "@pendingChangeRequests": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noChangeRequests": "Không có đề xuất nào",
+  "oldValue": "Cũ",
+  "newValue": "Mới",
+  "decisionNote": "Ghi chú cho nhân viên (không bắt buộc)",
+  "fieldFacebook": "Facebook",
+  "fieldXHandle": "Tài khoản X",
+  "accountInfo": "Tài khoản",
+  "nProfileChangeRequested": "{employee} đề xuất sửa thông tin cá nhân",
+  "@nProfileChangeRequested": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "nProfileChangeApproved": "HR đã duyệt đề xuất sửa thông tin của bạn",
+  "nProfileChangeRejected": "HR từ chối đề xuất sửa thông tin: {note}",
+  "@nProfileChangeRejected": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidAmount": "Giá trị không hợp lệ",
+  "invalidEmail": "Email không hợp lệ",
+  "todoProfileChanges": "{count} đề xuất sửa hồ sơ",
+  "@todoProfileChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "departments": "Phòng ban",
+  "departmentsHint": "Điều chuyển, trưởng phòng, giải thể",
+  "departmentAdd": "Thêm phòng ban",
+  "departmentName": "Tên phòng ban",
+  "departmentNameTaken": "Công ty này đã có phòng ban cùng tên",
+  "departmentCreated": "Đã thêm phòng {name}",
+  "@departmentCreated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "departmentEmpty": "Phòng ban chưa có ai",
+  "departmentHead": "Trưởng phòng",
+  "departmentHeadIs": "Trưởng phòng: {name}",
+  "@departmentHeadIs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "departmentMembers": "{count} người",
+  "@departmentMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noHead": "Chưa có trưởng phòng",
+  "noDepartments": "Chưa có phòng ban nào",
+  "sortedByHours": "Trưởng phòng đứng đầu, còn lại theo tổng giờ làm",
+  "setHead": "Giao làm trưởng phòng",
+  "headAssigned": "{name} đã làm trưởng phòng",
+  "@headAssigned": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "moveToDepartment": "Điều chuyển sang phòng khác",
+  "moveHere": "Chuyển vào phòng",
+  "transferDone": "Đã chuyển sang {name}",
+  "@transferDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "addMembers": "Thêm người vào phòng",
+  "addMembersFrom": "Lấy người từ phòng nào?",
+  "addMembersTitle": "Chuyển vào {name}",
+  "@addMembersTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "membersMoved": "Đã chuyển {count} người",
+  "@membersMoved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "membersMovedPartly": "Đã chuyển {moved} người, {failed} người không chuyển được",
+  "@membersMovedPartly": {
+    "placeholders": {
+      "moved": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "dissolveDepartment": "Giải thể phòng ban",
+  "dissolveTitle": "Giải thể {name}?",
+  "@dissolveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dissolveReason": "Lý do giải thể",
+  "dissolveNoLongerNeeded": "Không còn nhu cầu",
+  "dissolveRestructured": "Cơ cấu lại hoặc sáp nhập",
+  "dissolveUnderperforming": "Hoạt động kém hiệu quả",
+  "dissolveOutsourced": "Chuyển sang thuê ngoài",
+  "dissolveBusinessClosed": "Thu hẹp hoặc đóng cửa mảng kinh doanh",
+  "dissolveMembersMove": "Phòng còn {count} người, chọn phòng nhận lại họ",
+  "@dissolveMembersMove": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseReceivingDepartment": "Chọn phòng nhận",
+  "dissolveConfirm": "Giải thể",
+  "dissolveDone": "Đã giải thể {name}",
+  "@dissolveDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unassignedStaff": "Người mới chưa có phòng",
+  "unassignedCount": "{count} người mới chưa có phòng ban",
+  "@unassignedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unassignedHint": "Để AI gợi ý xếp phòng hoặc lập phòng mới",
+  "noUnassigned": "Ai cũng đã có phòng ban",
+  "aiSuggestPlacement": "AI gợi ý xếp phòng",
+  "aiThinking": "AI đang xem xét...",
+  "suggestionByAi": "Gợi ý do AI đưa ra, HR quyết định cuối cùng",
+  "suggestionByRules": "AI đang bận, gợi ý theo chức vụ trùng nhiều nhất",
+  "suggestedDepartment": "Gợi ý: {name}",
+  "@suggestedDepartment": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "acceptSuggestion": "Đồng ý",
+  "chooseOther": "Chọn phòng khác",
+  "chooseDepartment": "Chọn phòng ban",
+  "newDepartmentProposals": "Đề xuất lập phòng mới",
+  "createDepartmentAndMove": "Lập phòng và chuyển người",
+  "rankings": "Nhân viên xuất sắc",
+  "rankingsHint": "Xếp hạng theo giờ làm, đề cử thăng chức",
+  "rankingFormula": "Điểm = giờ thường + 1,5 × giờ tăng ca + 2 × số ngày công",
+  "rankingDetail": "{work} giờ · {overtime} giờ tăng ca · {days} ngày",
+  "@rankingDetail": {
+    "placeholders": {
+      "work": {
+        "type": "String"
+      },
+      "overtime": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "points": "điểm",
+  "noRankings": "Chưa có dữ liệu chấm công trong khoảng này",
+  "lastMonths": "{count} tháng gần nhất",
+  "@lastMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterPeriod": "Khoảng thời gian",
+  "filterDepartment": "Phòng ban",
+  "filterPosition": "Chức vụ",
+  "filterCompany": "Công ty",
+  "filterRegion": "Khu vực",
+  "statusWorking": "Đang làm",
+  "statusArchived": "Đã bảo lưu",
+  "viewProfile": "Xem hồ sơ",
+  "nominatePromotion": "Đề cử thăng chức",
+  "nominateTitle": "Đề cử {name}",
+  "@nominateTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "proposedPosition": "Chức vụ đề xuất",
+  "raisePercent": "Mức tăng lương",
+  "raisePercentInvalid": "Nhập từ 0,1 đến 100",
+  "nominationReason": "Lý do đề cử",
+  "sendToExecutives": "Gửi Ban lãnh đạo",
+  "nominationSent": "Đã gửi đề cử lên Ban lãnh đạo",
+  "nominations": "Đề cử thăng chức",
+  "nominationsHint": "Ban lãnh đạo duyệt, tăng chức và lương",
+  "noNominations": "Không có đề cử nào",
+  "raiseBy": "Tăng lương {percent}%",
+  "@raiseBy": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "approvePromotion": "Duyệt thăng chức",
+  "approvePromotionHint": "{name} sẽ lên {position} và được tăng {percent}% lương cơ bản.",
+  "@approvePromotionHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "position": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "promotionApproved": "Đã duyệt: đổi chức vụ và tăng lương",
+  "promotionApprovedNoRaise": "Đã đổi chức vụ, tăng lương chưa xong, thử lại ở Lương",
+  "promotionRejected": "Đã từ chối đề cử",
+  "todoNominations": "{count} đề cử thăng chức chờ duyệt",
+  "@todoNominations": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "archiveProfile": "Bảo lưu hồ sơ",
+  "archiveTitle": "Bảo lưu hồ sơ {name}?",
+  "@archiveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "archiveProjectsWarning": "Người này đang ở {count} dự án. Bảo lưu sẽ rút khỏi tất cả:",
+  "@archiveProjectsWarning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "archiveNoProjects": "Người này không ở dự án nào.",
+  "archiveKeepsPersonal": "Thông tin cá nhân vẫn được giữ, có thể khôi phục sau.",
+  "archiveReason": "Lý do bảo lưu",
+  "archiveConfirm": "Bảo lưu",
+  "archiveDone": "Đã bảo lưu, rút khỏi {count} dự án",
+  "@archiveDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "profileArchivedBanner": "Hồ sơ đang bảo lưu. Lý do: {reason}",
+  "@profileArchivedBanner": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "restoreProfile": "Khôi phục",
+  "restoreDone": "Đã khôi phục hồ sơ",
+  "fieldRequired": "Không được để trống",
+  "errIsHead": "Trưởng phòng phải giao lại cho người khác trước khi chuyển đi",
+  "errLastMember": "Phòng ban phải còn ít nhất một người",
+  "errSameDepartment": "Nhân viên đã ở phòng này rồi",
+  "errArchived": "Hồ sơ đang bảo lưu, khôi phục trước đã",
+  "errNotArchived": "Hồ sơ này không bảo lưu",
+  "errMembersRemaining": "Phòng còn người, chọn phòng nhận lại họ",
+  "errNotMember": "Người này không thuộc phòng ban",
+  "errPendingExists": "Đã có một yêu cầu đang chờ duyệt",
+  "errServiceUnavailable": "Một phần hệ thống đang bận, thử lại sau ít phút",
+  "nPromotionNominated": "{employee} được đề cử lên {position}, chờ duyệt",
+  "@nPromotionNominated": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      },
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "nPromotionApproved": "Chúc mừng! Bạn được thăng chức lên {position}",
+  "@nPromotionApproved": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "nPromotionRejected": "Đề cử lên {position} chưa được duyệt",
+  "@nPromotionRejected": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "nPromotionApprovedHr": "Ban lãnh đạo đã duyệt thăng chức cho {employee}",
+  "@nPromotionApprovedHr": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "nPromotionRejectedHr": "Ban lãnh đạo không duyệt thăng chức cho {employee}",
+  "@nPromotionRejectedHr": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "nEmployeeTransferred": "Bạn đã được điều chuyển sang phòng ban mới",
+  "nDepartmentHeadAssigned": "Bạn được giao làm trưởng phòng",
+  "memberHours": "{hours} giờ",
+  "@memberHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "stageInterviewed": "Đã phỏng vấn",
+  "interviewAwaitingCandidate": "Chờ ứng viên xác nhận",
+  "interviewAwaitingHr": "Chờ HR xác nhận lại",
+  "interviewConfirmed": "Đã xác nhận",
+  "interviewCancelled": "Đã hủy",
+  "interviewSchedule": "Lịch phỏng vấn",
+  "minutesAttached": "Biên bản: {name}",
+  "@minutesAttached": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chooseInterviewTime": "Chọn ngày giờ",
+  "errTimeInPast": "Giờ phỏng vấn phải sau thời điểm hiện tại",
+  "interviewLocation": "Địa điểm hoặc link họp",
+  "send": "Gửi",
+  "rejectCandidate": "Từ chối",
+  "rejectCandidateHint": "Từ chối hồ sơ {name}? Sau này vẫn xem xét lại được.",
+  "@rejectCandidateHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleInterview": "Hẹn phỏng vấn",
+  "scheduleAgain": "Hẹn lại phỏng vấn",
+  "interviewSent": "Đã gửi lịch, đang chờ bên kia xác nhận",
+  "proposeOtherTime": "Đề xuất giờ khác",
+  "confirmTime": "Xác nhận giờ này",
+  "interviewConfirmedDone": "Đã xác nhận lịch phỏng vấn",
+  "uploadMinutes": "Tải biên bản phỏng vấn",
+  "minutesUploaded": "Đã lưu biên bản, hồ sơ chuyển sang đã phỏng vấn",
+  "minutesAfterInterview": "Qua giờ phỏng vấn mới tải được biên bản (Word, Excel)",
+  "openMinutes": "Mở biên bản",
+  "moveToScreening": "Chuyển sang sàng lọc",
+  "reconsider": "Xem xét lại",
+  "reconsidered": "Hồ sơ đã quay về bước trước lúc từ chối",
+  "waitingCandidateReply": "Đang chờ ứng viên xác nhận hoặc đề xuất giờ khác",
+  "waitingHrReply": "Đang chờ HR xác nhận giờ bạn đề xuất",
+  "hiredSalaryPending": "Chưa lưu được lương thỏa thuận, cần nhập lại ở màn Lương",
+  "offerFromAi": "AI gợi ý",
+  "offerFromRules": "Gợi ý theo dữ liệu",
+  "offerPeerMedian": "Lương ở giữa của những người cùng chức vụ, phòng có nhiều người cùng chức vụ nhất",
+  "offerRegionMedian": "Chưa có ai cùng chức vụ: lương ở giữa của khu vực, phòng đông người nhất",
+  "agreedSalary": "Lương cơ bản thỏa thuận",
+  "currency": "Tiền tệ",
+  "errInvalidStep": "Hồ sơ không thể chuyển như vậy ở bước hiện tại, tải lại để xem bước mới nhất",
+  "errNotScreened": "Cần sàng lọc hồ sơ trước khi hẹn phỏng vấn",
+  "errInterviewNotConfirmed": "Lịch phỏng vấn chưa được xác nhận",
+  "errNotInterviewed": "Cần tải biên bản phỏng vấn trước khi nhận việc",
+  "errNotRejected": "Hồ sơ này chưa bị từ chối",
+  "errInvalidOffer": "Lương thỏa thuận phải lớn hơn 0 và có mã tiền tệ",
+  "errMinutesFile": "Biên bản phải là tệp Word hoặc Excel",
+  "nInterviewScheduled": "Lịch phỏng vấn {position} lúc {time}, mở để xác nhận",
+  "@nInterviewScheduled": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nInterviewConfirmed": "Lịch phỏng vấn lúc {time} đã được xác nhận",
+  "@nInterviewConfirmed": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nInterviewConfirmedHr": "Ứng viên {position} đã chốt lịch phỏng vấn lúc {time}",
+  "@nInterviewConfirmedHr": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nInterviewProposed": "Ứng viên {position} đề xuất phỏng vấn lúc {time}",
+  "@nInterviewProposed": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "projectTier": "Phân cấp",
+  "tierSmall": "Cấp 1 · Nhỏ",
+  "tierMedium": "Cấp 2 · Vừa",
+  "tierLarge": "Cấp 3 · Lớn",
+  "tierStrategic": "Cấp 4 · Trọng điểm",
+  "tierRule": "Tối đa {months} tháng, ít nhất {members} người",
+  "@tierRule": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      },
+      "members": {
+        "type": "int"
+      }
+    }
+  },
+  "warnRed": "Còn ≤ 1 tháng",
+  "warnOrange": "Còn ≤ 6 tháng",
+  "warnYellow": "Còn ≤ 12 tháng",
+  "warnNotStarted": "Chưa bắt đầu",
+  "warnAccepted": "Đã nghiệm thu",
+  "warnNormal": "Còn hơn 12 tháng",
+  "projectCharts": "Biểu đồ dự án",
+  "chart2d": "2D",
+  "chart3d": "3D",
+  "chartTimeline": "Thời gian",
+  "chartProgress": "Tiến độ",
+  "chartMembers": "Số người",
+  "chartValue": "Giá trị",
+  "thousandUsd": "nghìn USD",
+  "projectProposals": "Đề xuất dự án",
+  "projectNew": "Tạo dự án",
+  "wizardFiles": "Hợp đồng và ảnh",
+  "wizardFilesHint": "Tải hợp đồng theo mẫu (PDF hoặc Word), AI sẽ đọc và điền sẵn thông tin; không có hợp đồng thì nhập tay ở bước sau.",
+  "wizardInfo": "Thông tin dự án",
+  "wizardMembers": "Nhân viên tham gia",
+  "wizardSend": "Gửi Ban lãnh đạo",
+  "downloadContractTemplate": "Tải mẫu hợp đồng",
+  "uploadContract": "Tải hợp đồng lên",
+  "uploadProjectImage": "Tải ảnh công trình",
+  "contractReadByAi": "AI đã đọc hợp đồng và điền sẵn, kiểm lại ở bước sau",
+  "contractReadManual": "Chưa đọc được hợp đồng tự động, vui lòng nhập tay ở bước sau",
+  "projectName": "Tên dự án",
+  "customerName": "Khách hàng",
+  "customerCompany": "Doanh nghiệp",
+  "customerIndividual": "Cá nhân",
+  "customerContact": "Liên hệ khách hàng (email hoặc điện thoại)",
+  "contractType": "Loại hợp đồng",
+  "contractValue": "Giá trị hợp đồng",
+  "depositAmount": "Tạm ứng",
+  "startDate": "Bắt đầu",
+  "endDate": "Kết thúc",
+  "acceptanceDate": "Nghiệm thu",
+  "propErrName": "Cần tên dự án",
+  "propErrCustomer": "Cần tên khách hàng",
+  "propErrValue": "Giá trị hợp đồng phải lớn hơn 0",
+  "propErrDeposit": "Tạm ứng không được âm hay lớn hơn giá trị hợp đồng",
+  "propErrDates": "Cần ngày bắt đầu và ngày kết thúc",
+  "propErrStartPast": "Ngày bắt đầu không được trước hôm nay",
+  "propErrEndBeforeStart": "Ngày kết thúc phải sau ngày bắt đầu",
+  "propErrAcceptance": "Nghiệm thu phải từ ngày kết thúc tới 90 ngày sau",
+  "propErrTooLong": "Dự án cấp này làm quá thời gian tối đa",
+  "propErrFewMembers": "Chưa đủ số người tối thiểu của cấp này",
+  "membersNeeded": "Cần ít nhất {min} người · đã chọn {picked}",
+  "@membersNeeded": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "picked": {
+        "type": "int"
+      }
+    }
+  },
+  "suggestMembers": "AI gợi ý nhân viên",
+  "activeProjects": "{count} dự án đang làm",
+  "@activeProjects": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "next": "Tiếp",
+  "back": "Quay lại",
+  "sendToExecutive": "Gửi duyệt",
+  "proposalSent": "Đã gửi đề xuất, chờ Ban lãnh đạo duyệt",
+  "noProposals": "Chưa có đề xuất dự án",
+  "proposalVersion": "Bản {version}",
+  "@proposalVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "propAwaitingExecutive": "Chờ Ban lãnh đạo",
+  "propAwaitingProposer": "Chờ bên lập xác nhận",
+  "propApproved": "Đã duyệt",
+  "propRejected": "Đã từ chối",
+  "proposalEdit": "Sửa đề xuất",
+  "proposalNoteHint": "Lý do hoặc điều cần sửa",
+  "proposalApprovedDone": "Đã duyệt, dự án {id} đã được tạo",
+  "@proposalApprovedDone": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "acceptEdits": "Đồng ý bản sửa",
+  "withdrawProposal": "Rút đề xuất",
+  "waitingOtherSide": "Đang chờ bên kia trả lời",
+  "openContract": "Mở hợp đồng",
+  "openImage": "Mở ảnh",
+  "openProject": "Mở dự án",
+  "propActSubmitted": "Gửi đề xuất",
+  "propActCounter": "Sửa lại đề xuất",
+  "propActApprove": "Đồng ý",
+  "propActReject": "Từ chối",
+  "propActWithdraw": "Rút đề xuất",
+  "todoProposals": "{count} đề xuất dự án chờ duyệt",
+  "nProjectProposed": "Đề xuất dự án mới cần duyệt: {name}",
+  "@nProjectProposed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nProjectCountered": "Ban lãnh đạo đã sửa đề xuất {name}, cần bạn xác nhận",
+  "@nProjectCountered": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nProjectApproved": "Dự án {name} đã được duyệt và tạo",
+  "@nProjectApproved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nProjectRejected": "Đề xuất dự án {name} bị từ chối",
+  "@nProjectRejected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@todoProposals": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "workCalendar": "Lịch làm việc",
+  "clockStats": "Biểu đồ chấm công",
+  "shiftHours": "Ca {start}–{end}",
+  "@shiftHours": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "errShiftEnded": "Đã qua giờ kết thúc ca nên không chấm vào được nữa",
+  "errTooManyFiles": "Mỗi đơn chỉ đính kèm tối đa 5 tệp",
+  "errFileType": "Loại tệp không được nhận, hãy chọn đúng loại tệp yêu cầu",
+  "addEvidence": "Thêm minh chứng",
+  "viewOriginalLeave": "Xem đơn gốc ({count})",
+  "@viewOriginalLeave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "evidenceUploaded": "Đã thêm minh chứng, AI đang tóm tắt cho HR",
+  "noEvidence": "Chưa có minh chứng",
+  "aiLeaveSummary": "AI tóm tắt minh chứng",
+  "evidenceMatches": "Khớp lý do nghỉ",
+  "evidenceCheck": "Cần xem kỹ",
+  "calWorked": "Đã làm",
+  "calLeave": "Nghỉ phép",
+  "calHoliday": "Ngày lễ",
+  "calAbsent": "Vắng không phép",
+  "calScheduled": "Có ca",
+  "calLeaveOfType": "Nghỉ: {type}",
+  "@calLeaveOfType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "noShiftThisDay": "Không có ca ngày này",
+  "estimatedDayPay": "Tiền ước tính hôm nay: {amount}",
+  "@estimatedDayPay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "estimatedMonthPay": "Tiền ước tính theo giờ làm: {amount}",
+  "@estimatedMonthPay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "payEstimateHint": "Tính theo lương cơ bản, 26 ngày công, tăng ca 150%; chưa trừ bảo hiểm, thuế",
+  "projectsThisDay": "Dự án đang tham gia",
+  "statsScopeRegion": "Cả khu vực",
+  "statsScopeMine": "Của tôi",
+  "statsDays": "Ngày đã chấm công",
+  "statsLate": "Vào trễ",
+  "statsByWeekday": "Theo thứ trong tuần",
+  "statsByHour": "Giờ vào ca",
+  "statsByMonth": "Ngày công và số lần trễ theo tháng",
+  "errPayrollTooEarly": "Kỳ lương này chưa tới hạn: lương tháng M chốt từ ngày 10 tháng M+1",
+  "errAmountLowered": "Mức đề xuất chỉ được giữ nguyên hoặc tăng, không được hạ",
+  "errNotHigher": "Mức đề xuất phải cao hơn lương hiện tại",
+  "errNoSalary": "Chưa có lương cơ bản trong hệ thống",
+  "errAwaitingAck": "Báo cáo trước đang chờ cấp trên xác nhận, chưa gửi bản mới được",
+  "acknowledge": "Xác nhận",
+  "byDay": "Ngày",
+  "byMonth": "Tháng",
+  "byYear": "Năm",
+  "costs": "Chi phí",
+  "export": "Xuất tệp",
+  "exportExcel": "Xuất Excel",
+  "exportPdf": "Xuất PDF",
+  "exportedAt": "Xuất lúc {time}",
+  "@exportedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "exportId": "Mã",
+  "exportPeriod": "Kỳ",
+  "exportRank": "Hạng",
+  "exportMargin": "Biên lãi",
+  "exportCurrency": "Tiền tệ",
+  "exportRevenueUsd": "Doanh thu (USD)",
+  "exportCostUsd": "Chi phí (USD)",
+  "exportFinanceTitle": "Thu chi năm {year}",
+  "@exportFinanceTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "financeAnalytics": "Phân tích",
+  "materialCost": "Chi vật liệu",
+  "payrollCost": "Chi lương",
+  "materialsUsed": "Vật liệu đã dùng",
+  "revenueByStage": "Doanh thu theo đợt",
+  "projectProfitRanking": "Xếp hạng dự án theo lợi nhuận",
+  "projectSalaryShares": "Lương dự án chia cho từng người",
+  "overtimePay": "Tăng ca",
+  "insuranceDeduction": "Bảo hiểm",
+  "incomeTax": "Thuế thu nhập",
+  "salaryGrowth": "Lương qua các kỳ",
+  "salaryGrowthRate": "Thực nhận {rate} sau {count} kỳ",
+  "@salaryGrowthRate": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "payrollOpensOn": "Kỳ {period} mở chốt lương từ {date}",
+  "@payrollOpensOn": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "raiseRequests": "Đề xuất tăng lương",
+  "raiseRequestsHint": "Gửi, chuyển lên, duyệt tăng lương",
+  "newRaiseRequest": "Đề xuất tăng lương",
+  "noRaiseRequests": "Chưa có đề xuất tăng lương",
+  "proposedSalary": "Lương cơ bản đề xuất",
+  "raiseMinimum": "Không thấp hơn {amount}",
+  "@raiseMinimum": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "raiseReason": "Lý do (thành tích, trách nhiệm mới...)",
+  "raiseActionTitle": "Mức lương và ghi chú",
+  "raiseSent": "Đã gửi đề xuất tăng lương",
+  "raiseForwarded": "Đã chuyển lên cấp duyệt",
+  "raiseApprovedDone": "Đã duyệt, lương cơ bản đã tăng",
+  "raiseForward": "Chuyển lên duyệt",
+  "raiseReturn": "Trả lại",
+  "raiseEdit": "Sửa mức đề xuất",
+  "raiseAwaitingHr": "Chờ HR xem",
+  "raiseAwaitingApprover": "Chờ cấp trên duyệt",
+  "raiseAwaitingEmployee": "Trả lại cho nhân viên",
+  "raiseWithdrawn": "Đã rút",
+  "raiseRequestedFirst": "Ban đầu đề xuất {amount}",
+  "@raiseRequestedFirst": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reportSubmissions": "Báo cáo gửi cấp trên",
+  "reportSubmissionsHint": "Báo cáo nhân sự, tài chính theo kỳ, chờ cấp trên xác nhận",
+  "reportHr": "Nhân sự",
+  "reportFinance": "Tài chính",
+  "noReports": "Chưa gửi báo cáo nào",
+  "submitReport": "Gửi báo cáo",
+  "submitReportTitle": "Gửi báo cáo kỳ {period}",
+  "@submitReportTitle": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "reportWaitingAck": "Đang chờ xác nhận",
+  "reportSent": "Đã gửi báo cáo lên cấp trên",
+  "reportAcknowledged": "Đã xác nhận báo cáo",
+  "returnReport": "Trả lại báo cáo",
+  "reportStatusSubmitted": "Chờ xác nhận",
+  "reportStatusAcknowledged": "Đã xác nhận",
+  "reportStatusReturned": "Bị trả lại",
+  "reportPeriod": "Báo cáo kỳ {period}",
+  "@reportPeriod": {
+    "placeholders": {
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "reportHeadcount": "{people} nhân viên, {departments} phòng ban",
+  "@reportHeadcount": {
+    "placeholders": {
+      "people": {
+        "type": "int"
+      },
+      "departments": {
+        "type": "int"
+      }
+    }
+  },
+  "reportUnassigned": "{count} người chưa có phòng ban",
+  "@reportUnassigned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportNominations": "Đề cử thăng chức: {pending} chờ, {approved} đã duyệt",
+  "@reportNominations": {
+    "placeholders": {
+      "pending": {
+        "type": "int"
+      },
+      "approved": {
+        "type": "int"
+      }
+    }
+  },
+  "resignations": "Xin thôi việc",
+  "resignationsHint": "Gửi đơn nghỉ việc, theo dõi duyệt",
+  "newResignation": "Gửi đơn",
+  "resignationLastDay": "Ngày làm cuối",
+  "resignationLastDayOn": "Ngày làm cuối: {date}",
+  "@resignationLastDayOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "resignationReason": "Lý do nghỉ việc",
+  "resignationNotice": "Báo trước ít nhất {days} ngày",
+  "@resignationNotice": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "resignationSent": "Đã gửi đơn thôi việc cho HR",
+  "noResignations": "Chưa có đơn thôi việc nào",
+  "resignationPending": "Chờ HR duyệt",
+  "resignationApproved": "Đã duyệt, chờ ngày nghỉ",
+  "resignationCompleted": "Đã nghỉ việc",
+  "resignationWithdrawn": "Đã rút đơn",
+  "resignationWithdraw": "Rút đơn",
+  "resignationComplete": "Hoàn tất nghỉ việc",
+  "resignationCompleteConfirm": "Hồ sơ {name} sẽ được bảo lưu và rút khỏi mọi dự án. Tiếp tục?",
+  "@resignationCompleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "resignationCompletedDone": "Đã hoàn tất nghỉ việc, hồ sơ chuyển vào lưu trữ",
+  "errNoticeTooShort": "Ngày làm cuối phải cách hôm nay ít nhất 30 ngày",
+  "errBeforeLastDay": "Chưa tới ngày làm cuối, chưa hoàn tất được",
+  "exportCsv": "Xuất CSV",
+  "exportJson": "Xuất JSON",
+  "auditCharts": "Biểu đồ",
+  "auditFilter": "Lọc chi tiết",
+  "auditService": "Dịch vụ",
+  "auditEventType": "Loại sự kiện",
+  "auditTime": "Thời điểm",
+  "auditFromTime": "Từ lúc",
+  "auditToTime": "Đến lúc",
+  "anyTime": "Bất kỳ",
+  "anomalyAny": "Bất thường",
+  "anomalyAfterHours": "Ngoài giờ (22h–6h)",
+  "anomalyFailure": "Thất bại, từ chối",
+  "auditTotal": "Tổng sự kiện",
+  "auditByRegion": "Theo khu vực",
+  "auditByHour": "Theo giờ địa phương (đỏ là ngoài giờ)",
+  "auditByDay": "Theo ngày",
+  "auditByType": "Loại sự kiện nhiều nhất",
+  "auditByService": "Theo dịch vụ",
+  "clearFilters": "Xóa bộ lọc",
+  "auditSignedExport": "Xuất CSV có mã SHA-256",
+  "approvalInbox": "Hộp duyệt chung",
+  "approvalInboxHint": "Dự án, thăng chức, tăng lương chờ duyệt ở 6 khu vực",
+  "approvalKindProject": "Dự án",
+  "approvalKindPromotion": "Thăng chức",
+  "approvalKindRaise": "Tăng lương",
+  "noApprovals": "Không còn đề xuất nào chờ duyệt",
+  "approvalWaiting": "{count} đề xuất chờ duyệt",
+  "@approvalWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "approvalRegionsDown": "Chưa lấy được dữ liệu của: {regions}",
+  "@approvalRegionsDown": {
+    "placeholders": {
+      "regions": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalByRegion": "Chờ duyệt theo khu vực",
+  "approvalPromotionLine": "Lên {position}, tăng {percent}% lương",
+  "@approvalPromotionLine": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalDone": "Đã ghi quyết định",
+  "approvalConfirm": "Duyệt {title}?",
+  "@approvalConfirm": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalRejectConfirm": "Từ chối {title}?",
+  "@approvalRejectConfirm": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalColKind": "Loại",
+  "approvalColTitle": "Nội dung",
+  "approvalColDetail": "Chi tiết",
+  "approvalColUpdated": "Cập nhật",
+  "jobPositions": "Vị trí tuyển dụng",
+  "jobPositionsHint": "Mở vị trí, số người cần tuyển, xem ứng viên theo điểm AI",
+  "newJobPosition": "Mở vị trí",
+  "editJobPosition": "Sửa vị trí",
+  "noJobPositions": "Chưa mở vị trí tuyển dụng nào",
+  "positionTitle": "Tên vị trí",
+  "positionDepartment": "Phòng ban",
+  "positionHeadcount": "Số người cần tuyển",
+  "positionDescription": "Mô tả công việc",
+  "positionRequirements": "Yêu cầu",
+  "positionRequirementsHint": "AI dựa vào phần này để chấm mức phù hợp của CV",
+  "positionOpen": "Đang tuyển",
+  "positionFilled": "Đã đủ người",
+  "positionClosed": "Đã đóng",
+  "closePosition": "Đóng vị trí",
+  "reopenPosition": "Mở lại",
+  "positionSaved": "Đã lưu vị trí tuyển dụng",
+  "positionApplicants": "Ứng viên (điểm AI cao trước)",
+  "positionProgress": "Đã tuyển {hired}/{headcount} · {applicants} ứng viên",
+  "@positionProgress": {
+    "placeholders": {
+      "hired": {
+        "type": "int"
+      },
+      "headcount": {
+        "type": "int"
+      },
+      "applicants": {
+        "type": "int"
+      }
+    }
+  },
+  "positionSlotsLeft": "Còn {count} chỗ",
+  "@positionSlotsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "choosePositions": "Chọn vị trí ứng tuyển",
+  "choosePositionsHint": "Bấm để chọn",
+  "choosePositionsHelper": "Chọn một hoặc nhiều vị trí, tối đa {max}",
+  "@choosePositionsHelper": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "positionsChosen": "Xong ({count} vị trí)",
+  "@positionsChosen": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "positionMatchTitle": "Mức phù hợp với vị trí (AI)",
+  "positionMatchPending": "AI đang so khớp",
+  "positionMatchNone": "Chưa so khớp",
+  "positionMatchStrengths": "Đáp ứng",
+  "positionMatchGaps": "Còn thiếu",
+  "bestMatch": "Phù hợp {score}%",
+  "@bestMatch": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "errNoPosition": "Chọn ít nhất một vị trí ứng tuyển",
+  "errTooManyPositions": "Chỉ chọn tối đa 5 vị trí",
+  "errPositionUnavailable": "Vị trí này đã đóng hoặc đã đủ người, chọn vị trí khác",
+  "errPositionTitleExists": "Đã có vị trí đang tuyển cùng tên",
+  "errInvalidHeadcount": "Số người cần tuyển từ 1 đến 500",
+  "errHeadcountBelowHired": "Đã tuyển {hired} người, không thể đặt thấp hơn",
+  "@errHeadcountBelowHired": {
+    "placeholders": {
+      "hired": {
+        "type": "int"
+      }
+    }
+  },
+  "errInvalidPosition": "Nhập tên vị trí và số người cần tuyển",
+  "nRaiseRequested": "{employee} gửi đề xuất tăng lương",
+  "@nRaiseRequested": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "nRaiseForwarded": "HR chuyển đề xuất tăng lương của {employee}, cần bạn duyệt",
+  "@nRaiseForwarded": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "nRaiseApproved": "Đề xuất tăng lương của bạn đã được duyệt",
+  "nRaiseRejected": "Đề xuất tăng lương của bạn bị từ chối",
+  "nRaiseReturned": "Đề xuất tăng lương được trả lại, mời bạn xem và sửa",
+  "nReportSubmitted": "Có báo cáo {report} kỳ {period} gửi lên cần xác nhận",
+  "@nReportSubmitted": {
+    "placeholders": {
+      "report": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nReportAcknowledged": "Báo cáo {report} kỳ {period} đã được xác nhận",
+  "@nReportAcknowledged": {
+    "placeholders": {
+      "report": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nReportReturned": "Báo cáo {report} kỳ {period} bị trả lại, xem ghi chú",
+  "@nReportReturned": {
+    "placeholders": {
+      "report": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "nResignationRequested": "{employee} xin thôi việc, ngày làm cuối {date}",
+  "@nResignationRequested": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nResignationApproved": "Đơn thôi việc của bạn đã được duyệt, ngày làm cuối {date}",
+  "@nResignationApproved": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "nResignationRejected": "Đơn thôi việc của bạn không được duyệt",
+  "nResignationWithdrawn": "{employee} đã rút đơn thôi việc",
+  "@nResignationWithdrawn": {
+    "placeholders": {
+      "employee": {
+        "type": "String"
+      }
+    }
+  },
+  "reportKindHr": "nhân sự",
+  "reportKindFinance": "tài chính",
+  "openFullPage": "Mở màn đầy đủ",
+  "requestAlreadyHandled": "Đơn này đã được xử lý",
+  "requestFrom": "Người gửi",
+  "waitingSuperior": "Chờ cấp trên duyệt",
+  "signupTitle": "Đăng ký tài khoản ứng viên",
+  "signupHint": "Nhập thông tin thật của bạn. Mã xác nhận 6 số sẽ gửi về email này.",
+  "sendCode": "Gửi mã xác nhận",
+  "codeSentTo": "Đã gửi mã tới {email}, kiểm tra cả thư mục Spam",
+  "@codeSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verificationCode": "Mã xác nhận (6 số)",
+  "newPassword": "Mật khẩu",
+  "passwordRule": "Ít nhất 8 ký tự, có cả chữ và số",
+  "confirmPassword": "Nhập lại mật khẩu",
+  "createAccount": "Xác nhận và tạo tài khoản",
+  "resendCode": "Gửi lại mã",
+  "resendIn": "Gửi lại mã sau {seconds} giây",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "editDetails": "Sửa họ tên, email, số điện thoại",
+  "signupDone": "Đã tạo tài khoản, mời bạn đăng nhập",
+  "changePassword": "Đổi mật khẩu",
+  "passwordChanged": "Đã đổi mật khẩu",
+  "profileViewed": "Hồ sơ của bạn đã được xem",
+  "profileViewedHint": "HR đã mở xem hồ sơ nên bạn không sửa thông tin, đổi CV được nữa",
+  "cvRequired": "Đính kèm CV (PDF) để lưu hồ sơ",
+  "accountDetails": "Thông tin từ tài khoản đăng ký",
+  "errInvalidEmail": "Email không hợp lệ",
+  "errInvalidName": "Họ tên từ 2 đến 80 ký tự",
+  "errInvalidPhone": "Số điện thoại không hợp lệ",
+  "errWeakPassword": "Mật khẩu cần ít nhất 8 ký tự, có cả chữ và số",
+  "errEmailTaken": "Email này đã có tài khoản, hãy đăng nhập",
+  "errCodeTooSoon": "Vừa gửi mã, chờ 60 giây rồi gửi lại",
+  "errCodeExpired": "Mã đã hết hạn hoặc nhập sai quá nhiều lần, hãy gửi lại mã",
+  "errWrongCode": "Mã xác nhận không đúng",
+  "errSignupUnavailable": "Chưa gửi được email lúc này, thử lại sau ít phút",
+  "projectTime": "Thời gian",
+  "me": "Tôi",
+  "myProjectPay": "Tiền dự án của tôi: {amount}",
+  "@myProjectPay": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mySchedule": "Lịch làm việc của tôi",
+  "myScheduleHint": "Tháng này đã đi làm {days} buổi trong thời gian dự án",
+  "@myScheduleHint": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "myScheduleEarned": "Tiền ước tính theo các buổi đi làm: {amount}",
+  "@myScheduleEarned": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "notCheckedIn": "Chưa chấm công",
+  "contractRequired": "Bắt buộc tải hợp đồng (PDF, Word) để AI đọc ra thông tin dự án",
+  "attachedBonuses": "Thưởng phạt 12 tháng qua (gửi kèm đề xuất)",
+  "bonusNet": "Cộng dồn: {amount}",
+  "@bonusNet": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moreItems": "và {count} khoản khác",
+  "@moreItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "orgTree": "Sơ đồ tổ chức",
+  "orgTreeSearch": "Tìm người, chức vụ (gõ không dấu cũng được)",
+  "orgTreeSummary": "{departments} phòng ban · {people} người",
+  "@orgTreeSummary": {
+    "placeholders": {
+      "departments": {
+        "type": "int"
+      },
+      "people": {
+        "type": "int"
+      }
+    }
+  },
+  "orgTreeToggle": "Thu gọn hoặc mở tất cả",
+  "level1": "Nhân viên",
+  "level2": "Chuyên viên, kỹ sư",
+  "level3": "Chỉ huy, phó phòng",
+  "level4": "Trưởng phòng, quản lý",
+  "level5": "Giám đốc khối",
+  "level6": "Ban lãnh đạo",
+  "noHigherPosition": "Người này đã ở cấp cao nhất trong cây chức vụ",
+  "errNotHigherPosition": "Chỉ đề cử lên chức vụ cấp cao hơn hiện tại",
+  "errUnknownPosition": "Chọn chức vụ trong danh sách",
+  "overtimeApprovedToday": "Tăng ca đã duyệt {hours} giờ: làm tới {until} vẫn được tính",
+  "@overtimeApprovedToday": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "until": {
+        "type": "String"
+      }
+    }
+  },
+  "overtimePendingToday": "Đơn tăng ca {hours} giờ đang chờ duyệt: chưa được tính cho tới khi duyệt",
+  "@overtimePendingToday": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "overtimeNoneToday": "Chưa có đơn tăng ca được duyệt: làm quá giờ ca sẽ không được tính",
+  "viewZoomIn": "Phóng to",
+  "viewZoomOut": "Thu nhỏ",
+  "viewFromTop": "Nhìn từ trên xuống",
+  "viewFromBottom": "Nhìn từ dưới lên",
+  "viewRotateLeft": "Xoay trái",
+  "viewRotateRight": "Xoay phải",
+  "viewReset": "Về góc nhìn ban đầu",
+  "sectionGroup": "Tập đoàn",
+  "sectionAdmin": "Quản trị",
+  "roleGroup": "Cấp tập đoàn",
+  "groupOverview": "Tổng quan tập đoàn",
+  "groupOverviewHint": "Số liệu từng nước, bấm vào một nước để xem chi tiết",
+  "adminConsole": "Quản trị dữ liệu",
+  "adminConsoleHint": "Tài khoản, lịch làm việc, chức vụ, thống kê, sao lưu, SQL",
+  "viewingRegion": "Đang xem: {region}",
+  "@viewingRegion": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+  "chooseRegion": "Chọn khu vực cần xem",
+  "approvalKindLeave": "Đơn nghỉ",
+  "approvalKindOvertime": "Tăng ca",
+  "approvalKindProfile": "Sửa hồ sơ",
+  "approvalKindResignation": "Thôi việc",
+  "groupTotals": "Toàn tập đoàn",
+  "groupEmployees": "Nhân viên",
+  "groupRevenueYtd": "Doanh thu năm nay (USD)",
+  "groupCostYtd": "Chi phí năm nay (USD)",
+  "groupRegionDown": "Chưa lấy được số liệu của nước này, kéo xuống để thử lại",
+  "execActions": "Làm thẳng",
+  "execChangePosition": "Thăng chức, đổi chức vụ",
+  "execPromote": "Thăng chức",
+  "execChangeOnly": "Đổi chức vụ",
+  "execNewPosition": "Chức vụ mới",
+  "execNoHigherPosition": "Không còn chức vụ cấp cao hơn để thăng",
+  "execReason": "Lý do (ghi vào sổ kiểm toán)",
+  "execReasonRequired": "Lý do (bắt buộc)",
+  "execSalary": "Đổi lương cơ bản",
+  "execCurrentSalary": "Lương cơ bản hiện tại: {amount}",
+  "@execCurrentSalary": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "execNewSalary": "Lương cơ bản mới",
+  "execBonus": "Thưởng, phạt",
+  "execBonusKind": "Thưởng",
+  "execPenaltyKind": "Phạt",
+  "execAmount": "Số tiền (theo tiền lương của nhân viên)",
+  "execApply": "Áp dụng ngay",
+  "execAuditNote": "Có hiệu lực ngay, không qua ai duyệt; ghi vào sổ kiểm toán kèm tên người thực hiện.",
+  "execApplied": "Đã áp dụng và ghi vào sổ kiểm toán",
+  "nominationScope": "Phạm vi",
+  "nominationScopeRegion": "Thăng chức trong nước",
+  "nominationScopeGroupHr": "Lên Nhân sự tập đoàn",
+  "nominationScopeGroupFinance": "Lên Tài chính tập đoàn",
+  "nominationGroupNote": "Văn phòng quản lý tập đoàn duyệt; duyệt xong người này làm việc được ở mọi khu vực.",
+  "nominationToGroup": "Lên cấp tập đoàn",
+  "adminTabOverview": "Tổng quan",
+  "adminTabAccounts": "Tài khoản",
+  "adminTabCalendar": "Lịch làm việc",
+  "adminTabPositions": "Chức vụ",
+  "adminTabData": "Dữ liệu",
+  "adminAccountsByRole": "Tài khoản theo vai trò",
+  "adminAccountsTotal": "{n} tài khoản",
+  "@adminAccountsTotal": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "adminDatabases": "Cơ sở dữ liệu",
+  "adminDbLine": "{tables} bảng · {rows} dòng · {size}",
+  "@adminDbLine": {
+    "placeholders": {
+      "tables": {
+        "type": "int"
+      },
+      "rows": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "adminActivity": "Hoạt động 14 ngày qua (số sự kiện)",
+  "adminRowsByDb": "Số dòng theo cơ sở dữ liệu",
+  "adminDbUnavailable": "Chưa đọc được cơ sở dữ liệu này",
+  "adminSearchAccounts": "Tìm tên, email, tên đăng nhập",
+  "adminAccountDisabled": "Đã khóa",
+  "adminEditAccount": "Sửa tài khoản {name}",
+  "@adminEditAccount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminAccountEnabled": "Cho phép đăng nhập",
+  "adminRoles": "Vai trò",
+  "adminSaved": "Đã lưu và ghi vào sổ kiểm toán",
+  "adminHolidays": "Ngày lễ",
+  "adminAddHoliday": "Thêm ngày lễ",
+  "adminHolidayName": "Tên ngày lễ",
+  "adminHolidayRemove": "Bỏ ngày lễ {name}?",
+  "@adminHolidayRemove": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminNoHolidays": "Năm này chưa có ngày lễ nào",
+  "adminShift": "Giờ ca làm",
+  "adminShiftHint": "Đổi giờ vào, giờ ra cho mọi ca trong khoảng ngày (chỉ từ hôm nay trở đi, công đã chấm giữ nguyên)",
+  "adminShiftChange": "Đổi giờ ca",
+  "adminShiftStart": "Giờ vào",
+  "adminShiftEnd": "Giờ ra",
+  "adminShiftRange": "Khoảng ngày",
+  "adminShiftDone": "Đã đổi giờ cho {n} ca làm",
+  "@adminShiftDone": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "adminAddPosition": "Thêm chức vụ",
+  "adminEditPosition": "Sửa chức vụ",
+  "adminPositionName": "Tên chức vụ",
+  "adminPositionLevel": "Cấp",
+  "adminCoefficient": "Hệ số lương",
+  "adminHolders": "{n} người đang giữ",
+  "@adminHolders": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "adminDeletePosition": "Xóa chức vụ",
+  "adminSql": "Truy vấn SQL",
+  "adminSqlHint": "Mặc định chỉ đọc; mỗi lần chạy đều được ghi vào sổ kiểm toán",
+  "adminSqlWrite": "Cho phép ghi (INSERT, UPDATE, DELETE)",
+  "adminSqlWriteConfirm": "Câu lệnh sẽ sửa dữ liệu thật và được ghi vào sổ kiểm toán. Chạy?",
+  "adminSqlRun": "Chạy",
+  "adminSqlRows": "{n} dòng",
+  "@adminSqlRows": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "adminSqlAffected": "Đã tác động {n} dòng",
+  "@adminSqlAffected": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "adminSqlTruncated": "Chỉ hiện 500 dòng đầu",
+  "adminTechnical": "Chi tiết kỹ thuật",
+  "adminBackups": "Sao lưu",
+  "adminBackupNow": "Sao lưu ngay",
+  "adminBackupDone": "Đã sao lưu toàn bộ dữ liệu khu vực",
+  "adminBackupNone": "Chưa có bản sao lưu",
+  "adminDownload": "Tải về",
+  "errGroupOnly": "Chỉ văn phòng quản lý tập đoàn duyệt được đề cử này",
+  "errSamePosition": "Nhân viên đang giữ chức vụ này rồi",
+  "errInUse": "Còn người giữ chức vụ này nên chưa xóa được",
+  "errReadOnly": "Câu lệnh có ghi dữ liệu; bật Cho phép ghi nếu thật sự muốn sửa",
+  "errSqlError": "Câu lệnh không chạy được, xem chi tiết kỹ thuật bên dưới",
+  "errUnknownDatabase": "Chọn cơ sở dữ liệu trong danh sách",
+  "errEmptySql": "Nhập câu lệnh SQL",
+  "errStorageUnavailable": "Kho lưu trữ chưa sẵn sàng, thử lại sau",
+  "errIdentityUnavailable": "Chưa kết nối được dịch vụ tài khoản, thử lại sau",
+  "errOtherRegion": "Tài khoản này thuộc khu vực khác",
+  "errRoleNotAllowed": "Bạn không được gán hoặc gỡ vai trò này",
+  "errSelfChange": "Không tự sửa tài khoản của chính mình",
+  "errInvalidShift": "Giờ ca không hợp lệ: giờ ra phải sau giờ vào",
+  "errInvalidRange": "Khoảng ngày không hợp lệ (tối đa một năm)",
+  "adminRemove": "Bỏ",
+  "evClockedIn": "Chấm công vào ca",
+  "evClockedOut": "Chấm công ra ca",
+  "evLeaveRequested": "Gửi đơn nghỉ phép",
+  "evLeaveApproved": "Duyệt đơn nghỉ phép",
+  "evLeaveRejected": "Từ chối đơn nghỉ phép",
+  "evOvertimeRequested": "Gửi đơn tăng ca",
+  "evOvertimeApproved": "Duyệt đơn tăng ca",
+  "evOvertimeRejected": "Từ chối đơn tăng ca",
+  "evHolidayAdded": "Thêm ngày lễ",
+  "evHolidayRemoved": "Bỏ ngày lễ",
+  "evShiftChanged": "Đổi giờ ca làm",
+  "evCandidateApplied": "Ứng viên nộp hồ sơ",
+  "evCandidateAnalyzed": "AI đã đọc CV ứng viên",
+  "evCandidateCvUploaded": "Ứng viên tải CV lên",
+  "evCandidateProfileUpdated": "Ứng viên sửa hồ sơ",
+  "evCandidateStatusChanged": "Chuyển bước hồ sơ ứng viên",
+  "evCandidateHired": "Nhận ứng viên vào làm",
+  "evInterviewScheduled": "Hẹn lịch phỏng vấn",
+  "evInterviewConfirmed": "Ứng viên xác nhận lịch phỏng vấn",
+  "evInterviewProposed": "Ứng viên đề xuất giờ phỏng vấn khác",
+  "evPayslipIssued": "Phát phiếu lương",
+  "evPayrollRunCompleted": "Chốt lương xong",
+  "evPayrollRunFailed": "Chốt lương lỗi",
+  "evPayrollRunNeedsAttention": "Chốt lương cần xử lý",
+  "evPayrollExpenseRecorded": "Ghi chi phí lương vào sổ tài chính",
+  "evPayoutLogged": "Ghi nhận chuyển lương",
+  "evSalaryAgreed": "Chốt mức lương nhận việc",
+  "evSalaryRaised": "Tăng lương",
+  "evSalaryChanged": "Văn phòng quản lý đổi lương cơ bản",
+  "evBonusGranted": "Thưởng",
+  "evPenaltyApplied": "Phạt",
+  "evRaiseRequested": "Gửi đề xuất tăng lương",
+  "evRaiseForwarded": "HR chuyển đề xuất tăng lương lên",
+  "evRaiseApproved": "Duyệt tăng lương",
+  "evRaiseRejected": "Từ chối tăng lương",
+  "evRaiseReturned": "Trả lại đề xuất tăng lương",
+  "evRaiseWithdrawn": "Rút đề xuất tăng lương",
+  "evPromotionNominated": "Đề cử thăng chức",
+  "evPromotionApproved": "Duyệt thăng chức",
+  "evPromotionRejected": "Từ chối thăng chức",
+  "evEmployeePromoted": "Văn phòng quản lý thăng chức",
+  "evPositionChanged": "Văn phòng quản lý đổi chức vụ",
+  "evPositionCreated": "Thêm chức vụ",
+  "evPositionUpdated": "Sửa chức vụ",
+  "evPositionDeleted": "Xóa chức vụ",
+  "evEmployeeHired": "Thêm nhân viên mới",
+  "evEmployeeTransferred": "Điều chuyển phòng ban",
+  "evEmployeeArchived": "Bảo lưu hồ sơ nhân viên",
+  "evEmployeeRestored": "Mở lại hồ sơ nhân viên",
+  "evDepartmentCreated": "Thành lập phòng ban",
+  "evDepartmentDissolved": "Giải thể phòng ban",
+  "evDepartmentHeadChanged": "Đổi trưởng phòng",
+  "evProfileChangeRequested": "Đề xuất sửa hồ sơ",
+  "evProfileChangeApproved": "Duyệt sửa hồ sơ",
+  "evProfileChangeRejected": "Từ chối sửa hồ sơ",
+  "evResignationRequested": "Gửi đơn thôi việc",
+  "evResignationApproved": "Duyệt đơn thôi việc",
+  "evResignationRejected": "Từ chối đơn thôi việc",
+  "evResignationWithdrawn": "Rút đơn thôi việc",
+  "evResignationCompleted": "Hoàn tất thôi việc",
+  "evReportSubmitted": "Gửi báo cáo lên cấp trên",
+  "evReportAcknowledged": "Cấp trên xác nhận báo cáo",
+  "evReportReturned": "Cấp trên trả lại báo cáo",
+  "evProjectCreated": "Tạo dự án",
+  "evProjectProposed": "Gửi đề xuất dự án",
+  "evProjectProposalApproved": "Duyệt đề xuất dự án",
+  "evProjectProposalRejected": "Từ chối đề xuất dự án",
+  "evProjectProposalCountered": "Đề xuất dự án được sửa qua lại",
+  "evProjectAccepted": "Nghiệm thu dự án",
+  "evProjectMembersRemoved": "Rút nhân viên khỏi dự án",
+  "evAcceptanceRevenueRecorded": "Ghi doanh thu nghiệm thu",
+  "evMaterialPurchased": "Mua vật liệu",
+  "evSupplierPaid": "Trả tiền nhà cung cấp",
+  "evFinancePeriodClosed": "Chốt sổ tài chính tháng",
+  "evAdminSqlRead": "Quản trị chạy truy vấn SQL (chỉ đọc)",
+  "evAdminSqlWrite": "Quản trị sửa dữ liệu bằng SQL",
+  "evBackupCreated": "Sao lưu dữ liệu",
+  "evAccountChanged": "Đổi tài khoản, vai trò",
+  "nAuditLog": "Nhật ký mới: {event}{by}",
+  "@nAuditLog": {
+    "placeholders": {
+      "event": {
+        "type": "String"
+      },
+      "by": {
+        "type": "String"
+      }
+    }
+  },
+  "nAuditLogBy": " (bởi {by})",
+  "@nAuditLogBy": {
+    "placeholders": {
+      "by": {
+        "type": "String"
+      }
+    }
+  },
+  "nPositionChanged": "Chức vụ của bạn đã đổi thành {position}",
+  "@nPositionChanged": {
+    "placeholders": {
+      "position": {
+        "type": "String"
+      }
+    }
+  },
+  "nSalaryChanged": "Lương cơ bản mới của bạn: {amount}",
+  "@nSalaryChanged": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "nBonusGranted": "Bạn được thưởng {amount}: {reason}",
+  "@nBonusGranted": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "nPenaltyApplied": "Bạn bị phạt {amount}: {reason}",
+  "@nPenaltyApplied": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "errProtectedDatabase": "Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây"
 }

@@ -10,7 +10,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-/// GET /candidates?status=&q=  danh sách ứng viên cho HR.
+/// GET /candidates?status=&q=&positionId=  danh sách ứng viên cho HR.
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.get) {
     return apiError(405, 'method_not_allowed', 'GET only');
@@ -22,6 +22,7 @@ Future<Response> onRequest(RequestContext context) async {
   final items = await context.read<CandidateRepository>().list(
     status: query['status'],
     query: query['q']?.trim(),
+    positionId: int.tryParse(query['positionId'] ?? ''),
   );
   return Response.json(body: {'items': items});
 }

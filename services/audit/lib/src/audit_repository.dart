@@ -76,6 +76,9 @@ abstract interface class AuditRepository {
     bool exportAll = false,
   });
 
+  /// Đếm theo loại, khu vực, service, ngày, giờ địa phương; số bất thường
+  Future<Map<String, dynamic>> stats(AuditFilter filter);
+
   Future<void> logAccess(AccessRecord record);
 
   Future<List<Map<String, dynamic>>> accessLog({int limit = 100});
@@ -83,22 +86,75 @@ abstract interface class AuditRepository {
 
 /// Điều kiện tra cứu sổ kiểm toán.
 class AuditFilter {
-  const AuditFilter({this.region, this.eventType, this.from, this.to});
+  const AuditFilter({
+    this.region,
+    this.eventType,
+    this.from,
+    this.to,
+    this.service,
+    this.anomaly,
+    this.exactTime = false,
+  });
 
   final String? region;
   final String? eventType;
   final DateTime? from;
 
-  /// Tính tới hết ngày này.
+  /// Tính tới hết ngày này (hoặc đúng thời điểm này khi [exactTime])
   final DateTime? to;
+  final String? service;
+
+  /// `after_hours`, `failure` hoặc `any`
+  final String? anomaly;
+
+  /// from/to có giờ phút: lọc đúng thời điểm thay vì cả ngày
+  final bool exactTime;
+
+  DateTime? get toExclusive =>
+      to == null || exactTime ? to : DateTime(to!.year, to!.month, to!.day + 1);
 
   Map<String, Object?> toJson() => {
     'region': ?region,
     'eventType': ?eventType,
-    'from': ?from?.toIso8601String().substring(0, 10),
-    'to': ?to?.toIso8601String().substring(0, 10),
+    'service': ?service,
+    'anomaly': ?anomaly,
+    'from': ?from?.toIso8601String().substring(0, exactTime ? 16 : 10),
+    'to': ?to?.toIso8601String().substring(0, exactTime ? 16 : 10),
   };
 }
+
+/// Giờ địa phương của sự kiện theo múi giờ khu vực
+const _localHour =
+    'extract(hour from occurred_at at time zone case region '
+    "when 'vn' then 'Asia/Ho_Chi_Minh' when 'de' then 'Europe/Berlin' "
+    "when 'us' then 'America/New_York' when 'br' then 'America/Sao_Paulo' "
+    "when 'za' then 'Africa/Johannesburg' when 'au' then 'Australia/Sydney' "
+    "else 'UTC' end)";
+
+/// Bất thường: thao tác lúc 22h–6h giờ địa phương, hoặc sự kiện thất bại,
+/// bị từ chối, phải bù trừ, cần xử lý tay
+const afterHoursSql = '($_localHour < 6 or $_localHour >= 22)';
+const failureSql =
+    "(event_type ~* '(fail|reject|compensat|attention|broken|error|returned)')";
+
+const _filterSql =
+    'where (@region::text is null or region = @region) '
+    'and (@type::text is null or event_type = @type) '
+    'and (@service::text is null or source_service = @service) '
+    'and (@from::timestamptz is null or occurred_at >= @from::timestamptz) '
+    'and (@to::timestamptz is null or occurred_at < @to::timestamptz) '
+    "and (@anomaly::text is null or (@anomaly = 'after_hours' and "
+    "$afterHoursSql) or (@anomaly = 'failure' and $failureSql) "
+    "or (@anomaly = 'any' and ($afterHoursSql or $failureSql)))";
+
+Map<String, Object?> _filterParams(AuditFilter f) => {
+  'region': f.region,
+  'type': f.eventType,
+  'service': f.service,
+  'from': f.from,
+  'to': f.toExclusive,
+  'anomaly': f.anomaly,
+};
 
 /// Một lần ai đó đọc, kiểm, xuất sổ kiểm toán (R90).
 class AccessRecord {
@@ -210,21 +266,58 @@ class PostgresAuditRepository implements AuditRepository {
   }) async {
     final rows = await _db.query(
       'select id, region, source_service, event_type, aggregate_id, payload, '
-      'occurred_at, received_at, prev_hash, hash from events '
-      'where (@region::text is null or region = @region) '
-      'and (@type::text is null or event_type = @type) '
-      'and (@from::date is null or occurred_at >= @from::date) '
-      "and (@to::date is null or occurred_at < @to::date + interval '1 day') "
-      'order by id ${exportAll ? 'asc' : 'desc limit @limit'}',
-      params: {
-        'region': filter.region,
-        'type': filter.eventType,
-        'from': filter.from,
-        'to': filter.to,
-        if (!exportAll) 'limit': limit,
-      },
+      'occurred_at, received_at, prev_hash, hash, '
+      '$afterHoursSql as after_hours, $failureSql as failure from events '
+      '$_filterSql order by id ${exportAll ? 'asc' : 'desc limit @limit'}',
+      params: {..._filterParams(filter), if (!exportAll) 'limit': limit},
     );
-    return exportAll ? rows : [for (final r in rows) _json(r)];
+    if (exportAll) return rows;
+    return [
+      for (final r in rows)
+        {
+          ..._json(r),
+          'anomalies': [
+            if (r['after_hours'] == true) 'after_hours',
+            if (r['failure'] == true) 'failure',
+          ],
+        },
+    ];
+  }
+
+  @override
+  Future<Map<String, dynamic>> stats(AuditFilter filter) async {
+    final params = _filterParams(filter);
+    Future<List<Map<String, dynamic>>> group(String key, {int? top}) =>
+        _db.query(
+          'select $key as k, count(*)::int as n from events $_filterSql '
+          'group by 1 order by ${top == null ? '1' : '2 desc'} '
+          '${top == null ? '' : 'limit $top'}',
+          params: params,
+        );
+    final totals = await _db.query(
+      'select count(*)::int as total, '
+      'count(*) filter (where $afterHoursSql)::int as after_hours, '
+      'count(*) filter (where $failureSql)::int as failure '
+      'from events $_filterSql',
+      params: params,
+    );
+    List<Map<String, Object?>> pairs(List<Map<String, dynamic>> rows) => [
+      for (final r in rows) {'key': '${r['k']}', 'count': r['n']},
+    ];
+    final byHour = List<int>.filled(24, 0);
+    for (final r in await group('$_localHour::int')) {
+      byHour[r['k'] as int] = r['n'] as int;
+    }
+    return {
+      'total': totals.first['total'],
+      'afterHours': totals.first['after_hours'],
+      'failures': totals.first['failure'],
+      'byType': pairs(await group('event_type', top: 15)),
+      'byRegion': pairs(await group('region')),
+      'byService': pairs(await group('source_service')),
+      'byDay': pairs(await group("to_char(occurred_at, 'YYYY-MM-DD')")),
+      'byLocalHour': byHour,
+    };
   }
 
   @override

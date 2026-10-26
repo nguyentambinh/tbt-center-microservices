@@ -47,6 +47,26 @@ Thông báo đẩy (FCM) cần khóa service account Firebase ở `deploy/secret
 
 Tắt: thay `up -d` bằng `down` (thêm `-v` để xóa luôn dữ liệu).
 
+## Khu vực DE trên Kubernetes
+Khu vực DE chạy trên cụm k3s 2 node (dựng bằng [k3d](https://k3d.io), cần `k3d` và `kubectl`). Manifest ở `deploy/k8s/` (kustomize: `base/` dùng chung, `de/` riêng DE; khu vực khác thêm overlay cùng dạng). Cụm dùng lại volume dữ liệu của bản Compose DE, cổng trên máy giữ nguyên (8100, 5434, 3910, 8091, 9190), nên chỉ chạy một trong hai bản.
+```
+docker compose -p tbt-de --env-file deploy/regions/de.env -f deploy/compose.region.yml stop
+bash deploy/k8s/cluster.sh de up        # tạo cụm, nạp image tbt/*, áp manifest
+bash deploy/k8s/cluster.sh de status    # pod, service, HPA
+bash deploy/k8s/cluster.sh de images    # sau khi build lại image
+bash deploy/k8s/cluster.sh de stop      # dừng cụm, giữ dữ liệu
+```
+Trên Kubernetes, service gọi nhau bằng tên Service (không cần Eureka), liveness probe thay autoheal, `hr` và `attendance` tự tăng tới 4 bản theo CPU (HPA).
+
+## Chạy trên máy chủ thật
+`deploy/vps/` gồm Caddy (HTTPS tự động), tường lửa, script đưa cấu hình, image, khóa lên máy chủ và script bật từng phần. Địa chỉ công khai đặt trong `deploy/vps/vps.env` (chép từ `vps.env.example`).
+```
+bash deploy/vps/push.sh root@<máy chủ> all          # từ máy dev
+bash deploy/vps/firewall.sh                          # trên máy chủ, chạy một lần
+bash deploy/vps/up.sh all                            # Hub, VN (Compose), DE (k3s), Caddy
+```
+App trỏ về máy chủ khi build: `--dart-define=KEYCLOAK_URL=https://auth.<tên miền>`, `--dart-define=GEO_URL=https://geo.<tên miền>`, `--dart-define=KONG_URL=https://{region}.<tên miền>`.
+
 ## Tài khoản thử trong Keycloak
 `anonymous1606` (executive, admin), `hr.vn`, `finance.vn`, `employee.vn`, `hr.de`, `finance.de`, `employee.de`, `hr.us`, `employee.us`, `finance.us` (tương tự cho `br`, `za`, `au`), `auditor.ext` (kiểm toán, hạn tới 2026-12-31). Người tự đăng ký nhận role `candidate`. Mật khẩu ở `deploy/secrets/keycloak.env`.
 

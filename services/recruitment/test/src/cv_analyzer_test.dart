@@ -12,7 +12,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:recruitment_service/src/ai/claude_client.dart';
 import 'package:recruitment_service/src/ai/cv_analyzer.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
-import 'package:recruitment_service/src/storage/s3_presigner.dart';
 import 'package:tbt_common/tbt_common.dart';
 import 'package:test/test.dart';
 
@@ -29,12 +28,13 @@ void main() {
     when(
       () => repository.recordAiFailure(any(), any()),
     ).thenAnswer((_) async {});
+    when(() => repository.positionsFor(any())).thenAnswer((_) async => []);
   });
 
   CvAnalyzer analyzer({Uint8List? pdf, Exception? error}) => CvAnalyzer(
     repository: repository,
     readPdf: (_) async => pdf,
-    summarize: (_, language) async {
+    summarize: (_, language, _) async {
       if (error != null) throw error;
       return (
         summary: <String, dynamic>{

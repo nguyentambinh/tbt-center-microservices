@@ -8,15 +8,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/error/error_reporter.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/candidate.dart';
 import '../providers/candidate_providers.dart';
+import '../widgets/candidate_actions.dart';
+import '../widgets/position_widgets.dart';
 import '../widgets/stage_widgets.dart';
 import 'candidate_import_page.dart';
 
@@ -40,6 +44,11 @@ class _CandidatesPageState extends ConsumerState<CandidatesPage> {
       appBar: AppBar(
         title: Text(l10n.candidates),
         actions: [
+          IconButton(
+            tooltip: l10n.jobPositions,
+            icon: const Icon(Icons.work_outline),
+            onPressed: () => context.push(Routes.jobPositions),
+          ),
           IconButton(
             tooltip: l10n.importCandidates,
             icon: const Icon(Icons.upload_file),
@@ -77,7 +86,10 @@ class _CandidatesPageState extends ConsumerState<CandidatesPage> {
                       for (final c in value)
                         ListTile(
                           title: Text(c.fullName),
-                          subtitle: Text(c.appliedPosition ?? ''),
+                          subtitle: Text.rich(TextSpan(children: [
+                            TextSpan(text: c.appliedPosition ?? ''),
+                            if (c.bestScore case final s?) TextSpan(text: '  ·  ${l10n.bestMatch(s)}', style: TextStyle(color: matchColor(context, s), fontWeight: FontWeight.bold)),
+                          ])),
                           trailing: StageChip(c.status),
                           onTap: () => _openCandidate(context, c.id),
                         ),
@@ -98,30 +110,14 @@ class _CandidatesPageState extends ConsumerState<CandidatesPage> {
         context: context,
         isScrollControlled: true,
         showDragHandle: true,
-        builder: (_) => _CandidateSheet(id: id),
+        builder: (_) => CandidateSheet(id: id),
       );
 }
 
-class _CandidateSheet extends ConsumerWidget {
-  const _CandidateSheet({required this.id});
+class CandidateSheet extends ConsumerWidget {
+  const CandidateSheet({super.key, required this.id});
 
   final String id;
-
-  Future<void> _move(BuildContext context, WidgetRef ref, String stage) async {
-    try {
-      await ref.read(candidateRepositoryProvider).changeStage(id, status: stage);
-      ref
-        ..invalidate(candidateDetailProvider(id))
-        ..invalidate(candidateListProvider);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).statusChanged), behavior: SnackBarBehavior.floating),
-        );
-      }
-    } on Object catch (e) {
-      reportFailure(e);
-    }
-  }
 
   Future<void> _openCv(WidgetRef ref) async {
     try {
@@ -158,25 +154,9 @@ class _CandidateSheet extends ConsumerWidget {
                   ),
                 ),
               ],
+              if (value.positions.isNotEmpty) PositionMatchCard(matches: value.positions, waitingForAi: value.hasCv && value.consentAi),
               if (value.aiSummary case final summary?) _AiSummaryCard(summary: summary),
-              const SizedBox(height: 12),
-              if (value.status == 'offered') ...[
-                _HireButton(candidate: value),
-                const SizedBox(height: 12),
-              ],
-              // Đã hired thì khóa chuyển bước
-              if (value.status != 'hired') ...[
-                Text(l10n.moveTo, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final stage in candidateStages.where((s) => s != value.status && !hireOnlyStages.contains(s)))
-                      OutlinedButton(onPressed: () => _move(context, ref, stage), child: Text(stageName(l10n, stage))),
-                  ],
-                ),
-              ],
+              CandidateActions(candidate: value),
               const Divider(height: 32),
               Text(l10n.progress, style: Theme.of(context).textTheme.titleLarge),
               StageTimeline(history: value.history),
@@ -185,83 +165,6 @@ class _CandidateSheet extends ConsumerWidget {
         AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(candidateDetailProvider(id))),
         _ => const SkeletonList(),
       },
-    );
-  }
-}
-
-
-/// Nút nhận vào làm, khóa và hiện vòng xoay khi đang chờ server
-class _HireButton extends ConsumerStatefulWidget {
-  const _HireButton({required this.candidate});
-
-  final Candidate candidate;
-
-  @override
-  ConsumerState<_HireButton> createState() => _HireButtonState();
-}
-
-class _HireButtonState extends ConsumerState<_HireButton> {
-  bool _busy = false;
-
-  Future<void> _hire() async {
-    final candidate = widget.candidate;
-    final l10n = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.hireCandidate),
-        content: Text(l10n.hireConfirm(candidate.fullName, candidate.email ?? '')),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.hireCandidate)),
-        ],
-      ),
-    );
-    if (ok != true || !mounted) return;
-    // Nút biến mất khi đã hired, nên hiện kết quả bằng context của Navigator
-    final navigator = Navigator.of(context);
-    final HireResult result;
-    setState(() => _busy = true);
-    try {
-      result = await ref.read(candidateRepositoryProvider).hire(candidate.id);
-    } on Object catch (e) {
-      reportFailure(e);
-      return;
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-    ref
-      ..invalidate(candidateDetailProvider(candidate.id))
-      ..invalidate(candidateListProvider);
-    if (!navigator.mounted) return;
-    await showDialog<void>(
-      context: navigator.context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.hiredTitle(result.employeeId)),
-        content: SelectableText(
-          [
-            l10n.hiredLogin(result.login),
-            if (result.temporaryPassword case final password?)
-              l10n.hiredTempPassword(password)
-            else
-              l10n.hiredKeepPassword,
-            l10n.hiredRelogin,
-          ].join('\n\n'),
-        ),
-        actions: [FilledButton(onPressed: () => Navigator.pop(context), child: Text(l10n.close))],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton.icon(
-      onPressed: _busy ? null : _hire,
-      icon: _busy
-          ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
-          : const Icon(Icons.how_to_reg),
-      label: Text(AppLocalizations.of(context).hireCandidate),
-      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
     );
   }
 }

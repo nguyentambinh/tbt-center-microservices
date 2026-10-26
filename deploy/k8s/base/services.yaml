@@ -1,0 +1,701 @@
+# Service nghiệp vụ của một khu vực. Gọi nhau bằng tên Service (DNS của cụm), probe kiểm GET /
+# Nhân sự: 2 bản, Service chia đều request, HPA tăng tới 4
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: hr}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: hr, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: hr
+          image: tbt/hr:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: anthropic}
+            - secretRef: {name: gemini}
+            - secretRef: {name: garage}
+            - secretRef: {name: identity}
+          env:
+            - {name: DB_NAME, value: hr_db}
+            - {name: KEYCLOAK_ADMIN_URL, value: "http://host.docker.internal:8180"}
+            - {name: S3_MEDIA_BUCKET, value: "tbt-media"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hr
+spec:
+  selector: {app: hr}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Chấm công: 2 bản, Service chia đều request, HPA tăng tới 4
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attendance
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: attendance}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: attendance, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: attendance
+          image: tbt/attendance:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: garage}
+            - secretRef: {name: anthropic}
+            - secretRef: {name: gemini}
+          env:
+            - {name: DB_NAME, value: attendance_db}
+            - {name: S3_MEDIA_BUCKET, value: "tbt-media"}
+            - {name: S3_INTERNAL_ENDPOINT, value: "http://garage:3900"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: attendance
+spec:
+  selector: {app: attendance}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Lương: điều phối Saga chốt lương
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payroll
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: payroll}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: payroll, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: payroll
+          image: tbt/payroll:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+          env:
+            - {name: DB_NAME, value: payroll_db}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payroll
+spec:
+  selector: {app: payroll}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Tài chính
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finance
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: finance}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: finance, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: finance
+          image: tbt/finance:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+          env:
+            - {name: DB_NAME, value: finance_db}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: finance
+spec:
+  selector: {app: finance}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Dự án, hợp đồng
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-contract
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: project-contract}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: project-contract, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: project-contract
+          image: tbt/project_contract:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: garage}
+            - secretRef: {name: anthropic}
+            - secretRef: {name: gemini}
+          env:
+            - {name: DB_NAME, value: project_contract_db}
+            - {name: S3_MEDIA_BUCKET, value: "tbt-media"}
+            - {name: S3_INTERNAL_ENDPOINT, value: "http://garage:3900"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: project-contract
+spec:
+  selector: {app: project-contract}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Tỷ giá nội bộ
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currency
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: currency}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: currency, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: currency
+          image: tbt/currency:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+          env:
+            - {name: DB_NAME, value: currency_db}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currency
+spec:
+  selector: {app: currency}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Quản trị dữ liệu khu vực: tài khoản, thống kê, SQL, sao lưu
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: admin}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: admin, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: admin
+          image: tbt/admin:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: garage}
+            - secretRef: {name: identity}
+          env:
+            - {name: DB_NAME, value: admin_db}
+            - {name: KEYCLOAK_ADMIN_URL, value: "http://host.docker.internal:8180"}
+            - {name: S3_INTERNAL_ENDPOINT, value: "http://garage:3900"}
+            - {name: S3_MEDIA_BUCKET, value: "tbt-media"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+spec:
+  selector: {app: admin}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Hộp thông báo: nhận sự kiện từ Hub, đẩy FCM
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: notification}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: notification, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: notification
+          image: tbt/notification:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: sync}
+            - secretRef: {name: rabbitmq}
+          env:
+            - {name: DB_NAME, value: notification_db}
+            - {name: RABBITMQ_HOST, value: "host.docker.internal"}
+            - {name: RABBITMQ_PORT, value: "5673"}
+            - {name: HUB_AUDIT_URL, value: "http://host.docker.internal:8195/events"}
+            - {name: FCM_SERVICE_ACCOUNT, value: "/run/secrets/firebase-sa.json"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+          volumeMounts:
+            - {name: firebase, mountPath: /run/secrets/firebase-sa.json, subPath: firebase-sa.json, readOnly: true}
+      volumes:
+        - name: firebase
+          secret: {secretName: firebase}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+spec:
+  selector: {app: notification}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Tuyển dụng: CV lưu ở Garage, AI tóm tắt chạy nền
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recruitment
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: recruitment}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: recruitment, tier: service, metrics: "true"}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: recruitment
+          image: tbt/recruitment:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: internal}
+            - secretRef: {name: anthropic}
+            - secretRef: {name: gemini}
+            - secretRef: {name: garage}
+            - secretRef: {name: identity}
+            - secretRef: {name: smtp, optional: true}
+          env:
+            - {name: DB_NAME, value: recruitment_db}
+            - {name: S3_INTERNAL_ENDPOINT, value: "http://garage:3900"}
+            - {name: S3_BUCKET, value: "tbt-cv"}
+            - {name: CANDIDATE_SHEET_URL, value: ""}
+            - {name: KEYCLOAK_ADMIN_URL, value: "http://host.docker.internal:8180"}
+            - {name: HR_URL, value: "http://hr:8080"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recruitment
+spec:
+  selector: {app: recruitment}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Cổng ra ngân hàng có Circuit Breaker; không có database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integration
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: integration}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: integration, tier: service, metrics: "true"}
+    spec:
+      containers:
+        - name: integration
+          image: tbt/integration:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: internal}
+            - secretRef: {name: payos, optional: true}
+          env:
+            - {name: BANK_URL, value: "http://bank-mock:8080"}
+            - {name: SERVICE_NAME, value: "integration"}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: integration
+spec:
+  selector: {app: integration}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Ngân hàng giả lập để thử chi lương, Circuit Breaker, Saga (chỉ môi trường phát triển)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bank-mock}
+  strategy:
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  template:
+    metadata:
+      labels: {app: bank-mock, tier: service, metrics: "true"}
+    spec:
+      containers:
+        - name: bank-mock
+          image: tbt/bank_mock:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8080}
+          envFrom:
+            - configMapRef: {name: service-env}
+            - configMapRef: {name: region}
+            - secretRef: {name: internal}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet: {path: /, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 500m, memory: 192Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-mock
+spec:
+  selector: {app: bank-mock}
+  ports:
+    - {name: http, port: 8080, targetPort: http}
+---
+# Mở bank_mock ra máy dev để đổi chế độ lỗi khi demo: POST /admin/mode
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-mock-external
+spec:
+  type: NodePort
+  selector: {app: bank-mock}
+  ports:
+    - {name: http, port: 8080, targetPort: http, nodePort: 30890}
+---
+# Đọc outbox các service, đẩy lên audit; đồng bộ kho tổng. Một bản để không gửi trùng sự kiện
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sync-worker
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector:
+    matchLabels: {app: sync-worker}
+  template:
+    metadata:
+      labels: {app: sync-worker, tier: worker}
+    spec:
+      initContainers:
+        - name: wait-postgres
+          image: postgres:17
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "until pg_isready -h postgres-primary -q; do sleep 2; done"]
+      containers:
+        - name: sync-worker
+          image: tbt/sync_worker:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef: {name: region}
+            - secretRef: {name: postgres}
+            - secretRef: {name: sync}
+            - secretRef: {name: datakey}
+          env:
+            - {name: DB_PRIMARY_HOST, value: postgres-primary}
+            - {name: DB_PORT, value: "5432"}
+            - {name: SYNC_SERVICES, value: "hr,attendance,payroll,recruitment,finance,project_contract,admin"}
+            - {name: HUB_AUDIT_URL, value: "http://host.docker.internal:8195/events"}
+            - {name: DATASTORE_URL, value: "http://host.docker.internal:8197/internal/ingest"}
+            - {name: FIRESTORE_SA, value: /run/secrets/firestore.json}
+          resources:
+            requests: {cpu: 20m, memory: 48Mi}
+            limits: {cpu: 300m, memory: 192Mi}
+          volumeMounts:
+            - {name: firestore, mountPath: /run/secrets/firestore.json, subPath: firestore.json, readOnly: true}
+      volumes:
+        - name: firestore
+          secret: {secretName: firestore}

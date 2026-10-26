@@ -10,6 +10,7 @@ import 'dart:io';
 
 import 'package:payroll_service/src/payout_desk.dart';
 import 'package:payroll_service/src/payroll_repository.dart';
+import 'package:payroll_service/src/raise_requests.dart';
 import 'package:payroll_service/src/saga/payroll_run_repository.dart';
 import 'package:payroll_service/src/saga/payroll_saga.dart';
 import 'package:tbt_common/tbt_common.dart';
@@ -17,8 +18,12 @@ import 'package:tbt_common/tbt_common.dart';
 final _env = Platform.environment;
 
 final database = Database.fromEnvironment();
-final payrollRepository = PostgresPayrollRepository(database);
+final payrollRepository = PostgresPayrollRepository(
+  database,
+  countryCode: _env['COUNTRY_CODE'] ?? 'VN',
+);
 final runRepository = PostgresPayrollRunRepository(database);
+final raiseRequests = PostgresRaiseRequestRepository(database);
 
 InternalClient _client(
   String service,
@@ -39,6 +44,21 @@ final _integration = _client(
   timeout: const Duration(seconds: 45),
 );
 final _finance = _client('finance', 'http://finance:8080');
+
+/// Tỷ giá nội bộ từ service currency (đổi tiền nước ra USD)
+Future<({String rate, DateTime date})> currencyRate(
+  String currency,
+  DateTime date,
+) async {
+  final data = await _currency.get(
+    '/internal/rate',
+    query: {'quote': currency, 'date': date.toIso8601String().substring(0, 10)},
+  );
+  return (
+    rate: data['rate'] as String,
+    date: DateTime.parse(data['rateDate'] as String),
+  );
+}
 
 final payrollSaga = PayrollSaga(
   repository: runRepository,
@@ -75,19 +95,7 @@ final payrollSaga = PayrollSaga(
             (item['overtimeHours'] as num).toDouble(),
     };
   },
-  rate: (currency, date) async {
-    final data = await _currency.get(
-      '/internal/rate',
-      query: {
-        'quote': currency,
-        'date': date.toIso8601String().substring(0, 10),
-      },
-    );
-    return (
-      rate: data['rate'] as String,
-      date: DateTime.parse(data['rateDate'] as String),
-    );
-  },
+  rate: currencyRate,
   payout: payoutSink,
 );
 

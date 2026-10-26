@@ -16,6 +16,7 @@ class AuditEvent {
     required this.aggregateId,
     required this.occurredAt,
     required this.hash,
+    this.anomalies = const [],
   });
 
   final int id;
@@ -25,6 +26,9 @@ class AuditEvent {
   final String aggregateId;
   final DateTime occurredAt;
   final String hash;
+
+  /// `after_hours` (22h–6h giờ địa phương), `failure` (thất bại, từ chối, bù trừ)
+  final List<String> anomalies;
 }
 
 class ChainCheck {
@@ -64,4 +68,36 @@ class AccessEntry {
   final DateTime accessedAt;
   final int? rowCount;
   final String? checksum;
+}
+
+/// Điều kiện tra cứu sổ; [from]/[to] có giờ phút thì lọc đúng thời điểm, không thì theo ngày
+typedef AuditQuery = ({String? region, String? type, String? service, String? anomaly, DateTime? from, DateTime? to});
+
+const AuditQuery emptyAuditQuery = (region: null, type: null, service: null, anomaly: null, from: null, to: null);
+
+typedef AuditCount = ({String key, int count});
+
+/// Số liệu cho biểu đồ kiểm toán, cùng điều kiện lọc với danh sách
+class AuditStats {
+  const AuditStats({
+    required this.total,
+    required this.afterHours,
+    required this.failures,
+    required this.byType,
+    required this.byRegion,
+    required this.byService,
+    required this.byDay,
+    required this.byLocalHour,
+  });
+
+  final int total;
+  final int afterHours;
+  final int failures;
+  final List<AuditCount> byType;
+  final List<AuditCount> byRegion;
+  final List<AuditCount> byService;
+  final List<AuditCount> byDay;
+
+  /// 24 ô, theo giờ địa phương của khu vực phát sinh
+  final List<int> byLocalHour;
 }

@@ -51,6 +51,11 @@ class FakeRunRepository implements PayrollRunRepository {
     }
   }
 
+  Map<String, double> bonusTotals = {};
+
+  @override
+  Future<Map<String, double>> bonuses(String period) async => bonusTotals;
+
   @override
   Future<List<UnpaidPayslip>> unpaid(String runId) async => [
     for (final d in drafts.values)

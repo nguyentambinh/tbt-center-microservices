@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tbtcenter/app.dart';
+import 'package:tbtcenter/features/attendance/presentation/providers/attendance_providers.dart';
+import 'package:tbtcenter/features/hr/presentation/providers/employee_providers.dart';
 import 'package:tbtcenter/features/notification/domain/entities/app_notification.dart';
+
+import 'attendance_test.dart' show FakeAttendanceRepository;
 
 import 'helpers.dart';
 
@@ -72,5 +76,36 @@ void main() {
     await tester.tap(find.byTooltip('Benachrichtigungen'));
     await tester.pumpAndSettle();
     expect(find.text('Gehalt für 2026-10 wurde ausgezahlt'), findsOneWidget);
+  });
+
+  testWidgets('HR bấm thông báo xin nghỉ: đánh dấu đã đọc, mở thẳng đơn để duyệt', (tester) async {
+    final notifications = FakeNotificationRepository([
+      AppNotification(id: 'N9', kind: 'leave_requested', params: const {'employeeId': 'NV001', 'fromDate': '2026-12-28', 'days': 3, 'ref': 'L1'}, createdAt: DateTime(2026, 10, 26, 9)),
+      AppNotification(id: 'N8', kind: 'raise_requested', params: const {'employeeId': 'NV002', 'ref': '7'}, createdAt: DateTime(2026, 10, 26, 8)),
+    ]);
+    final attendance = FakeAttendanceRepository();
+    final overrides = await testOverrides(language: 'vi', store: MemorySessionStore(fakeSession(token: fakeJwt(roles: ['hr']))), notifications: notifications);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        ...overrides,
+        attendanceRepositoryProvider.overrideWithValue(attendance),
+        employeeDetailProvider.overrideWith((ref, id) => Future.error(StateError('offline'))),
+      ],
+      child: const TbtApp(),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Thông báo'));
+    await tester.pumpAndSettle();
+    // Loại mới có câu riêng, không còn câu chung chung
+    expect(find.text('NV002 gửi đề xuất tăng lương'), findsOneWidget);
+    expect(find.text('Bạn có thông báo mới'), findsNothing);
+
+    await tester.tap(find.textContaining('xin nghỉ'));
+    await tester.pumpAndSettle();
+    expect(notifications.readIds, ['N9']);
+    expect(find.text('Người gửi · Anh8715OP'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Duyệt'));
+    await tester.pumpAndSettle();
+    expect(attendance.decisions, {'L1': true});
   });
 }

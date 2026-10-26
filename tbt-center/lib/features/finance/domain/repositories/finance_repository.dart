@@ -26,4 +26,13 @@ abstract interface class FinanceRepository {
   Future<void> recordPayment({required String supplierId, required DateTime date, required String amount, String? note});
 
   Future<void> closePeriod(String period);
+
+  /// Thu, chi vật liệu, chi lương, lợi nhuận theo `day`, `month` hoặc `year`
+  Future<FinanceSeries> analytics(String granularity);
+
+  /// Dự án xếp theo lợi nhuận
+  Future<List<ProjectFinance>> projectRanking();
+
+  /// Doanh thu theo đợt, vật liệu đã dùng của một dự án
+  Future<ProjectFinanceDetail> projectFinance(String projectId);
 }

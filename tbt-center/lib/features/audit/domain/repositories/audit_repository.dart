@@ -10,11 +10,13 @@ import '../entities/audit.dart';
 
 /// Sổ kiểm toán ở Hub, chỉ đọc (R54, R88–R90).
 abstract interface class AuditRepository {
-  Future<List<AuditEvent>> events({String? region});
+  Future<List<AuditEvent>> events(AuditQuery query);
+
+  Future<AuditStats> stats(AuditQuery query);
 
   Future<ChainCheck> verify();
 
-  Future<AuditExport> export({String? region});
+  Future<AuditExport> export(AuditQuery query);
 
   Future<List<AccessEntry>> accessLog();
 }

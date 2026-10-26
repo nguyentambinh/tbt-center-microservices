@@ -1825,4 +1825,2521 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manualIpReset => 'Real IP';
+
+  @override
+  String moreNotifications(int count) {
+    return 'and $count more';
+  }
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterStatus => 'Status';
+
+  @override
+  String get filterType => 'Type';
+
+  @override
+  String get filterRead => 'Read';
+
+  @override
+  String get filterUnread => 'Unread';
+
+  @override
+  String get profileTab => 'Profile';
+
+  @override
+  String get myProfile => 'My profile';
+
+  @override
+  String get proposeChange => 'Request changes';
+
+  @override
+  String get proposeChangeHint =>
+      'Edit only what changed. Your profile updates after HR approves.';
+
+  @override
+  String get changeReason => 'Reason (optional)';
+
+  @override
+  String get sendRequest => 'Send request';
+
+  @override
+  String get changeRequestSent => 'Request sent, waiting for HR';
+
+  @override
+  String get changeRequestPending => 'You have a request waiting for HR';
+
+  @override
+  String get changeRequestNoChange => 'Nothing has changed';
+
+  @override
+  String get changeHistory => 'Request history';
+
+  @override
+  String get changeRequests => 'Profile change requests';
+
+  @override
+  String get changeRequestsHint => 'Employees asking to update their details';
+
+  @override
+  String pendingChangeRequests(int count) {
+    return '$count profile change requests';
+  }
+
+  @override
+  String get noChangeRequests => 'No requests';
+
+  @override
+  String get oldValue => 'Old';
+
+  @override
+  String get newValue => 'New';
+
+  @override
+  String get decisionNote => 'Note to employee (optional)';
+
+  @override
+  String get fieldFacebook => 'Facebook';
+
+  @override
+  String get fieldXHandle => 'X handle';
+
+  @override
+  String get accountInfo => 'Account';
+
+  @override
+  String nProfileChangeRequested(String employee) {
+    return '$employee asked to update their profile';
+  }
+
+  @override
+  String get nProfileChangeApproved => 'HR approved your profile changes';
+
+  @override
+  String nProfileChangeRejected(String note) {
+    return 'HR rejected your profile changes: $note';
+  }
+
+  @override
+  String get invalidAmount => 'Invalid value';
+
+  @override
+  String get invalidEmail => 'Invalid email';
+
+  @override
+  String todoProfileChanges(int count) {
+    return '$count profile change requests';
+  }
+
+  @override
+  String get departments => 'Departments';
+
+  @override
+  String get departmentsHint => 'Transfers, heads, dissolution';
+
+  @override
+  String get departmentAdd => 'Add department';
+
+  @override
+  String get departmentName => 'Department name';
+
+  @override
+  String get departmentNameTaken =>
+      'This company already has a department with that name';
+
+  @override
+  String departmentCreated(String name) {
+    return 'Department $name added';
+  }
+
+  @override
+  String get departmentEmpty => 'No one in this department yet';
+
+  @override
+  String get departmentHead => 'Head';
+
+  @override
+  String departmentHeadIs(String name) {
+    return 'Head: $name';
+  }
+
+  @override
+  String departmentMembers(int count) {
+    return '$count people';
+  }
+
+  @override
+  String get noHead => 'No head yet';
+
+  @override
+  String get noDepartments => 'No departments yet';
+
+  @override
+  String get sortedByHours => 'Head first, then by total hours worked';
+
+  @override
+  String get setHead => 'Make head';
+
+  @override
+  String headAssigned(String name) {
+    return '$name is now the head';
+  }
+
+  @override
+  String get moveToDepartment => 'Move to another department';
+
+  @override
+  String get moveHere => 'Move here';
+
+  @override
+  String transferDone(String name) {
+    return 'Moved to $name';
+  }
+
+  @override
+  String get addMembers => 'Add people';
+
+  @override
+  String get addMembersFrom => 'Take people from which department?';
+
+  @override
+  String addMembersTitle(String name) {
+    return 'Move into $name';
+  }
+
+  @override
+  String membersMoved(int count) {
+    return '$count people moved';
+  }
+
+  @override
+  String membersMovedPartly(int moved, int failed) {
+    return '$moved moved, $failed could not be moved';
+  }
+
+  @override
+  String get dissolveDepartment => 'Dissolve department';
+
+  @override
+  String dissolveTitle(String name) {
+    return 'Dissolve $name?';
+  }
+
+  @override
+  String get dissolveReason => 'Reason';
+
+  @override
+  String get dissolveNoLongerNeeded => 'No longer needed';
+
+  @override
+  String get dissolveRestructured => 'Restructured or merged';
+
+  @override
+  String get dissolveUnderperforming => 'Underperforming';
+
+  @override
+  String get dissolveOutsourced => 'Outsourced';
+
+  @override
+  String get dissolveBusinessClosed => 'Business line scaled down or closed';
+
+  @override
+  String dissolveMembersMove(int count) {
+    return '$count people remain; choose a department to take them';
+  }
+
+  @override
+  String get chooseReceivingDepartment => 'Choose receiving department';
+
+  @override
+  String get dissolveConfirm => 'Dissolve';
+
+  @override
+  String dissolveDone(String name) {
+    return '$name dissolved';
+  }
+
+  @override
+  String get unassignedStaff => 'New staff without a department';
+
+  @override
+  String unassignedCount(int count) {
+    return '$count new people without a department';
+  }
+
+  @override
+  String get unassignedHint => 'Let AI suggest a department or a new one';
+
+  @override
+  String get noUnassigned => 'Everyone has a department';
+
+  @override
+  String get aiSuggestPlacement => 'AI placement suggestions';
+
+  @override
+  String get aiThinking => 'AI is thinking...';
+
+  @override
+  String get suggestionByAi => 'Suggested by AI; HR makes the final call';
+
+  @override
+  String get suggestionByRules =>
+      'AI unavailable; suggested by matching positions';
+
+  @override
+  String suggestedDepartment(String name) {
+    return 'Suggested: $name';
+  }
+
+  @override
+  String get acceptSuggestion => 'Accept';
+
+  @override
+  String get chooseOther => 'Choose another';
+
+  @override
+  String get chooseDepartment => 'Choose department';
+
+  @override
+  String get newDepartmentProposals => 'Proposed new departments';
+
+  @override
+  String get createDepartmentAndMove => 'Create and move people';
+
+  @override
+  String get rankings => 'Top performers';
+
+  @override
+  String get rankingsHint => 'Ranking by hours, promotion nominations';
+
+  @override
+  String get rankingFormula =>
+      'Score = regular hours + 1.5 × overtime + 2 × days worked';
+
+  @override
+  String rankingDetail(String work, String overtime, int days) {
+    return '$work h · $overtime h overtime · $days days';
+  }
+
+  @override
+  String get points => 'points';
+
+  @override
+  String get noRankings => 'No attendance data in this period';
+
+  @override
+  String lastMonths(int count) {
+    return 'Last $count months';
+  }
+
+  @override
+  String get filterPeriod => 'Period';
+
+  @override
+  String get filterDepartment => 'Department';
+
+  @override
+  String get filterPosition => 'Position';
+
+  @override
+  String get filterCompany => 'Company';
+
+  @override
+  String get filterRegion => 'Region';
+
+  @override
+  String get statusWorking => 'Working';
+
+  @override
+  String get statusArchived => 'Archived';
+
+  @override
+  String get viewProfile => 'View profile';
+
+  @override
+  String get nominatePromotion => 'Nominate for promotion';
+
+  @override
+  String nominateTitle(String name) {
+    return 'Nominate $name';
+  }
+
+  @override
+  String get proposedPosition => 'Proposed position';
+
+  @override
+  String get raisePercent => 'Salary raise';
+
+  @override
+  String get raisePercentInvalid => 'Enter 0.1 to 100';
+
+  @override
+  String get nominationReason => 'Reason for nomination';
+
+  @override
+  String get sendToExecutives => 'Send to executives';
+
+  @override
+  String get nominationSent => 'Nomination sent to executives';
+
+  @override
+  String get nominations => 'Promotion nominations';
+
+  @override
+  String get nominationsHint => 'Executives approve title and pay';
+
+  @override
+  String get noNominations => 'No nominations';
+
+  @override
+  String raiseBy(String percent) {
+    return 'Raise $percent%';
+  }
+
+  @override
+  String get approvePromotion => 'Approve promotion';
+
+  @override
+  String approvePromotionHint(String name, String position, String percent) {
+    return '$name becomes $position with a $percent% base salary raise.';
+  }
+
+  @override
+  String get promotionApproved => 'Approved: title and salary updated';
+
+  @override
+  String get promotionApprovedNoRaise =>
+      'Title changed; salary raise pending, retry in Payroll';
+
+  @override
+  String get promotionRejected => 'Nomination rejected';
+
+  @override
+  String todoNominations(int count) {
+    return '$count promotions to review';
+  }
+
+  @override
+  String get archiveProfile => 'Archive profile';
+
+  @override
+  String archiveTitle(String name) {
+    return 'Archive $name?';
+  }
+
+  @override
+  String archiveProjectsWarning(int count) {
+    return 'This person is on $count projects and will be removed from all of them:';
+  }
+
+  @override
+  String get archiveNoProjects => 'This person is not on any project.';
+
+  @override
+  String get archiveKeepsPersonal =>
+      'Personal details are kept and the profile can be restored.';
+
+  @override
+  String get archiveReason => 'Reason';
+
+  @override
+  String get archiveConfirm => 'Archive';
+
+  @override
+  String archiveDone(int count) {
+    return 'Archived and removed from $count projects';
+  }
+
+  @override
+  String profileArchivedBanner(String reason) {
+    return 'Profile archived. Reason: $reason';
+  }
+
+  @override
+  String get restoreProfile => 'Restore';
+
+  @override
+  String get restoreDone => 'Profile restored';
+
+  @override
+  String get fieldRequired => 'Required';
+
+  @override
+  String get errIsHead => 'Assign a new head before moving the current one';
+
+  @override
+  String get errLastMember => 'A department must keep at least one person';
+
+  @override
+  String get errSameDepartment => 'Already in this department';
+
+  @override
+  String get errArchived => 'This profile is archived; restore it first';
+
+  @override
+  String get errNotArchived => 'This profile is not archived';
+
+  @override
+  String get errMembersRemaining =>
+      'People remain; choose a receiving department';
+
+  @override
+  String get errNotMember => 'Not a member of this department';
+
+  @override
+  String get errPendingExists => 'A request is already waiting for review';
+
+  @override
+  String get errServiceUnavailable =>
+      'Part of the system is busy; try again shortly';
+
+  @override
+  String nPromotionNominated(String employee, String position) {
+    return '$employee nominated for $position, awaiting review';
+  }
+
+  @override
+  String nPromotionApproved(String position) {
+    return 'Congratulations! You were promoted to $position';
+  }
+
+  @override
+  String nPromotionRejected(String position) {
+    return 'Promotion to $position not approved';
+  }
+
+  @override
+  String nPromotionApprovedHr(String employee) {
+    return 'Executives approved the promotion of $employee';
+  }
+
+  @override
+  String nPromotionRejectedHr(String employee) {
+    return 'Executives rejected the promotion of $employee';
+  }
+
+  @override
+  String get nEmployeeTransferred => 'You were moved to a new department';
+
+  @override
+  String get nDepartmentHeadAssigned => 'You are now head of your department';
+
+  @override
+  String memberHours(String hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get stageInterviewed => 'Interviewed';
+
+  @override
+  String get interviewAwaitingCandidate => 'Waiting for candidate';
+
+  @override
+  String get interviewAwaitingHr => 'Waiting for HR';
+
+  @override
+  String get interviewConfirmed => 'Confirmed';
+
+  @override
+  String get interviewCancelled => 'Cancelled';
+
+  @override
+  String get interviewSchedule => 'Interview';
+
+  @override
+  String minutesAttached(String name) {
+    return 'Minutes: $name';
+  }
+
+  @override
+  String get chooseInterviewTime => 'Choose date and time';
+
+  @override
+  String get errTimeInPast => 'The interview time must be in the future';
+
+  @override
+  String get interviewLocation => 'Place or meeting link';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get rejectCandidate => 'Reject';
+
+  @override
+  String rejectCandidateHint(String name) {
+    return 'Reject $name? You can reconsider later.';
+  }
+
+  @override
+  String get scheduleInterview => 'Schedule interview';
+
+  @override
+  String get scheduleAgain => 'Schedule again';
+
+  @override
+  String get interviewSent => 'Time sent, waiting for confirmation';
+
+  @override
+  String get proposeOtherTime => 'Suggest another time';
+
+  @override
+  String get confirmTime => 'Confirm this time';
+
+  @override
+  String get interviewConfirmedDone => 'Interview confirmed';
+
+  @override
+  String get uploadMinutes => 'Upload interview minutes';
+
+  @override
+  String get minutesUploaded =>
+      'Minutes saved, candidate marked as interviewed';
+
+  @override
+  String get minutesAfterInterview =>
+      'Upload the minutes (Word, Excel) after the interview';
+
+  @override
+  String get openMinutes => 'Open minutes';
+
+  @override
+  String get moveToScreening => 'Move to screening';
+
+  @override
+  String get reconsider => 'Reconsider';
+
+  @override
+  String get reconsidered => 'Application moved back to its previous step';
+
+  @override
+  String get waitingCandidateReply =>
+      'Waiting for the candidate to confirm or suggest a time';
+
+  @override
+  String get waitingHrReply => 'Waiting for HR to confirm your time';
+
+  @override
+  String get hiredSalaryPending =>
+      'The agreed salary was not saved, enter it again in Payroll';
+
+  @override
+  String get offerFromAi => 'AI suggestion';
+
+  @override
+  String get offerFromRules => 'Data-based suggestion';
+
+  @override
+  String get offerPeerMedian =>
+      'Median pay of the same position, department with most peers';
+
+  @override
+  String get offerRegionMedian =>
+      'No peers yet: regional median pay, largest department';
+
+  @override
+  String get agreedSalary => 'Agreed base salary';
+
+  @override
+  String get currency => 'Currency';
+
+  @override
+  String get errInvalidStep =>
+      'This step is not allowed now, refresh to see the latest step';
+
+  @override
+  String get errNotScreened => 'Screen the application before scheduling';
+
+  @override
+  String get errInterviewNotConfirmed => 'The interview is not confirmed yet';
+
+  @override
+  String get errNotInterviewed => 'Upload the interview minutes before hiring';
+
+  @override
+  String get errNotRejected => 'This application is not rejected';
+
+  @override
+  String get errInvalidOffer => 'Salary must be above 0 with a currency';
+
+  @override
+  String get errMinutesFile => 'Minutes must be a Word or Excel file';
+
+  @override
+  String nInterviewScheduled(String position, String time) {
+    return 'Interview for $position at $time, tap to confirm';
+  }
+
+  @override
+  String nInterviewConfirmed(String time) {
+    return 'Your interview at $time is confirmed';
+  }
+
+  @override
+  String nInterviewConfirmedHr(String position, String time) {
+    return 'Interview for $position at $time is confirmed';
+  }
+
+  @override
+  String nInterviewProposed(String position, String time) {
+    return 'Candidate for $position proposed $time';
+  }
+
+  @override
+  String get projectTier => 'Tier';
+
+  @override
+  String get tierSmall => 'Tier 1 · Small';
+
+  @override
+  String get tierMedium => 'Tier 2 · Medium';
+
+  @override
+  String get tierLarge => 'Tier 3 · Large';
+
+  @override
+  String get tierStrategic => 'Tier 4 · Strategic';
+
+  @override
+  String tierRule(int months, int members) {
+    return 'Up to $months months, at least $members people';
+  }
+
+  @override
+  String get warnRed => '≤ 1 month left';
+
+  @override
+  String get warnOrange => '≤ 6 months left';
+
+  @override
+  String get warnYellow => '≤ 12 months left';
+
+  @override
+  String get warnNotStarted => 'Not started';
+
+  @override
+  String get warnAccepted => 'Accepted';
+
+  @override
+  String get warnNormal => 'Over 12 months left';
+
+  @override
+  String get projectCharts => 'Project charts';
+
+  @override
+  String get chart2d => '2D';
+
+  @override
+  String get chart3d => '3D';
+
+  @override
+  String get chartTimeline => 'Timeline';
+
+  @override
+  String get chartProgress => 'Progress';
+
+  @override
+  String get chartMembers => 'People';
+
+  @override
+  String get chartValue => 'Value';
+
+  @override
+  String get thousandUsd => 'thousand USD';
+
+  @override
+  String get projectProposals => 'Project proposals';
+
+  @override
+  String get projectNew => 'New project';
+
+  @override
+  String get wizardFiles => 'Contract and image';
+
+  @override
+  String get wizardFilesHint =>
+      'Upload the contract (PDF or Word, from the template); AI fills in the form. Without a contract, enter it by hand next.';
+
+  @override
+  String get wizardInfo => 'Project details';
+
+  @override
+  String get wizardMembers => 'Team';
+
+  @override
+  String get wizardSend => 'Send to management';
+
+  @override
+  String get downloadContractTemplate => 'Download contract template';
+
+  @override
+  String get uploadContract => 'Upload contract';
+
+  @override
+  String get uploadProjectImage => 'Upload project image';
+
+  @override
+  String get contractReadByAi =>
+      'AI read the contract and filled the form, check it next';
+
+  @override
+  String get contractReadManual =>
+      'Could not read the contract automatically, enter the details next';
+
+  @override
+  String get projectName => 'Project name';
+
+  @override
+  String get customerName => 'Client';
+
+  @override
+  String get customerCompany => 'Company';
+
+  @override
+  String get customerIndividual => 'Individual';
+
+  @override
+  String get customerContact => 'Client contact (email or phone)';
+
+  @override
+  String get contractType => 'Contract type';
+
+  @override
+  String get contractValue => 'Contract value';
+
+  @override
+  String get depositAmount => 'Deposit';
+
+  @override
+  String get startDate => 'Start';
+
+  @override
+  String get endDate => 'End';
+
+  @override
+  String get acceptanceDate => 'Acceptance';
+
+  @override
+  String get propErrName => 'Project name is required';
+
+  @override
+  String get propErrCustomer => 'Client is required';
+
+  @override
+  String get propErrValue => 'Contract value must be above 0';
+
+  @override
+  String get propErrDeposit =>
+      'Deposit cannot be negative or above the contract value';
+
+  @override
+  String get propErrDates => 'Start and end dates are required';
+
+  @override
+  String get propErrStartPast => 'Start date cannot be in the past';
+
+  @override
+  String get propErrEndBeforeStart => 'End must be after start';
+
+  @override
+  String get propErrAcceptance =>
+      'Acceptance must be within 90 days after the end';
+
+  @override
+  String get propErrTooLong => 'Too long for this tier';
+
+  @override
+  String get propErrFewMembers => 'Not enough people for this tier';
+
+  @override
+  String membersNeeded(int min, int picked) {
+    return 'At least $min people · $picked selected';
+  }
+
+  @override
+  String get suggestMembers => 'AI team suggestion';
+
+  @override
+  String activeProjects(int count) {
+    return '$count active projects';
+  }
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get sendToExecutive => 'Send for approval';
+
+  @override
+  String get proposalSent => 'Proposal sent, waiting for management';
+
+  @override
+  String get noProposals => 'No project proposals';
+
+  @override
+  String proposalVersion(int version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get propAwaitingExecutive => 'Waiting for management';
+
+  @override
+  String get propAwaitingProposer => 'Waiting for proposer';
+
+  @override
+  String get propApproved => 'Approved';
+
+  @override
+  String get propRejected => 'Rejected';
+
+  @override
+  String get proposalEdit => 'Edit proposal';
+
+  @override
+  String get proposalNoteHint => 'Reason or what to change';
+
+  @override
+  String proposalApprovedDone(String id) {
+    return 'Approved, project $id created';
+  }
+
+  @override
+  String get acceptEdits => 'Accept edits';
+
+  @override
+  String get withdrawProposal => 'Withdraw';
+
+  @override
+  String get waitingOtherSide => 'Waiting for the other side';
+
+  @override
+  String get openContract => 'Open contract';
+
+  @override
+  String get openImage => 'Open image';
+
+  @override
+  String get openProject => 'Open project';
+
+  @override
+  String get propActSubmitted => 'Submitted';
+
+  @override
+  String get propActCounter => 'Edited';
+
+  @override
+  String get propActApprove => 'Agreed';
+
+  @override
+  String get propActReject => 'Rejected';
+
+  @override
+  String get propActWithdraw => 'Withdrawn';
+
+  @override
+  String todoProposals(int count) {
+    return '$count project proposals to review';
+  }
+
+  @override
+  String nProjectProposed(String name) {
+    return 'New project proposal to review: $name';
+  }
+
+  @override
+  String nProjectCountered(String name) {
+    return 'Management edited $name, please confirm';
+  }
+
+  @override
+  String nProjectApproved(String name) {
+    return 'Project $name approved and created';
+  }
+
+  @override
+  String nProjectRejected(String name) {
+    return 'Project proposal $name rejected';
+  }
+
+  @override
+  String get workCalendar => 'Work calendar';
+
+  @override
+  String get clockStats => 'Attendance charts';
+
+  @override
+  String shiftHours(String start, String end) {
+    return 'Shift $start–$end';
+  }
+
+  @override
+  String get errShiftEnded => 'The shift has ended, you can no longer clock in';
+
+  @override
+  String get errTooManyFiles => 'At most 5 files per request';
+
+  @override
+  String get errFileType =>
+      'This file type is not accepted, choose a supported file';
+
+  @override
+  String get addEvidence => 'Add evidence';
+
+  @override
+  String viewOriginalLeave(int count) {
+    return 'View originals ($count)';
+  }
+
+  @override
+  String get evidenceUploaded => 'Evidence added, AI summary updated for HR';
+
+  @override
+  String get noEvidence => 'No evidence yet';
+
+  @override
+  String get aiLeaveSummary => 'AI evidence summary';
+
+  @override
+  String get evidenceMatches => 'Matches the request';
+
+  @override
+  String get evidenceCheck => 'Needs a closer look';
+
+  @override
+  String get calWorked => 'Worked';
+
+  @override
+  String get calLeave => 'Leave';
+
+  @override
+  String get calHoliday => 'Holiday';
+
+  @override
+  String get calAbsent => 'Absent';
+
+  @override
+  String get calScheduled => 'Scheduled';
+
+  @override
+  String calLeaveOfType(String type) {
+    return 'Leave: $type';
+  }
+
+  @override
+  String get noShiftThisDay => 'No shift on this day';
+
+  @override
+  String estimatedDayPay(String amount) {
+    return 'Estimated pay for the day: $amount';
+  }
+
+  @override
+  String estimatedMonthPay(String amount) {
+    return 'Estimated pay from hours worked: $amount';
+  }
+
+  @override
+  String get payEstimateHint =>
+      'Based on base salary, 26 working days, overtime at 150%; before insurance and tax';
+
+  @override
+  String get projectsThisDay => 'Projects on this day';
+
+  @override
+  String get statsScopeRegion => 'Whole region';
+
+  @override
+  String get statsScopeMine => 'Mine';
+
+  @override
+  String get statsDays => 'Days clocked';
+
+  @override
+  String get statsLate => 'Late arrivals';
+
+  @override
+  String get statsByWeekday => 'By weekday';
+
+  @override
+  String get statsByHour => 'Clock-in time';
+
+  @override
+  String get statsByMonth => 'Days and late arrivals by month';
+
+  @override
+  String get errPayrollTooEarly =>
+      'This period is not open yet: month M pays from the 10th of month M+1';
+
+  @override
+  String get errAmountLowered => 'The proposed salary can only stay or go up';
+
+  @override
+  String get errNotHigher =>
+      'The requested salary must be above the current one';
+
+  @override
+  String get errNoSalary => 'No base salary on record yet';
+
+  @override
+  String get errAwaitingAck =>
+      'The previous report is waiting for confirmation';
+
+  @override
+  String get acknowledge => 'Confirm';
+
+  @override
+  String get byDay => 'Day';
+
+  @override
+  String get byMonth => 'Month';
+
+  @override
+  String get byYear => 'Year';
+
+  @override
+  String get costs => 'Costs';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get exportExcel => 'Export Excel';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String exportedAt(String time) {
+    return 'Exported at $time';
+  }
+
+  @override
+  String get exportId => 'ID';
+
+  @override
+  String get exportPeriod => 'Period';
+
+  @override
+  String get exportRank => 'Rank';
+
+  @override
+  String get exportMargin => 'Margin';
+
+  @override
+  String get exportCurrency => 'Currency';
+
+  @override
+  String get exportRevenueUsd => 'Revenue (USD)';
+
+  @override
+  String get exportCostUsd => 'Costs (USD)';
+
+  @override
+  String exportFinanceTitle(int year) {
+    return 'Income and costs $year';
+  }
+
+  @override
+  String get financeAnalytics => 'Analytics';
+
+  @override
+  String get materialCost => 'Materials';
+
+  @override
+  String get payrollCost => 'Payroll';
+
+  @override
+  String get materialsUsed => 'Materials used';
+
+  @override
+  String get revenueByStage => 'Revenue by stage';
+
+  @override
+  String get projectProfitRanking => 'Projects ranked by profit';
+
+  @override
+  String get projectSalaryShares => 'Project pay per person';
+
+  @override
+  String get overtimePay => 'Overtime';
+
+  @override
+  String get insuranceDeduction => 'Insurance';
+
+  @override
+  String get incomeTax => 'Income tax';
+
+  @override
+  String get salaryGrowth => 'Pay over time';
+
+  @override
+  String salaryGrowthRate(String rate, int count) {
+    return 'Net pay $rate over $count periods';
+  }
+
+  @override
+  String payrollOpensOn(String period, String date) {
+    return 'Payroll for $period opens on $date';
+  }
+
+  @override
+  String get raiseRequests => 'Raise requests';
+
+  @override
+  String get raiseRequestsHint => 'Request, forward, approve raises';
+
+  @override
+  String get newRaiseRequest => 'Request a raise';
+
+  @override
+  String get noRaiseRequests => 'No raise requests';
+
+  @override
+  String get proposedSalary => 'Proposed base salary';
+
+  @override
+  String raiseMinimum(String amount) {
+    return 'At least $amount';
+  }
+
+  @override
+  String get raiseReason => 'Reason (results, new duties...)';
+
+  @override
+  String get raiseActionTitle => 'Salary and note';
+
+  @override
+  String get raiseSent => 'Raise request sent';
+
+  @override
+  String get raiseForwarded => 'Forwarded for approval';
+
+  @override
+  String get raiseApprovedDone => 'Approved, base salary raised';
+
+  @override
+  String get raiseForward => 'Forward';
+
+  @override
+  String get raiseReturn => 'Return';
+
+  @override
+  String get raiseEdit => 'Edit amount';
+
+  @override
+  String get raiseAwaitingHr => 'With HR';
+
+  @override
+  String get raiseAwaitingApprover => 'Awaiting approval';
+
+  @override
+  String get raiseAwaitingEmployee => 'Returned to employee';
+
+  @override
+  String get raiseWithdrawn => 'Withdrawn';
+
+  @override
+  String raiseRequestedFirst(String amount) {
+    return 'Originally requested $amount';
+  }
+
+  @override
+  String get reportSubmissions => 'Reports to management';
+
+  @override
+  String get reportSubmissionsHint => 'HR and finance reports, confirmation';
+
+  @override
+  String get reportHr => 'HR';
+
+  @override
+  String get reportFinance => 'Finance';
+
+  @override
+  String get noReports => 'No reports yet';
+
+  @override
+  String get submitReport => 'Send report';
+
+  @override
+  String submitReportTitle(String period) {
+    return 'Send report for $period';
+  }
+
+  @override
+  String get reportWaitingAck => 'Awaiting confirmation';
+
+  @override
+  String get reportSent => 'Report sent to management';
+
+  @override
+  String get reportAcknowledged => 'Report confirmed';
+
+  @override
+  String get returnReport => 'Return report';
+
+  @override
+  String get reportStatusSubmitted => 'Awaiting confirmation';
+
+  @override
+  String get reportStatusAcknowledged => 'Confirmed';
+
+  @override
+  String get reportStatusReturned => 'Returned';
+
+  @override
+  String reportPeriod(String period) {
+    return 'Report for $period';
+  }
+
+  @override
+  String reportHeadcount(int people, int departments) {
+    return '$people employees, $departments departments';
+  }
+
+  @override
+  String reportUnassigned(int count) {
+    return '$count without a department';
+  }
+
+  @override
+  String reportNominations(int pending, int approved) {
+    return 'Promotions: $pending pending, $approved approved';
+  }
+
+  @override
+  String get resignations => 'Resignation';
+
+  @override
+  String get resignationsHint => 'Submit and track resignations';
+
+  @override
+  String get newResignation => 'Resign';
+
+  @override
+  String get resignationLastDay => 'Last working day';
+
+  @override
+  String resignationLastDayOn(String date) {
+    return 'Last day: $date';
+  }
+
+  @override
+  String get resignationReason => 'Reason for leaving';
+
+  @override
+  String resignationNotice(int days) {
+    return 'Give at least $days days of notice';
+  }
+
+  @override
+  String get resignationSent => 'Resignation sent to HR';
+
+  @override
+  String get noResignations => 'No resignations yet';
+
+  @override
+  String get resignationPending => 'Waiting for HR';
+
+  @override
+  String get resignationApproved => 'Approved, serving notice';
+
+  @override
+  String get resignationCompleted => 'Left the company';
+
+  @override
+  String get resignationWithdrawn => 'Withdrawn';
+
+  @override
+  String get resignationWithdraw => 'Withdraw';
+
+  @override
+  String get resignationComplete => 'Complete exit';
+
+  @override
+  String resignationCompleteConfirm(String name) {
+    return '$name\'s record will be archived and removed from all projects. Continue?';
+  }
+
+  @override
+  String get resignationCompletedDone => 'Exit completed, record archived';
+
+  @override
+  String get errNoticeTooShort =>
+      'The last day must be at least 30 days from today';
+
+  @override
+  String get errBeforeLastDay => 'The last working day has not come yet';
+
+  @override
+  String get exportCsv => 'Export CSV';
+
+  @override
+  String get exportJson => 'Export JSON';
+
+  @override
+  String get auditCharts => 'Charts';
+
+  @override
+  String get auditFilter => 'Detailed filter';
+
+  @override
+  String get auditService => 'Service';
+
+  @override
+  String get auditEventType => 'Event type';
+
+  @override
+  String get auditTime => 'Time';
+
+  @override
+  String get auditFromTime => 'From';
+
+  @override
+  String get auditToTime => 'To';
+
+  @override
+  String get anyTime => 'Any';
+
+  @override
+  String get anomalyAny => 'Anomalies';
+
+  @override
+  String get anomalyAfterHours => 'After hours (10pm–6am)';
+
+  @override
+  String get anomalyFailure => 'Failed or rejected';
+
+  @override
+  String get auditTotal => 'Total events';
+
+  @override
+  String get auditByRegion => 'By region';
+
+  @override
+  String get auditByHour => 'By local hour (red is after hours)';
+
+  @override
+  String get auditByDay => 'By day';
+
+  @override
+  String get auditByType => 'Top event types';
+
+  @override
+  String get auditByService => 'By service';
+
+  @override
+  String get clearFilters => 'Clear filters';
+
+  @override
+  String get auditSignedExport => 'Signed CSV with SHA-256';
+
+  @override
+  String get approvalInbox => 'Approval inbox';
+
+  @override
+  String get approvalInboxHint =>
+      'Projects, promotions, raises waiting in all regions';
+
+  @override
+  String get approvalKindProject => 'Project';
+
+  @override
+  String get approvalKindPromotion => 'Promotion';
+
+  @override
+  String get approvalKindRaise => 'Raise';
+
+  @override
+  String get noApprovals => 'Nothing is waiting for approval';
+
+  @override
+  String approvalWaiting(int count) {
+    return '$count waiting for approval';
+  }
+
+  @override
+  String approvalRegionsDown(String regions) {
+    return 'No data from: $regions';
+  }
+
+  @override
+  String get approvalByRegion => 'Waiting by region';
+
+  @override
+  String approvalPromotionLine(String position, String percent) {
+    return 'To $position, +$percent% salary';
+  }
+
+  @override
+  String get approvalDone => 'Decision saved';
+
+  @override
+  String approvalConfirm(String title) {
+    return 'Approve $title?';
+  }
+
+  @override
+  String approvalRejectConfirm(String title) {
+    return 'Reject $title?';
+  }
+
+  @override
+  String get approvalColKind => 'Type';
+
+  @override
+  String get approvalColTitle => 'Subject';
+
+  @override
+  String get approvalColDetail => 'Details';
+
+  @override
+  String get approvalColUpdated => 'Updated';
+
+  @override
+  String get jobPositions => 'Job openings';
+
+  @override
+  String get jobPositionsHint =>
+      'Open roles, headcount, applicants ranked by AI match';
+
+  @override
+  String get newJobPosition => 'New opening';
+
+  @override
+  String get editJobPosition => 'Edit opening';
+
+  @override
+  String get noJobPositions => 'No job openings yet';
+
+  @override
+  String get positionTitle => 'Job title';
+
+  @override
+  String get positionDepartment => 'Department';
+
+  @override
+  String get positionHeadcount => 'People needed';
+
+  @override
+  String get positionDescription => 'Job description';
+
+  @override
+  String get positionRequirements => 'Requirements';
+
+  @override
+  String get positionRequirementsHint =>
+      'AI scores each CV against these requirements';
+
+  @override
+  String get positionOpen => 'Hiring';
+
+  @override
+  String get positionFilled => 'Filled';
+
+  @override
+  String get positionClosed => 'Closed';
+
+  @override
+  String get closePosition => 'Close opening';
+
+  @override
+  String get reopenPosition => 'Reopen';
+
+  @override
+  String get positionSaved => 'Job opening saved';
+
+  @override
+  String get positionApplicants => 'Applicants (best AI match first)';
+
+  @override
+  String positionProgress(int hired, int headcount, int applicants) {
+    return 'Hired $hired/$headcount · $applicants applicants';
+  }
+
+  @override
+  String positionSlotsLeft(int count) {
+    return '$count left';
+  }
+
+  @override
+  String get choosePositions => 'Choose positions';
+
+  @override
+  String get choosePositionsHint => 'Tap to choose';
+
+  @override
+  String choosePositionsHelper(int max) {
+    return 'Choose one or more, up to $max';
+  }
+
+  @override
+  String positionsChosen(int count) {
+    return 'Done ($count chosen)';
+  }
+
+  @override
+  String get positionMatchTitle => 'Fit for each position (AI)';
+
+  @override
+  String get positionMatchPending => 'AI is matching';
+
+  @override
+  String get positionMatchNone => 'Not matched';
+
+  @override
+  String get positionMatchStrengths => 'Meets';
+
+  @override
+  String get positionMatchGaps => 'Missing';
+
+  @override
+  String bestMatch(int score) {
+    return '$score% match';
+  }
+
+  @override
+  String get errNoPosition => 'Choose at least one position';
+
+  @override
+  String get errTooManyPositions => 'Choose at most 5 positions';
+
+  @override
+  String get errPositionUnavailable =>
+      'This position is closed or full, choose another';
+
+  @override
+  String get errPositionTitleExists =>
+      'An open position with this title already exists';
+
+  @override
+  String get errInvalidHeadcount => 'People needed must be 1 to 500';
+
+  @override
+  String errHeadcountBelowHired(int hired) {
+    return '$hired already hired, cannot set lower';
+  }
+
+  @override
+  String get errInvalidPosition =>
+      'Enter a job title and how many people are needed';
+
+  @override
+  String nRaiseRequested(String employee) {
+    return '$employee requested a raise';
+  }
+
+  @override
+  String nRaiseForwarded(String employee) {
+    return 'HR forwarded $employee\'s raise request for your approval';
+  }
+
+  @override
+  String get nRaiseApproved => 'Your raise request was approved';
+
+  @override
+  String get nRaiseRejected => 'Your raise request was rejected';
+
+  @override
+  String get nRaiseReturned => 'Your raise request was returned for changes';
+
+  @override
+  String nReportSubmitted(String report, String period) {
+    return 'New $report report for $period to confirm';
+  }
+
+  @override
+  String nReportAcknowledged(String report, String period) {
+    return '$report report for $period was confirmed';
+  }
+
+  @override
+  String nReportReturned(String report, String period) {
+    return '$report report for $period was returned, see the note';
+  }
+
+  @override
+  String nResignationRequested(String employee, String date) {
+    return '$employee resigned, last working day $date';
+  }
+
+  @override
+  String nResignationApproved(String date) {
+    return 'Your resignation was approved, last day $date';
+  }
+
+  @override
+  String get nResignationRejected => 'Your resignation was not approved';
+
+  @override
+  String nResignationWithdrawn(String employee) {
+    return '$employee withdrew their resignation';
+  }
+
+  @override
+  String get reportKindHr => 'HR';
+
+  @override
+  String get reportKindFinance => 'finance';
+
+  @override
+  String get openFullPage => 'Open full page';
+
+  @override
+  String get requestAlreadyHandled => 'This request has already been handled';
+
+  @override
+  String get requestFrom => 'From';
+
+  @override
+  String get waitingSuperior => 'Waiting for your superior';
+
+  @override
+  String get signupTitle => 'Create a candidate account';
+
+  @override
+  String get signupHint =>
+      'Enter your real details. A 6-digit code will be sent to this email.';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String codeSentTo(String email) {
+    return 'Code sent to $email, check Spam too';
+  }
+
+  @override
+  String get verificationCode => 'Verification code (6 digits)';
+
+  @override
+  String get newPassword => 'Password';
+
+  @override
+  String get passwordRule => 'At least 8 characters with letters and digits';
+
+  @override
+  String get confirmPassword => 'Repeat password';
+
+  @override
+  String get createAccount => 'Verify and create account';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get editDetails => 'Edit name, email, phone';
+
+  @override
+  String get signupDone => 'Account created, please sign in';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get passwordChanged => 'Password changed';
+
+  @override
+  String get profileViewed => 'Your application has been viewed';
+
+  @override
+  String get profileViewedHint =>
+      'HR has opened your application, so it can no longer be edited';
+
+  @override
+  String get cvRequired => 'Attach your CV (PDF) to save';
+
+  @override
+  String get accountDetails => 'From your registered account';
+
+  @override
+  String get errInvalidEmail => 'Email is not valid';
+
+  @override
+  String get errInvalidName => 'Name must be 2 to 80 characters';
+
+  @override
+  String get errInvalidPhone => 'Phone number is not valid';
+
+  @override
+  String get errWeakPassword =>
+      'Password needs 8+ characters with letters and digits';
+
+  @override
+  String get errEmailTaken =>
+      'This email already has an account, please sign in';
+
+  @override
+  String get errCodeTooSoon => 'A code was just sent, wait 60 seconds';
+
+  @override
+  String get errCodeExpired =>
+      'The code expired or was entered wrong too often, request a new one';
+
+  @override
+  String get errWrongCode => 'Wrong verification code';
+
+  @override
+  String get errSignupUnavailable =>
+      'Cannot send email right now, try again shortly';
+
+  @override
+  String get projectTime => 'Period';
+
+  @override
+  String get me => 'Me';
+
+  @override
+  String myProjectPay(String amount) {
+    return 'My project pay: $amount';
+  }
+
+  @override
+  String get mySchedule => 'My work schedule';
+
+  @override
+  String myScheduleHint(int days) {
+    return '$days days worked this month during the project';
+  }
+
+  @override
+  String myScheduleEarned(String amount) {
+    return 'Estimated pay for days worked: $amount';
+  }
+
+  @override
+  String get notCheckedIn => 'Not checked in';
+
+  @override
+  String get contractRequired =>
+      'Upload the contract (PDF, Word) so AI can read the project details';
+
+  @override
+  String get attachedBonuses =>
+      'Bonuses and penalties, last 12 months (attached)';
+
+  @override
+  String bonusNet(String amount) {
+    return 'Net: $amount';
+  }
+
+  @override
+  String moreItems(int count) {
+    return 'and $count more';
+  }
+
+  @override
+  String get orgTree => 'Organisation chart';
+
+  @override
+  String get orgTreeSearch => 'Search people or roles';
+
+  @override
+  String orgTreeSummary(int departments, int people) {
+    return '$departments departments · $people people';
+  }
+
+  @override
+  String get orgTreeToggle => 'Collapse or expand all';
+
+  @override
+  String get level1 => 'Staff';
+
+  @override
+  String get level2 => 'Specialist, engineer';
+
+  @override
+  String get level3 => 'Lead, deputy head';
+
+  @override
+  String get level4 => 'Head, manager';
+
+  @override
+  String get level5 => 'Director';
+
+  @override
+  String get level6 => 'Executive board';
+
+  @override
+  String get noHigherPosition => 'This person is already at the top level';
+
+  @override
+  String get errNotHigherPosition => 'Promotion must be to a higher level';
+
+  @override
+  String get errUnknownPosition => 'Pick a position from the list';
+
+  @override
+  String overtimeApprovedToday(String hours, String until) {
+    return '$hours h overtime approved: work until $until counts';
+  }
+
+  @override
+  String overtimePendingToday(String hours) {
+    return '$hours h overtime request pending: not counted until approved';
+  }
+
+  @override
+  String get overtimeNoneToday =>
+      'No approved overtime: time after the shift is not counted';
+
+  @override
+  String get viewZoomIn => 'Zoom in';
+
+  @override
+  String get viewZoomOut => 'Zoom out';
+
+  @override
+  String get viewFromTop => 'View from above';
+
+  @override
+  String get viewFromBottom => 'View from below';
+
+  @override
+  String get viewRotateLeft => 'Rotate left';
+
+  @override
+  String get viewRotateRight => 'Rotate right';
+
+  @override
+  String get viewReset => 'Reset view';
+
+  @override
+  String get sectionGroup => 'Group';
+
+  @override
+  String get sectionAdmin => 'Administration';
+
+  @override
+  String get roleGroup => 'Group level';
+
+  @override
+  String get groupOverview => 'Group overview';
+
+  @override
+  String get groupOverviewHint =>
+      'Figures per country, tap a country for details';
+
+  @override
+  String get adminConsole => 'Data administration';
+
+  @override
+  String get adminConsoleHint =>
+      'Accounts, work calendar, positions, statistics, backups, SQL';
+
+  @override
+  String viewingRegion(String region) {
+    return 'Viewing: $region';
+  }
+
+  @override
+  String get chooseRegion => 'Choose a region';
+
+  @override
+  String get approvalKindLeave => 'Leave';
+
+  @override
+  String get approvalKindOvertime => 'Overtime';
+
+  @override
+  String get approvalKindProfile => 'Profile change';
+
+  @override
+  String get approvalKindResignation => 'Resignation';
+
+  @override
+  String get groupTotals => 'Whole group';
+
+  @override
+  String get groupEmployees => 'Employees';
+
+  @override
+  String get groupRevenueYtd => 'Revenue this year (USD)';
+
+  @override
+  String get groupCostYtd => 'Costs this year (USD)';
+
+  @override
+  String get groupRegionDown =>
+      'Could not load this country yet, pull to retry';
+
+  @override
+  String get execActions => 'Act directly';
+
+  @override
+  String get execChangePosition => 'Promote or change position';
+
+  @override
+  String get execPromote => 'Promote';
+
+  @override
+  String get execChangeOnly => 'Change position';
+
+  @override
+  String get execNewPosition => 'New position';
+
+  @override
+  String get execNoHigherPosition => 'No higher position available';
+
+  @override
+  String get execReason => 'Reason (kept in the audit log)';
+
+  @override
+  String get execReasonRequired => 'Reason (required)';
+
+  @override
+  String get execSalary => 'Change base salary';
+
+  @override
+  String execCurrentSalary(String amount) {
+    return 'Current base salary: $amount';
+  }
+
+  @override
+  String get execNewSalary => 'New base salary';
+
+  @override
+  String get execBonus => 'Bonus or penalty';
+
+  @override
+  String get execBonusKind => 'Bonus';
+
+  @override
+  String get execPenaltyKind => 'Penalty';
+
+  @override
+  String get execAmount => 'Amount (in the employee\'s salary currency)';
+
+  @override
+  String get execApply => 'Apply now';
+
+  @override
+  String get execAuditNote =>
+      'Takes effect immediately without further approval; recorded in the audit log with your name.';
+
+  @override
+  String get execApplied => 'Applied and recorded in the audit log';
+
+  @override
+  String get nominationScope => 'Scope';
+
+  @override
+  String get nominationScopeRegion => 'Promotion within the country';
+
+  @override
+  String get nominationScopeGroupHr => 'To Group HR';
+
+  @override
+  String get nominationScopeGroupFinance => 'To Group finance';
+
+  @override
+  String get nominationGroupNote =>
+      'Decided by the group executive office; once approved this person works across all regions.';
+
+  @override
+  String get nominationToGroup => 'Group level';
+
+  @override
+  String get adminTabOverview => 'Overview';
+
+  @override
+  String get adminTabAccounts => 'Accounts';
+
+  @override
+  String get adminTabCalendar => 'Work calendar';
+
+  @override
+  String get adminTabPositions => 'Positions';
+
+  @override
+  String get adminTabData => 'Data';
+
+  @override
+  String get adminAccountsByRole => 'Accounts by role';
+
+  @override
+  String adminAccountsTotal(int n) {
+    return '$n accounts';
+  }
+
+  @override
+  String get adminDatabases => 'Databases';
+
+  @override
+  String adminDbLine(int tables, String rows, String size) {
+    return '$tables tables · $rows rows · $size';
+  }
+
+  @override
+  String get adminActivity => 'Activity in the last 14 days (events)';
+
+  @override
+  String get adminRowsByDb => 'Rows per database';
+
+  @override
+  String get adminDbUnavailable => 'This database could not be read';
+
+  @override
+  String get adminSearchAccounts => 'Search name, email, username';
+
+  @override
+  String get adminAccountDisabled => 'Disabled';
+
+  @override
+  String adminEditAccount(String name) {
+    return 'Edit account $name';
+  }
+
+  @override
+  String get adminAccountEnabled => 'Allow sign-in';
+
+  @override
+  String get adminRoles => 'Roles';
+
+  @override
+  String get adminSaved => 'Saved and recorded in the audit log';
+
+  @override
+  String get adminHolidays => 'Holidays';
+
+  @override
+  String get adminAddHoliday => 'Add holiday';
+
+  @override
+  String get adminHolidayName => 'Holiday name';
+
+  @override
+  String adminHolidayRemove(String name) {
+    return 'Remove holiday $name?';
+  }
+
+  @override
+  String get adminNoHolidays => 'No holidays for this year yet';
+
+  @override
+  String get adminShift => 'Shift hours';
+
+  @override
+  String get adminShiftHint =>
+      'Change start and end time for every shift in a date range (from today on; past work stays as recorded)';
+
+  @override
+  String get adminShiftChange => 'Change shift hours';
+
+  @override
+  String get adminShiftStart => 'Start';
+
+  @override
+  String get adminShiftEnd => 'End';
+
+  @override
+  String get adminShiftRange => 'Date range';
+
+  @override
+  String adminShiftDone(int n) {
+    return 'Updated $n shifts';
+  }
+
+  @override
+  String get adminAddPosition => 'Add position';
+
+  @override
+  String get adminEditPosition => 'Edit position';
+
+  @override
+  String get adminPositionName => 'Position name';
+
+  @override
+  String get adminPositionLevel => 'Level';
+
+  @override
+  String get adminCoefficient => 'Salary coefficient';
+
+  @override
+  String adminHolders(int n) {
+    return '$n holders';
+  }
+
+  @override
+  String get adminDeletePosition => 'Delete position';
+
+  @override
+  String get adminSql => 'SQL query';
+
+  @override
+  String get adminSqlHint =>
+      'Read-only by default; every run is recorded in the audit log';
+
+  @override
+  String get adminSqlWrite => 'Allow writes (INSERT, UPDATE, DELETE)';
+
+  @override
+  String get adminSqlWriteConfirm =>
+      'This changes real data and is recorded in the audit log. Run it?';
+
+  @override
+  String get adminSqlRun => 'Run';
+
+  @override
+  String adminSqlRows(int n) {
+    return '$n rows';
+  }
+
+  @override
+  String adminSqlAffected(int n) {
+    return '$n rows affected';
+  }
+
+  @override
+  String get adminSqlTruncated => 'Showing the first 500 rows';
+
+  @override
+  String get adminTechnical => 'Technical details';
+
+  @override
+  String get adminBackups => 'Backups';
+
+  @override
+  String get adminBackupNow => 'Back up now';
+
+  @override
+  String get adminBackupDone => 'The region\'s data has been backed up';
+
+  @override
+  String get adminBackupNone => 'No backups yet';
+
+  @override
+  String get adminDownload => 'Download';
+
+  @override
+  String get errGroupOnly =>
+      'Only the group executive office can decide this nomination';
+
+  @override
+  String get errSamePosition => 'The employee already holds this position';
+
+  @override
+  String get errInUse =>
+      'Someone still holds this position, so it cannot be deleted';
+
+  @override
+  String get errReadOnly =>
+      'The statement writes data; turn on Allow writes if you really mean it';
+
+  @override
+  String get errSqlError =>
+      'The statement failed, see the technical details below';
+
+  @override
+  String get errUnknownDatabase => 'Pick a database from the list';
+
+  @override
+  String get errEmptySql => 'Enter an SQL statement';
+
+  @override
+  String get errStorageUnavailable =>
+      'Storage is not available, try again later';
+
+  @override
+  String get errIdentityUnavailable =>
+      'The account service is not reachable, try again later';
+
+  @override
+  String get errOtherRegion => 'This account belongs to another region';
+
+  @override
+  String get errRoleNotAllowed => 'You may not grant or remove this role';
+
+  @override
+  String get errSelfChange => 'You cannot change your own account';
+
+  @override
+  String get errInvalidShift =>
+      'Invalid shift: the end must be after the start';
+
+  @override
+  String get errInvalidRange => 'Invalid date range (at most one year)';
+
+  @override
+  String get adminRemove => 'Remove';
+
+  @override
+  String get evClockedIn => 'Clocked in';
+
+  @override
+  String get evClockedOut => 'Clocked out';
+
+  @override
+  String get evLeaveRequested => 'Leave requested';
+
+  @override
+  String get evLeaveApproved => 'Leave approved';
+
+  @override
+  String get evLeaveRejected => 'Leave rejected';
+
+  @override
+  String get evOvertimeRequested => 'Overtime requested';
+
+  @override
+  String get evOvertimeApproved => 'Overtime approved';
+
+  @override
+  String get evOvertimeRejected => 'Overtime rejected';
+
+  @override
+  String get evHolidayAdded => 'Holiday added';
+
+  @override
+  String get evHolidayRemoved => 'Holiday removed';
+
+  @override
+  String get evShiftChanged => 'Shift hours changed';
+
+  @override
+  String get evCandidateApplied => 'Candidate applied';
+
+  @override
+  String get evCandidateAnalyzed => 'Candidate CV analyzed by AI';
+
+  @override
+  String get evCandidateCvUploaded => 'Candidate uploaded a CV';
+
+  @override
+  String get evCandidateProfileUpdated => 'Candidate profile updated';
+
+  @override
+  String get evCandidateStatusChanged => 'Candidate stage changed';
+
+  @override
+  String get evCandidateHired => 'Candidate hired';
+
+  @override
+  String get evInterviewScheduled => 'Interview scheduled';
+
+  @override
+  String get evInterviewConfirmed => 'Interview confirmed';
+
+  @override
+  String get evInterviewProposed => 'Another interview time proposed';
+
+  @override
+  String get evPayslipIssued => 'Payslip issued';
+
+  @override
+  String get evPayrollRunCompleted => 'Payroll run completed';
+
+  @override
+  String get evPayrollRunFailed => 'Payroll run failed';
+
+  @override
+  String get evPayrollRunNeedsAttention => 'Payroll run needs attention';
+
+  @override
+  String get evPayrollExpenseRecorded => 'Payroll expense recorded';
+
+  @override
+  String get evPayoutLogged => 'Payout recorded';
+
+  @override
+  String get evSalaryAgreed => 'Starting salary agreed';
+
+  @override
+  String get evSalaryRaised => 'Salary raised';
+
+  @override
+  String get evSalaryChanged => 'Base salary changed by the executive office';
+
+  @override
+  String get evBonusGranted => 'Bonus granted';
+
+  @override
+  String get evPenaltyApplied => 'Penalty applied';
+
+  @override
+  String get evRaiseRequested => 'Raise requested';
+
+  @override
+  String get evRaiseForwarded => 'Raise forwarded by HR';
+
+  @override
+  String get evRaiseApproved => 'Raise approved';
+
+  @override
+  String get evRaiseRejected => 'Raise rejected';
+
+  @override
+  String get evRaiseReturned => 'Raise returned';
+
+  @override
+  String get evRaiseWithdrawn => 'Raise withdrawn';
+
+  @override
+  String get evPromotionNominated => 'Promotion nominated';
+
+  @override
+  String get evPromotionApproved => 'Promotion approved';
+
+  @override
+  String get evPromotionRejected => 'Promotion rejected';
+
+  @override
+  String get evEmployeePromoted => 'Promoted by the executive office';
+
+  @override
+  String get evPositionChanged => 'Position changed by the executive office';
+
+  @override
+  String get evPositionCreated => 'Position created';
+
+  @override
+  String get evPositionUpdated => 'Position updated';
+
+  @override
+  String get evPositionDeleted => 'Position deleted';
+
+  @override
+  String get evEmployeeHired => 'Employee hired';
+
+  @override
+  String get evEmployeeTransferred => 'Employee transferred';
+
+  @override
+  String get evEmployeeArchived => 'Employee archived';
+
+  @override
+  String get evEmployeeRestored => 'Employee restored';
+
+  @override
+  String get evDepartmentCreated => 'Department created';
+
+  @override
+  String get evDepartmentDissolved => 'Department dissolved';
+
+  @override
+  String get evDepartmentHeadChanged => 'Department head changed';
+
+  @override
+  String get evProfileChangeRequested => 'Profile change requested';
+
+  @override
+  String get evProfileChangeApproved => 'Profile change approved';
+
+  @override
+  String get evProfileChangeRejected => 'Profile change rejected';
+
+  @override
+  String get evResignationRequested => 'Resignation submitted';
+
+  @override
+  String get evResignationApproved => 'Resignation approved';
+
+  @override
+  String get evResignationRejected => 'Resignation rejected';
+
+  @override
+  String get evResignationWithdrawn => 'Resignation withdrawn';
+
+  @override
+  String get evResignationCompleted => 'Resignation completed';
+
+  @override
+  String get evReportSubmitted => 'Report submitted';
+
+  @override
+  String get evReportAcknowledged => 'Report acknowledged';
+
+  @override
+  String get evReportReturned => 'Report returned';
+
+  @override
+  String get evProjectCreated => 'Project created';
+
+  @override
+  String get evProjectProposed => 'Project proposed';
+
+  @override
+  String get evProjectProposalApproved => 'Project proposal approved';
+
+  @override
+  String get evProjectProposalRejected => 'Project proposal rejected';
+
+  @override
+  String get evProjectProposalCountered => 'Project proposal revised';
+
+  @override
+  String get evProjectAccepted => 'Project accepted';
+
+  @override
+  String get evProjectMembersRemoved => 'Members removed from project';
+
+  @override
+  String get evAcceptanceRevenueRecorded => 'Acceptance revenue recorded';
+
+  @override
+  String get evMaterialPurchased => 'Material purchased';
+
+  @override
+  String get evSupplierPaid => 'Supplier paid';
+
+  @override
+  String get evFinancePeriodClosed => 'Finance period closed';
+
+  @override
+  String get evAdminSqlRead => 'Admin ran a read-only SQL query';
+
+  @override
+  String get evAdminSqlWrite => 'Admin changed data with SQL';
+
+  @override
+  String get evBackupCreated => 'Backup created';
+
+  @override
+  String get evAccountChanged => 'Account or roles changed';
+
+  @override
+  String nAuditLog(String event, String by) {
+    return 'New log entry: $event$by';
+  }
+
+  @override
+  String nAuditLogBy(String by) {
+    return ' (by $by)';
+  }
+
+  @override
+  String nPositionChanged(String position) {
+    return 'Your position is now $position';
+  }
+
+  @override
+  String nSalaryChanged(String amount) {
+    return 'Your new base salary: $amount';
+  }
+
+  @override
+  String nBonusGranted(String amount, String reason) {
+    return 'You received a bonus of $amount: $reason';
+  }
+
+  @override
+  String nPenaltyApplied(String amount, String reason) {
+    return 'A penalty of $amount was applied: $reason';
+  }
+
+  @override
+  String get errProtectedDatabase =>
+      'The admin log database cannot be queried here';
 }

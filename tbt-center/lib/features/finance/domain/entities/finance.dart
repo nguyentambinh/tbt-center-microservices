@@ -86,3 +86,47 @@ class SupplierDetail {
   final List<LedgerEntry> imports;
   final List<LedgerEntry> payments;
 }
+
+/// Một mốc trên biểu đồ thu chi: ngày, tháng hoặc năm
+class FinancePoint {
+  const FinancePoint({required this.bucket, required this.revenue, required this.material, required this.payroll, required this.profit});
+
+  final String bucket;
+  final double revenue;
+  final double material;
+  final double payroll;
+  final double profit;
+}
+
+class FinanceSeries {
+  const FinanceSeries({required this.granularity, required this.currency, required this.points});
+
+  final String granularity;
+  final String currency;
+  final List<FinancePoint> points;
+}
+
+/// Một dự án trong bảng xếp hạng lợi nhuận
+class ProjectFinance {
+  const ProjectFinance({required this.projectId, required this.rank, required this.revenue, required this.cost, required this.profit, this.margin});
+
+  final String projectId;
+  final int rank;
+  final double revenue;
+  final double cost;
+  final double profit;
+  final double? margin;
+}
+
+class ProjectFinanceDetail {
+  const ProjectFinanceDetail({required this.projectId, required this.currency, required this.revenue, required this.cost, required this.revenues, required this.materials});
+
+  final String projectId;
+  final String currency;
+  final double revenue;
+  final double cost;
+  final List<({DateTime date, double amount, String kind})> revenues;
+  final List<({String name, DateTime date, String? supplier, double amount})> materials;
+
+  double get profit => revenue - cost;
+}

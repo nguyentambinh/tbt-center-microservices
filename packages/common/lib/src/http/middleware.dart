@@ -102,6 +102,7 @@ Middleware requireClaims({
       }
       final noRegionAllowed =
           (allowNoRegion && claims.region == null) ||
+          claims.isGroup ||
           claims.hasAnyRole(anyRegionRoles);
       if (region != null && claims.region != region && !noRegionAllowed) {
         return apiError(

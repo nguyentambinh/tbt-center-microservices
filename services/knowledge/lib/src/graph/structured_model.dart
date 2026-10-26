@@ -27,7 +27,7 @@ abstract interface class StructuredModel {
 class ClaudeStructured implements StructuredModel {
   ClaudeStructured(
     this._apiKey, {
-    this.model = 'claude-opus-5-5',
+    this.model = 'claude-sonnet-5-5',
     HttpClient? http,
   }) : _http =
            http ??

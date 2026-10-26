@@ -96,6 +96,12 @@ class InternalClient {
     String? correlationId,
   }) => _send('POST', path, body: body, correlationId: correlationId);
 
+  Future<Map<String, dynamic>> put(
+    String path,
+    Object body, {
+    String? correlationId,
+  }) => _send('PUT', path, body: body, correlationId: correlationId);
+
   Future<Map<String, dynamic>> delete(
     String path,
     Object body, {

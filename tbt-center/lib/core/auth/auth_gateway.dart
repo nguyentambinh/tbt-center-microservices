@@ -29,6 +29,9 @@ abstract interface class AuthGateway {
   /// [locale] là ngôn ngữ đang chọn trong app (`vi`, `en`, `de`, `pt`), để
   /// trang đăng nhập, đăng ký của Keycloak hiện cùng ngôn ngữ.
   Future<Session> signIn({bool register = false, String? locale});
+
+  /// Mở trang đổi mật khẩu của Keycloak trên phiên đang đăng nhập
+  Future<Session> changePassword({String? locale});
   Future<Session> refresh(Session session);
   Future<void> signOut(Session session);
 }
@@ -70,6 +73,25 @@ class KeycloakAuthGateway implements AuthGateway {
         // Chuẩn OIDC ui_locales: plugin Android tự đưa vào chỗ riêng của AppAuth
         // nên không văng như prompt. Keycloak dùng tên pt-BR cho tiếng Bồ Đào Nha.
         additionalParameters: locale == null ? null : {'ui_locales': locale == 'pt' ? 'pt-BR' : locale},
+      ));
+      return _toSession(response.accessToken, response.refreshToken, response.idToken,
+          response.accessTokenExpirationDateTime);
+    } on FlutterAppAuthUserCancelledException {
+      throw const SignInCancelled();
+    }
+  }
+
+  @override
+  Future<Session> changePassword({String? locale}) async {
+    try {
+      final response = await _appAuth.authorizeAndExchangeCode(AuthorizationTokenRequest(
+        _clientId,
+        _redirectUrl,
+        issuer: _issuer,
+        scopes: _scopes,
+        allowInsecureConnections: _insecure,
+        // Keycloak AIA: yêu cầu hành động đổi mật khẩu ngay trong lần ủy quyền này
+        additionalParameters: {'kc_action': 'UPDATE_PASSWORD', if (locale != null) 'ui_locales': locale == 'pt' ? 'pt-BR' : locale},
       ));
       return _toSession(response.accessToken, response.refreshToken, response.idToken,
           response.accessTokenExpirationDateTime);

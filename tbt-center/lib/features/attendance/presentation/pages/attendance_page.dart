@@ -8,10 +8,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/error/error_reporter.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
@@ -19,6 +21,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/attendance.dart';
 import '../providers/attendance_providers.dart';
 import '../widgets/clock_card.dart';
+import '../widgets/leave_evidence.dart';
 import '../widgets/leave_form.dart';
 import '../widgets/overtime_widgets.dart';
 
@@ -47,6 +50,10 @@ class AttendancePage extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.attendance),
+          actions: [
+            IconButton(tooltip: l10n.workCalendar, icon: const Icon(Icons.calendar_month), onPressed: () => context.push(Routes.workCalendar)),
+            IconButton(tooltip: l10n.clockStats, icon: const Icon(Icons.bar_chart), onPressed: () => context.push(Routes.clockStats)),
+          ],
           bottom: TabBar(isScrollable: canApprove, tabAlignment: canApprove ? TabAlignment.start : null, tabs: [
             Tab(text: l10n.tabTimesheet),
             Tab(text: l10n.tabLeave),
@@ -73,7 +80,7 @@ class _TimesheetTab extends ConsumerStatefulWidget {
 }
 
 class _TimesheetTabState extends ConsumerState<_TimesheetTab> {
-  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+  late DateTime _month = DateTime(ref.read(regionTodayProvider).year, ref.read(regionTodayProvider).month);
 
   void _shift(int months) => setState(() => _month = DateTime(_month.year, _month.month + months));
 
@@ -92,7 +99,7 @@ class _TimesheetTabState extends ConsumerState<_TimesheetTab> {
             IconButton(icon: const Icon(Icons.chevron_left), onPressed: () => _shift(-1)),
             Expanded(
               child: Text(
-                DateFormat.yMMMM(locale).format(_month),
+                toBeginningOfSentenceCase(DateFormat.yMMMM(locale).format(_month), locale),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
@@ -159,7 +166,7 @@ class _MyLeavesTab extends ConsumerWidget {
             onRefresh: () => ref.refresh(myLeavesProvider.future),
             child: ListView(
               padding: const EdgeInsets.only(bottom: 88),
-              children: [for (final leave in value) _LeaveTile(leave: leave)],
+              children: [for (final leave in value) LeaveTile(leave: leave, mine: true)],
             ),
           ),
         AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(myLeavesProvider)),
@@ -197,6 +204,7 @@ class _ApprovalsTab extends ConsumerWidget {
     final overtime = ref.watch(pendingOvertimeProvider);
     final attendance = ref.read(attendanceRepositoryProvider);
     final workTime = ref.read(workTimeRepositoryProvider);
+    final me = ref.watch(authControllerProvider).value?.employeeId;
 
     if (leaves.error ?? overtime.error case final error?) {
       return ErrorView(
@@ -221,10 +229,10 @@ class _ApprovalsTab extends ConsumerWidget {
       child: ListView(
         children: [
           for (final leave in pendingLeaves)
-            _LeaveTile(
+            LeaveTile(
               leave: leave,
               showEmployee: true,
-              actions: [
+              actions: leave.employeeId == me ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))] : [
                 TextButton(
                   onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: false)),
                   child: Text(l10n.reject),
@@ -239,7 +247,7 @@ class _ApprovalsTab extends ConsumerWidget {
             OvertimeTile(
               request: request,
               showEmployee: true,
-              actions: [
+              actions: request.employeeId == me ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))] : [
                 TextButton(
                   onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: false)),
                   child: Text(l10n.reject),
@@ -256,12 +264,15 @@ class _ApprovalsTab extends ConsumerWidget {
   }
 }
 
-class _LeaveTile extends StatelessWidget {
-  const _LeaveTile({required this.leave, this.showEmployee = false, this.actions = const []});
+class LeaveTile extends StatelessWidget {
+  const LeaveTile({super.key, required this.leave, this.showEmployee = false, this.actions = const [], this.mine = false});
 
   final LeaveRequest leave;
   final bool showEmployee;
   final List<Widget> actions;
+
+  /// Đơn của chính mình: còn chờ duyệt thì thêm được minh chứng
+  final bool mine;
 
   @override
   Widget build(BuildContext context) {
@@ -301,6 +312,7 @@ class _LeaveTile extends StatelessWidget {
             ),
             if (showEmployee) Text(leave.employeeId, style: TextStyle(color: context.tbt.textSecondary)),
             if (leave.reason case final reason? when reason.isNotEmpty) Text(reason),
+            LeaveEvidence(leave: leave, canUpload: mine && leave.status == LeaveStatus.pending, showSummary: !mine),
             if (actions.isNotEmpty) ...[
               const SizedBox(height: 8),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [...actions.expand((a) => [a, const SizedBox(width: 8)])]),

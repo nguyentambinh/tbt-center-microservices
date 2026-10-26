@@ -16,6 +16,7 @@ abstract interface class ClockRepository {
 
   /// Chấm công một lượt; tự biết là vào ca hay ra ca (R31–R33).
   /// Ném [ClockRuleViolation] `no_shift` nếu hôm nay không có ca,
+  /// `shift_ended` nếu chưa vào ca mà đã qua giờ kết thúc ca,
   /// `already_clocked_out` nếu đã ra ca, `too_soon` nếu vừa vào ca chưa đủ
   /// [minShift].
   Future<Map<String, dynamic>> clock(String employeeId);
@@ -36,11 +37,18 @@ class PostgresClockRepository implements ClockRepository {
       'with t as (select (now() at time zone @tz) as local) '
       'select t.local::date as work_date, t.local::time::text as now, '
       's.note, s.pay_coefficient::text as coefficient, s.is_sunday, '
-      's.is_holiday, ts.check_in::text as check_in, '
+      's.is_holiday, s.shift_start::text as shift_start, '
+      's.shift_end::text as shift_end, ts.check_in::text as check_in, '
       'ts.check_out::text as check_out, ts.work_hours::float8 as work_hours, '
       'ts.overtime_hours::float8 as overtime_hours, '
       'ts.total_hours::float8 as total_hours, '
-      '(s.employee_id is not null) as has_shift '
+      '(s.employee_id is not null) as has_shift, '
+      "(select coalesce(sum(o.hours) filter (where o.status = 'approved'), 0) "
+      'from overtime_requests o where o.employee_id = @id and o.work_date = '
+      't.local::date)::float8 as approved_overtime, '
+      "(select coalesce(sum(o.hours) filter (where o.status = 'pending'), 0) "
+      'from overtime_requests o where o.employee_id = @id and o.work_date = '
+      't.local::date)::float8 as pending_overtime '
       'from t left join work_schedules s on s.employee_id = @id '
       'and s.work_date = t.local::date '
       'left join timesheets ts on ts.employee_id = @id '
@@ -62,6 +70,8 @@ class PostgresClockRepository implements ClockRepository {
               'coefficient': r['coefficient'],
               'isSunday': r['is_sunday'],
               'isHoliday': r['is_holiday'],
+              'start': _hhmm(r['shift_start']),
+              'end': _hhmm(r['shift_end']),
             }
           : null,
       'checkIn': _hhmm(r['check_in']),
@@ -69,6 +79,8 @@ class PostgresClockRepository implements ClockRepository {
       'workHours': r['work_hours'],
       'overtimeHours': r['overtime_hours'],
       'totalHours': r['total_hours'],
+      'approvedOvertime': r['approved_overtime'],
+      'pendingOvertime': r['pending_overtime'],
     };
   }
 
@@ -89,8 +101,8 @@ class PostgresClockRepository implements ClockRepository {
       // Khóa ca hôm nay: hai lượt bấm cùng lúc không cùng thành "vào ca".
       final shift = await tx.execute(
         Sql.named(
-          'select 1 from work_schedules where employee_id = @id '
-          'and work_date = @day for update',
+          'select shift_end::text from work_schedules '
+          'where employee_id = @id and work_date = @day for update',
         ),
         parameters: key,
       );
@@ -114,6 +126,12 @@ class PostgresClockRepository implements ClockRepository {
 
       final Map<String, dynamic> result;
       if (checkIn == null) {
+        if (!canCheckIn(time, shift.first[0]! as String)) {
+          throw const ClockRuleViolation(
+            'shift_ended',
+            'The shift is over, clock-in is closed',
+          );
+        }
         await tx.execute(
           Sql.named(
             'insert into timesheets (employee_id, work_date, check_in) '
@@ -140,7 +158,10 @@ class PostgresClockRepository implements ClockRepository {
             'Clock out at least 5 minutes after clocking in',
           );
         }
-        final hours = splitHours(span);
+        final hours = splitHours(
+          span,
+          approvedOvertime: await approvedOvertimeHours(tx, employeeId, day),
+        );
         await tx.execute(
           Sql.named(
             'update timesheets set check_out = @time::time, '
@@ -185,4 +206,54 @@ class PostgresClockRepository implements ClockRepository {
       value is String ? value.substring(0, 5) : null;
 
   static String _day(DateTime d) => d.toIso8601String().substring(0, 10);
+}
+
+/// Giờ tăng ca đã duyệt trong ngày; đơn chờ duyệt không tính.
+Future<double> approvedOvertimeHours(
+  TxSession tx,
+  String employeeId,
+  DateTime day,
+) async {
+  final rows = await tx.execute(
+    Sql.named(
+      'select coalesce(sum(hours), 0)::float8 from overtime_requests '
+      "where employee_id = @id and work_date = @day and status = 'approved'",
+    ),
+    parameters: {'id': employeeId, 'day': day},
+  );
+  return (rows.first[0]! as num).toDouble();
+}
+
+/// Ngày đã ra ca mà đơn tăng ca mới được duyệt hoặc bị từ chối: tính lại giờ.
+Future<void> recountOvertime(
+  TxSession tx,
+  String employeeId,
+  DateTime day,
+) async {
+  final rows = await tx.execute(
+    Sql.named(
+      'select check_in::text, check_out::text from timesheets '
+      'where employee_id = @id and work_date = @day and check_out is not null',
+    ),
+    parameters: {'id': employeeId, 'day': day},
+  );
+  if (rows.isEmpty) return;
+  DateTime parse(Object? t) => DateTime.parse('2000-01-01 $t');
+  final hours = splitHours(
+    parse(rows.first[1]).difference(parse(rows.first[0])),
+    approvedOvertime: await approvedOvertimeHours(tx, employeeId, day),
+  );
+  await tx.execute(
+    Sql.named(
+      'update timesheets set work_hours = @work, overtime_hours = @overtime, '
+      'total_hours = @total where employee_id = @id and work_date = @day',
+    ),
+    parameters: {
+      'id': employeeId,
+      'day': day,
+      'work': hours.work,
+      'overtime': hours.overtime,
+      'total': hours.total,
+    },
+  );
 }

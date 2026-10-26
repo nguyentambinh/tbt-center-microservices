@@ -17,6 +17,7 @@ import 'package:tbtcenter/app.dart';
 import 'package:tbtcenter/core/auth/auth_controller.dart';
 import 'package:tbtcenter/core/auth/auth_gateway.dart';
 import 'package:tbtcenter/core/auth/session.dart';
+import 'package:tbtcenter/core/config/env.dart';
 import 'package:tbtcenter/core/locale/locale_providers.dart';
 import 'package:tbtcenter/core/widgets/motion.dart';
 
@@ -25,7 +26,7 @@ const e2ePassword = String.fromEnvironment('TBT_TEST_PASSWORD');
 
 Future<Session> login(String username, {String? password}) async {
   final http = HttpClient();
-  final request = await http.postUrl(Uri.parse('http://localhost:8180/realms/tbt/protocol/openid-connect/token'));
+  final request = await http.postUrl(Uri.parse('${Env.keycloakUrl}/realms/tbt/protocol/openid-connect/token'));
   request.headers.contentType = ContentType('application', 'x-www-form-urlencoded');
   request.write(Uri(queryParameters: {
     'grant_type': 'password',
@@ -66,6 +67,9 @@ class PasswordGateway implements AuthGateway {
 
   @override
   Future<Session> signIn({bool register = false, String? locale}) => login(username);
+
+  @override
+  Future<Session> changePassword({String? locale}) => login(username);
 
   @override
   Future<Session> refresh(Session session) => login(username);

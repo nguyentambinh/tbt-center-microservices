@@ -65,12 +65,10 @@ class PostgresFinanceRepository implements FinanceRepository {
 
   final Database _db;
 
-  // Mọi khoản thu, chi quy về một dạng. Doanh thu: dự án và dịch vụ;
-  // chi phí: tiền mua vật liệu và tiền vận chuyển thực trả.
+  // Mọi khoản thu, chi quy về một dạng. Doanh thu: dự án (tính vào tháng
+  // nghiệm thu) và dịch vụ; chi phí: tiền mua vật liệu và tiền vận chuyển.
   static const _entries = '''
-select rate_date as day, 'revenue' as kind, amount_original, amount_base
-  from project_revenues
-union all select used_on, 'revenue', amount_original, amount_base
+select used_on as day, 'revenue' as kind, amount_original, amount_base
   from service_revenues
 union all select accepted_on, 'revenue', amount_original, amount_base
   from acceptance_revenues

@@ -49,6 +49,7 @@ Future<Response> onRequest(RequestContext context) async {
       email: email,
       phone: text('phone'),
       positionName: text('position'),
+      departmentId: text('departmentId'),
     ),
   );
   // Có nhân viên mới thì danh sách cũ trong cache hết đúng

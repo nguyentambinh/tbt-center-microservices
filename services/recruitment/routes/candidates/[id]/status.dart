@@ -8,6 +8,7 @@
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
+import 'package:recruitment_service/src/responses.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 /// POST /candidates/{id}/status  {"status": "interview", "note": "..."}
@@ -34,12 +35,17 @@ Future<Response> onRequest(RequestContext context, String id) async {
     return apiError(400, 'use_hire', 'Use POST /candidates/{id}/hire');
   }
 
-  final candidate = await context.read<CandidateRepository>().changeStatus(
-    id,
-    status: status,
-    changedBy: claims.username,
-    note: (body['note'] as String?)?.trim(),
-  );
+  final Map<String, dynamic>? candidate;
+  try {
+    candidate = await context.read<CandidateRepository>().changeStatus(
+      id,
+      status: status,
+      changedBy: claims.username,
+      note: (body['note'] as String?)?.trim(),
+    );
+  } on CandidateRuleViolation catch (e) {
+    return violationResponse(e);
+  }
   if (candidate == null) {
     return apiError(404, 'not_found', 'Candidate $id not found');
   }

@@ -18,6 +18,11 @@ class DraftPayslip {
     required this.rate,
     required this.rateDate,
     required this.netUsd,
+    this.base,
+    this.overtime,
+    this.bonus,
+    this.insurance,
+    this.tax,
   });
 
   final String employeeId;
@@ -27,6 +32,13 @@ class DraftPayslip {
   final String rate;
   final DateTime rateDate;
   final double netUsd;
+
+  /// Từng khoản của phiếu lương (tiền tệ gốc)
+  final double? base;
+  final double? overtime;
+  final double? bonus;
+  final double? insurance;
+  final double? tax;
 }
 
 class UnpaidPayslip {
@@ -76,6 +88,9 @@ abstract interface class PayrollRunRepository {
     String period,
     List<DraftPayslip> drafts,
   );
+
+  /// Tổng thưởng (dương), phạt (âm) của từng người trong kỳ, tiền tệ gốc
+  Future<Map<String, double>> bonuses(String period);
 
   Future<List<UnpaidPayslip>> unpaid(String runId);
 
@@ -372,9 +387,11 @@ class PostgresPayrollRunRepository implements PayrollRunRepository {
           Sql.named(
             'insert into payslips (employee_id, period, gross_original, '
             'net_original, currency_original, rate_applied, rate_date, '
-            'amount_base, status, run_id) values (@employee, @period, @gross, '
-            "@net, @currency, @rate::numeric, @rateDate, @usd, 'draft', "
-            '@run::uuid) on conflict (employee_id, period) do nothing',
+            'amount_base, status, run_id, base_original, overtime_original, '
+            'bonus_original, insurance_original, tax_original) values '
+            '(@employee, @period, @gross, @net, @currency, @rate::numeric, '
+            "@rateDate, @usd, 'draft', @run::uuid, @base, @overtime, @bonus, "
+            '@insurance, @tax) on conflict (employee_id, period) do nothing',
           ),
           parameters: {
             'employee': d.employeeId,
@@ -386,10 +403,30 @@ class PostgresPayrollRunRepository implements PayrollRunRepository {
             'rateDate': d.rateDate,
             'usd': d.netUsd,
             'run': runId,
+            'base': d.base,
+            'overtime': d.overtime,
+            'bonus': d.bonus,
+            'insurance': d.insurance,
+            'tax': d.tax,
           },
         );
       }
     });
+  }
+
+  @override
+  Future<Map<String, double>> bonuses(String period) async {
+    final rows = await _db.query(
+      "select employee_id, coalesce(sum(case when kind = 'penalty' "
+      'then -total_original else total_original end), 0)::float8 as total '
+      "from bonuses_penalties where to_char(occurred_on, 'YYYY-MM') = @period "
+      'group by employee_id',
+      params: {'period': period},
+      fromPrimary: true,
+    );
+    return {
+      for (final r in rows) r['employee_id'] as String: r['total'] as double,
+    };
   }
 
   @override

@@ -93,6 +93,66 @@ const deductionRateByCountry = {
 /// Giờ chuẩn một tháng để quy lương tháng ra lương giờ.
 const standardHours = 176;
 
+/// Lương tháng M chi từ ngày 10 tháng M+1, khi chấm công tháng M đã đủ
+const payrollOpensOnDay = 10;
+
+DateTime earliestRunDate(String period) {
+  final month = DateTime.parse('$period-01');
+  return DateTime(month.year, month.month + 1, payrollOpensOnDay);
+}
+
+bool canRunPeriod(String period, DateTime today) {
+  final day = DateTime(today.year, today.month, today.day);
+  return !day.isBefore(earliestRunDate(period));
+}
+
+/// Tách khoản trừ: bảo hiểm (người lao động đóng) và thuế thu nhập, theo nước
+/// (mô phỏng, chưa phải biểu thuế thật); cộng lại bằng [deductionRateByCountry]
+const insuranceRateByCountry = {
+  'VN': 0.105,
+  'DE': 0.20,
+  'US': 0.0765,
+  'BR': 0.11,
+  'ZA': 0.01,
+  'AU': 0.02,
+};
+
+typedef PayBreakdown = ({
+  double base,
+  double overtime,
+  double bonus,
+  double gross,
+  double insurance,
+  double tax,
+  double net,
+});
+
+/// Lương gộp = lương cơ bản + tăng ca 150% + thưởng phạt trong kỳ; thực nhận
+/// = lương gộp - bảo hiểm - thuế
+PayBreakdown breakdown({
+  required double baseSalary,
+  required double overtimeHours,
+  required double bonus,
+  required String countryCode,
+}) {
+  double r(double v) => (v * 100).roundToDouble() / 100;
+  final overtime = r(overtimeHours * baseSalary / standardHours * 1.5);
+  final gross = r(baseSalary + overtime + bonus);
+  final rate = deductionRateByCountry[countryCode] ?? 0.25;
+  final insuranceRate = insuranceRateByCountry[countryCode] ?? 0.08;
+  final insurance = r(gross * insuranceRate);
+  final tax = r(gross * (rate - insuranceRate));
+  return (
+    base: baseSalary,
+    overtime: overtime,
+    bonus: bonus,
+    gross: gross,
+    insurance: insurance,
+    tax: tax,
+    net: r(gross - insurance - tax),
+  );
+}
+
 /// Saga chốt lương: bước bù trừ được → pivot (pay) → bước thử lại được
 class PayrollSaga {
   PayrollSaga({
@@ -199,11 +259,17 @@ class PayrollSaga {
         );
 
         await run('calculate', () async {
-          final deduction = deductionRateByCountry[countryCode] ?? 0.25;
           final usdRate = double.parse(fx.rate);
+          final bonuses = await repository.bonuses(period);
           final drafts = [
             for (final s in salaries)
-              _draft(s, overtime[s.employeeId] ?? 0, deduction, fx, usdRate),
+              _draft(
+                s,
+                overtime[s.employeeId] ?? 0,
+                bonuses[s.employeeId] ?? 0,
+                fx,
+                usdRate,
+              ),
           ];
           await repository.saveDrafts(runId, period, drafts);
           return '${drafts.length} phiếu lương';
@@ -397,21 +463,29 @@ class PayrollSaga {
   DraftPayslip _draft(
     SalaryRow salary,
     double overtimeHours,
-    double deduction,
+    double bonus,
     ({String rate, DateTime date}) fx,
     double usdRate,
   ) {
-    final hourly = salary.baseSalary / standardHours;
-    final gross = _round(salary.baseSalary + overtimeHours * hourly * 1.5);
-    final net = _round(gross * (1 - deduction));
+    final pay = breakdown(
+      baseSalary: salary.baseSalary,
+      overtimeHours: overtimeHours,
+      bonus: bonus,
+      countryCode: countryCode,
+    );
     return DraftPayslip(
       employeeId: salary.employeeId,
-      gross: gross,
-      net: net,
+      gross: pay.gross,
+      net: pay.net,
       currency: salary.currency,
       rate: fx.rate,
       rateDate: fx.date,
-      netUsd: _round(net / usdRate),
+      netUsd: _round(pay.net / usdRate),
+      base: pay.base,
+      overtime: pay.overtime,
+      bonus: pay.bonus,
+      insurance: pay.insurance,
+      tax: pay.tax,
     );
   }
 

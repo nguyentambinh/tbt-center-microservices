@@ -10,6 +10,10 @@ import 'dart:convert';
 
 import 'jwt_verifier.dart';
 
+/// Vai trò đánh dấu cấp tập đoàn: đi kèm executive, admin, hr, finance,
+/// cho phép làm việc với dữ liệu mọi khu vực
+const groupRole = 'group';
+
 /// Thông tin người gọi lấy từ access token Keycloak.
 ///
 /// Lớp này chỉ đọc nội dung token. Chữ ký, hạn đã được Kong kiểm, và
@@ -40,6 +44,11 @@ class Claims {
   /// Mã nhân viên gắn với tài khoản (thuộc tính `employee_id` trong Keycloak).
   String? get employeeId => _payload['employee_id'] as String?;
 
+  /// Họ tên, email, số điện thoại khai lúc đăng ký tài khoản
+  String? get fullName => _payload['name'] as String? ?? _payload['given_name'] as String?;
+  String? get email => _payload['email'] as String?;
+  String? get phone => _payload['phone_number'] as String?;
+
   /// Hạn truy cập của tài khoản kiểm toán độc lập (thuộc tính `access_until`
   /// trong Keycloak, dạng YYYY-MM-DD).
   String? get accessUntil => _payload['access_until'] as String?;
@@ -51,4 +60,7 @@ class Claims {
   }
 
   bool hasAnyRole(Iterable<String> wanted) => wanted.any(roles.contains);
+
+  /// Tài khoản cấp tập đoàn (văn phòng, admin, HR, tài chính tập đoàn)
+  bool get isGroup => roles.contains(groupRole);
 }

@@ -8,6 +8,8 @@
 
 library;
 
+export 'src/ai/docx_text.dart';
+export 'src/ai/structured_ai.dart';
 export 'src/cache/redis_cache.dart';
 export 'src/cache/response_cache.dart';
 export 'src/datastore/catalog.dart';
@@ -23,6 +25,12 @@ export 'src/http/internal.dart';
 export 'src/http/jwt_verifier.dart';
 export 'src/http/metrics.dart';
 export 'src/http/middleware.dart';
+export 'src/identity/keycloak_users.dart';
 export 'src/messaging/event_bus.dart';
 export 'src/observability/request_log.dart';
+export 'src/reports/report_submissions.dart';
 export 'src/resilience/circuit_breaker.dart';
+export 'src/storage/media_store.dart';
+export 'src/storage/object_store.dart';
+export 'src/storage/s3_presigner.dart';
+export 'src/time/region_time.dart';

@@ -26,15 +26,23 @@ class ClockRuleViolation implements Exception {
 typedef ShiftHours = ({double work, double overtime, double total});
 
 /// Chia thời gian từ lúc vào tới lúc ra thành giờ công và giờ tăng ca (R33).
-ShiftHours splitHours(Duration span) {
+/// Tăng ca chỉ tính tới số giờ của đơn tăng ca đã duyệt trong ngày; không có
+/// đơn duyệt thì phần làm quá giờ chuẩn không được tính.
+ShiftHours splitHours(Duration span, {double approvedOvertime = 0}) {
   final worked = span >= lunchBreakFrom ? span - lunchBreak : span;
-  final total = _round(worked.inMinutes / 60);
-  final work = total < standardHours ? total : standardHours;
-  return (work: work, overtime: _round(total - work), total: total);
+  final actual = _round(worked.inMinutes / 60);
+  final work = actual < standardHours ? actual : standardHours;
+  final extra = _round(actual - work);
+  final overtime = extra < approvedOvertime ? extra : _round(approvedOvertime);
+  return (work: work, overtime: overtime, total: _round(work + overtime));
 }
 
 /// Làm tròn 2 số lẻ, khớp cột numeric(4, 2).
 double _round(double hours) => (hours * 100).round() / 100;
+
+/// Vào ca được tới hết giờ kết thúc ca; ra ca trễ thì vẫn được.
+/// Giờ dạng `HH:mm:ss` nên so chuỗi là so giờ.
+bool canCheckIn(String now, String shiftEnd) => now.compareTo(shiftEnd) <= 0;
 
 /// Một lượt chấm công: vào ca (lần đầu trong ngày) hay ra ca (lần thứ hai).
 enum ClockAction { checkIn, checkOut }

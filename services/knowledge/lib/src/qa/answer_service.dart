@@ -14,6 +14,7 @@ import 'package:knowledge_service/src/graph_repository.dart';
 import 'package:knowledge_service/src/knowledge_repository.dart';
 import 'package:knowledge_service/src/qa/answer_models.dart';
 import 'package:knowledge_service/src/qa/embedder.dart';
+import 'package:knowledge_service/src/qa/personal_data.dart';
 import 'package:knowledge_service/src/qa/vectors.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -47,9 +48,13 @@ class AskInput {
     this.roles = const [],
     this.country,
     this.history = const [],
+    this.employeeId,
+    this.personal,
   });
 
   final String question;
+  final String? employeeId;
+  final PersonalFetch? personal;
   final String lang;
   final String region;
   final String username;
@@ -87,7 +92,9 @@ class AnswerService {
 
     final version = await articles.contentVersion();
     final cacheKey = input.history.isEmpty
-        ? 'kb:qa:v4:${_hash('$version|${input.region}|$lang|$question')}'
+        // Nhân viên hỏi được về dữ liệu riêng: cache tách theo từng người
+        ? 'kb:qa:v7:${_hash('$version|${input.region}|$lang|'
+              '${input.personal == null ? '' : input.employeeId}|$question')}'
         : null;
     if (cacheKey != null) {
       final hit = await _cacheGet(cacheKey);
@@ -141,12 +148,14 @@ class AnswerService {
       history: input.history,
       roles: input.roles,
       country: input.country,
+      employeeId: input.employeeId,
+      personal: input.personal,
     );
 
     var provider = 'none';
     String? model;
     late ModelAnswer answer;
-    if (sources.isEmpty && facts.isEmpty) {
+    if (sources.isEmpty && facts.isEmpty && input.personal == null) {
       answer = ModelAnswer(
         answerable: false,
         answer: _notCovered[lang]!,
@@ -185,9 +194,13 @@ class AnswerService {
       'followUps': answer.followUps.take(3).toList(),
       'provider': provider,
       'model': ?model,
+      'personal': answer.usedPersonalData,
     };
     final id = await _log(input, lang, result, started, cached: false);
-    if (cacheKey != null && provider != 'none' && answer.answerable) {
+    if (cacheKey != null &&
+        provider != 'none' &&
+        answer.answerable &&
+        !answer.usedPersonalData) {
       await _cacheSet(cacheKey, result);
     }
     return {...result, 'id': id, 'cached': false};

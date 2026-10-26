@@ -15,7 +15,7 @@ psql_db() {
     sh -c "psql -v ON_ERROR_STOP=1 -q -U \"\$POSTGRES_USER\" -d $1"
 }
 
-for svc in hr attendance payroll project_contract finance recruitment currency; do
+for svc in hr attendance payroll project_contract finance recruitment currency admin; do
   for f in "$DIR"/services/$svc/migrations/*.sql; do
     psql_db "${svc}_db" < "$f"
   done

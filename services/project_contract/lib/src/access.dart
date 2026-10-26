@@ -7,8 +7,8 @@
  */
 
 /// Xem danh sách dự án, hợp đồng.
-const projectViewerRoles = {'finance', 'hr', 'admin', 'executive'};
+const projectViewerRoles = {'finance', 'hr', 'executive'};
 
 /// Liên hệ của khách hàng chỉ dành cho bộ phận làm việc với khách (R101);
 /// HR thấy tên khách nhưng không thấy số điện thoại, địa chỉ.
-const customerContactRoles = {'finance', 'admin', 'executive'};
+const customerContactRoles = {'finance', 'executive'};

@@ -6,6 +6,8 @@
  * Ngày:   2026-10-15
  */
 
+import 'dart:convert';
+
 import 'package:dart_frog/dart_frog.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
 import 'package:recruitment_service/src/identity/hiring.dart';
@@ -21,10 +23,27 @@ Future<Response> onRequest(RequestContext context, String id) async {
     return apiError(403, 'forbidden', 'HR only');
   }
 
+  HireOffer? offer;
+  try {
+    final body = await context.request.body();
+    if (body.trim().isNotEmpty) {
+      final json = jsonDecode(body) as Map<String, dynamic>;
+      offer = (
+        departmentId: json['departmentId'] as String?,
+        baseSalary: (json['baseSalary'] as num?)?.toDouble(),
+        currency: (json['currency'] as String?)?.toUpperCase(),
+        employmentType: json['employmentType'] as String? ?? 'FT',
+      );
+    }
+  } on Object {
+    return apiError(400, 'invalid_json', 'Body must be a JSON object');
+  }
+
   try {
     final result = await context.read<Hiring>().hire(
       id,
       hiredBy: claims.username,
+      offer: offer,
     );
     if (result == null) {
       return apiError(404, 'not_found', 'Candidate $id not found');
@@ -35,6 +54,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
         'employeeId': result.employeeId,
         'login': result.login,
         'temporaryPassword': ?result.temporaryPassword,
+        'salarySet': result.salarySet,
       },
     );
   } on HiringRuleViolation catch (e) {

@@ -94,23 +94,44 @@ void main() {
     expect((await response.json() as Map)['code'], 'invalid_status');
   });
 
-  test('HR chuyển sang phỏng vấn', () async {
+  test('HR chuyển sang sàng lọc', () async {
     request(
       'POST',
       '/candidates/C1/status',
-      body: {'status': 'interview', 'note': 'Hẹn 20/10'},
+      body: {'status': 'screening', 'note': 'Hợp yêu cầu'},
       claims: _claims(['hr']),
     );
     when(
       () => repository.changeStatus(
         'C1',
-        status: 'interview',
+        status: 'screening',
         changedBy: 'tester',
-        note: 'Hẹn 20/10',
+        note: 'Hợp yêu cầu',
       ),
-    ).thenAnswer((_) async => {'id': 'C1', 'status': 'interview'});
+    ).thenAnswer((_) async => {'id': 'C1', 'status': 'screening'});
     final response = await status_route.onRequest(context, 'C1');
-    expect((await response.json() as Map)['status'], 'interview');
+    expect((await response.json() as Map)['status'], 'screening');
+  });
+
+  test('quay lại bước trước thì 409 invalid_transition', () async {
+    request(
+      'POST',
+      '/candidates/C1/status',
+      body: {'status': 'screening'},
+      claims: _claims(['hr']),
+    );
+    when(
+      () => repository.changeStatus(
+        'C1',
+        status: 'screening',
+        changedBy: 'tester',
+      ),
+    ).thenThrow(
+      const CandidateRuleViolation('invalid_transition', 'backwards'),
+    );
+    final response = await status_route.onRequest(context, 'C1');
+    expect(response.statusCode, 409);
+    expect((await response.json() as Map)['code'], 'invalid_transition');
   });
   test('không chuyển thẳng sang hired qua /status', () async {
     request(

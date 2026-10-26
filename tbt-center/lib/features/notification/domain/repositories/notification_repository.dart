@@ -13,4 +13,7 @@ abstract interface class NotificationRepository {
 
   /// Đánh dấu đã đọc mọi thông báo của mình.
   Future<void> markAllRead();
+
+  /// Đánh dấu đã đọc các thông báo vừa mở
+  Future<void> markRead(List<String> ids);
 }

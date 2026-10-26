@@ -10,6 +10,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:recruitment_service/src/candidate_repository.dart';
 import 'package:recruitment_service/src/identity/hiring.dart';
 import 'package:recruitment_service/src/identity/keycloak_admin.dart';
+import 'package:tbt_common/tbt_common.dart';
 import 'package:test/test.dart';
 
 class _MockRepository extends Mock implements CandidateRepository {}
@@ -21,7 +22,7 @@ class _FakeAccount extends Fake implements StaffAccount {}
 const _id = '1a2b3c4d-0000-4000-8000-000000000001';
 
 Map<String, dynamic> _candidate({
-  String status = 'offered',
+  String status = 'interviewed',
   String? email = 'thu.le@gmail.com',
 }) => {
   'id': _id,
@@ -62,6 +63,9 @@ void main() {
         employeeId: any(named: 'employeeId'),
         changedBy: any(named: 'changedBy'),
         subject: any(named: 'subject'),
+        departmentId: any(named: 'departmentId'),
+        salary: any(named: 'salary'),
+        currency: any(named: 'currency'),
       ),
     ).thenAnswer((_) async => _candidate(status: 'hired'));
   });
@@ -108,7 +112,7 @@ void main() {
     ).called(1);
   });
 
-  test('chưa tới bước offered thì không nhận, không tạo gì', () async {
+  test('chưa có biên bản phỏng vấn thì không nhận, không tạo gì', () async {
     when(
       () => repository.findById(_id),
     ).thenAnswer((_) async => _candidate(status: 'interview'));
@@ -116,7 +120,11 @@ void main() {
     await expectLater(
       hiring.hire(_id, hiredBy: 'hr.vn'),
       throwsA(
-        isA<HiringRuleViolation>().having((e) => e.code, 'code', 'not_offered'),
+        isA<HiringRuleViolation>().having(
+          (e) => e.code,
+          'code',
+          'not_interviewed',
+        ),
       ),
     );
     expect(employeeCalls, isEmpty);
@@ -153,6 +161,74 @@ void main() {
         employeeId: any(named: 'employeeId'),
         changedBy: any(named: 'changedBy'),
         subject: any(named: 'subject'),
+      ),
+    );
+  });
+
+  test('nhận việc kèm phòng ban, lương; payroll lỗi vẫn nhận', () async {
+    final salaries = <String, double>{};
+    var payrollDown = false;
+    hiring = Hiring(
+      candidates: repository,
+      identity: identity,
+      createEmployee: (body) async {
+        employeeCalls.add(body);
+        return body['id']! as String;
+      },
+      region: 'vn',
+      setSalary:
+          (
+            id, {
+            required baseSalary,
+            required currency,
+            required employmentType,
+          }) async {
+            if (payrollDown) {
+              throw const InternalCallException('payroll', 'down');
+            }
+            salaries[id] = baseSalary;
+          },
+    );
+    when(() => repository.findById(_id)).thenAnswer((_) async => _candidate());
+    when(
+      () => identity.grantEmployee(any(), subject: 'sub-thu'),
+    ).thenAnswer((_) async => (subject: 'sub-thu', temporaryPassword: null));
+    const offer = (
+      departmentId: 'KT01',
+      baseSalary: 15000000.0,
+      currency: 'VND',
+      employmentType: 'FT',
+    );
+
+    final ok = await hiring.hire(_id, hiredBy: 'hr.vn', offer: offer);
+    expect(ok!.salarySet, isTrue);
+    expect(salaries['TBT1A2B3C4D'], 15000000);
+    expect(employeeCalls.single['departmentId'], 'KT01');
+
+    payrollDown = true;
+    final degraded = await hiring.hire(_id, hiredBy: 'hr.vn', offer: offer);
+    expect(degraded!.salarySet, isFalse);
+  });
+
+  test('lương thỏa thuận phải dương', () async {
+    when(() => repository.findById(_id)).thenAnswer((_) async => _candidate());
+    await expectLater(
+      hiring.hire(
+        _id,
+        hiredBy: 'hr.vn',
+        offer: (
+          departmentId: null,
+          baseSalary: -1,
+          currency: 'VND',
+          employmentType: 'FT',
+        ),
+      ),
+      throwsA(
+        isA<HiringRuleViolation>().having(
+          (e) => e.code,
+          'code',
+          'invalid_offer',
+        ),
       ),
     );
   });

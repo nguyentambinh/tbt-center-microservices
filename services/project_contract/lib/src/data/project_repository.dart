@@ -7,12 +7,19 @@
  */
 
 import 'package:postgres/postgres.dart';
+import 'package:project_contract_service/src/project_rules.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 abstract interface class ProjectRepository {
   /// Danh sách dự án, tìm theo mã dự án, tên hợp đồng hoặc tên khách hàng.
+  /// [tier] lọc theo phân cấp (giá trị chia [rateToUsd] ra USD)
+  /// [from], [to]: dự án có thời gian chạy chồng lên khoảng này
   Future<({List<Map<String, dynamic>> items, int total})> projects({
     String? search,
+    int? tier,
+    DateTime? from,
+    DateTime? to,
+    double rateToUsd = 1,
     int limit = 20,
     int offset = 0,
   });
@@ -22,6 +29,12 @@ abstract interface class ProjectRepository {
 
   /// Dự án nhân viên đang tham gia, kèm tổng giờ làm theo từng dự án (R38).
   Future<List<Map<String, dynamic>>> projectsOf(String employeeId);
+
+  /// Nhân viên có tham gia hợp đồng nào của dự án không.
+  Future<bool> isMember(String projectId, String employeeId);
+
+  /// Rút nhân viên khỏi mọi dự án (bảo lưu hồ sơ); trả số dòng đã xóa.
+  Future<int> removeMember(String employeeId);
 
   /// Đánh dấu đã nghiệm thu, phát `ProjectAccepted`. [recordRevenue] chạy
   /// trước khi ghi (gọi finance); nó lỗi thì dự án giữ nguyên trạng thái.
@@ -42,47 +55,84 @@ class ProjectRuleViolation implements Exception {
 }
 
 class PostgresProjectRepository implements ProjectRepository {
-  PostgresProjectRepository(this._db);
+  PostgresProjectRepository(this._db, {this.media});
 
   final Database _db;
+
+  /// Đổi đường dẫn ảnh dự án trong Garage thành URL ký sẵn
+  final MediaStore? media;
 
   // Tên hiển thị của dự án lấy theo hợp đồng đầu tiên, vì bảng projects
   // của dữ liệu cũ không có cột tên.
   static const _summary = '''
 select p.id, p.company_id, p.deposit_amount::text as deposit,
   p.expected_acceptance_amount::text as acceptance, p.currency,
-  p.status, p.accepted_on,
+  p.status, p.accepted_on, p.image_key, p.progress_percent,
   c.name as customer_name, c.customer_type,
   (select k.name from project_contracts pc
      join contracts k on k.id = pc.contract_id
     where pc.project_id = p.id order by k.start_date limit 1) as name,
   (select count(*) from project_contracts pc
      join project_members m on m.project_contract_id = pc.id
-    where pc.project_id = p.id)::int as members
+    where pc.project_id = p.id)::int as members,
+  (select min(k.start_date) from project_contracts pc
+     join contracts k on k.id = pc.contract_id
+    where pc.project_id = p.id) as start_date,
+  (select max(coalesce(pc.end_date, k.expected_end_date)) from project_contracts pc
+     join contracts k on k.id = pc.contract_id
+    where pc.project_id = p.id) as end_date
 from projects p left join customers c on c.id = p.customer_id''';
 
-  static const _filter = '''
-where @search::text is null
+  /// Cấp dự án tính trong SQL để lọc và phân trang đúng
+  static final _tierSql = () {
+    const value = 'coalesce(p.expected_acceptance_amount, 0) / @rate';
+    final cases = [
+      for (final (i, t) in tierThresholdsUsd.indexed)
+        'when $value < $t then ${i + 1}',
+    ];
+    return 'case ${cases.join(' ')} else ${tierThresholdsUsd.length + 1} end';
+  }();
+
+  static final _filter = '''
+where (@search::text is null
    or p.id ilike @search or c.name ilike @search
    or exists (select 1 from project_contracts pc
                 join contracts k on k.id = pc.contract_id
-               where pc.project_id = p.id and k.name ilike @search)''';
+               where pc.project_id = p.id and k.name ilike @search))
+  and (@tier::int is null or $_tierSql = @tier)
+  and (@from::date is null or exists (select 1 from project_contracts pc
+         join contracts k on k.id = pc.contract_id where pc.project_id = p.id
+          and coalesce(pc.end_date, k.expected_end_date) >= @from::date))
+  and (@to::date is null or exists (select 1 from project_contracts pc
+         join contracts k on k.id = pc.contract_id where pc.project_id = p.id
+          and k.start_date <= @to::date))''';
 
   @override
   Future<({List<Map<String, dynamic>> items, int total})> projects({
     String? search,
+    int? tier,
+    DateTime? from,
+    DateTime? to,
+    double rateToUsd = 1,
     int limit = 20,
     int offset = 0,
   }) async {
     final pattern = search == null || search.isEmpty ? null : '%$search%';
+    final filter = {
+      'search': pattern,
+      'tier': tier,
+      'rate': rateToUsd,
+      'from': from,
+      'to': to,
+    };
     final rows = await _db.query(
       '$_summary $_filter order by p.id limit @limit offset @offset',
-      params: {'search': pattern, 'limit': limit, 'offset': offset},
+      params: {...filter, 'limit': limit, 'offset': offset},
     );
     final count = await _db.query(
       'select count(*)::int as n from projects p '
       'left join customers c on c.id = p.customer_id $_filter',
-      params: {'search': pattern},
+      params: filter,
     );
     return (
       items: [for (final r in rows) _summaryJson(r)],
@@ -114,7 +164,7 @@ where @search::text is null
     );
     final contracts = await _db.query(
       'select pc.id, k.id as contract_id, k.name, k.contract_type, '
-      'k.start_date, k.expected_end_date, pc.end_date '
+      'k.start_date, k.expected_end_date, pc.end_date, k.file_key, k.summary '
       'from project_contracts pc join contracts k on k.id = pc.contract_id '
       'where pc.project_id = @id order by k.start_date',
       params: {'id': id},
@@ -166,6 +216,8 @@ where @search::text is null
             'startDate': _date(c['start_date']),
             'expectedEndDate': _date(c['expected_end_date']),
             'endDate': _date(c['end_date']),
+            'summary': c['summary'],
+            'fileUrl': media?.url(c['file_key'] as String?),
           },
       ],
       'members': [
@@ -183,7 +235,7 @@ where @search::text is null
   @override
   Future<List<Map<String, dynamic>>> projectsOf(String employeeId) async {
     final rows = await _db.query(
-      'select p.id, k.name, k.start_date, pc.end_date, '
+      'select p.id, k.name, k.start_date, pc.end_date, p.image_key, '
       'm.total_hours::float8 as hours '
       'from project_members m '
       'join project_contracts pc on pc.id = m.project_contract_id '
@@ -200,8 +252,41 @@ where @search::text is null
           'startDate': _date(r['start_date']),
           'endDate': _date(r['end_date']),
           'hours': r['hours'],
+          'imageUrl': media?.url(r['image_key'] as String?),
         },
     ];
+  }
+
+  @override
+  Future<int> removeMember(String employeeId) => _db.transaction((tx) async {
+    final rows = await tx.execute(
+      Sql.named(
+        'delete from project_members where employee_id = @id '
+        'returning project_contract_id',
+      ),
+      parameters: {'id': employeeId},
+    );
+    if (rows.isNotEmpty) {
+      await addOutboxEvent(
+        tx,
+        aggregate: 'employee',
+        aggregateId: employeeId,
+        eventType: 'ProjectMembersRemoved',
+        payload: {'employeeId': employeeId, 'contracts': rows.length},
+      );
+    }
+    return rows.length;
+  });
+
+  @override
+  Future<bool> isMember(String projectId, String employeeId) async {
+    final rows = await _db.query(
+      'select 1 from project_members m '
+      'join project_contracts pc on pc.id = m.project_contract_id '
+      'where pc.project_id = @project and m.employee_id = @employee limit 1',
+      params: {'project': projectId, 'employee': employeeId},
+    );
+    return rows.isNotEmpty;
   }
 
   /// Xếp hàng xác nhận gửi khách (R102): có email thì gửi email, không thì
@@ -239,6 +324,7 @@ where @search::text is null
   }
 
   Map<String, dynamic> _summaryJson(Map<String, dynamic> r) => {
+    'progressPercent': r['progress_percent'],
     'id': r['id'],
     'name': r['name'],
     'companyId': r['company_id'],
@@ -250,6 +336,9 @@ where @search::text is null
     'members': r['members'],
     'status': r['status'],
     'acceptedOn': _date(r['accepted_on']),
+    'startDate': _date(r['start_date']),
+    'endDate': _date(r['end_date']),
+    'imageUrl': media?.url(r['image_key'] as String?),
   };
 
   @override

@@ -9,6 +9,7 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:finance_service/src/data/analytics_repository.dart';
 import 'package:finance_service/src/data/finance_repository.dart';
 import 'package:finance_service/src/data/payroll_budget.dart';
 import 'package:finance_service/src/domain/finance_rules.dart';
@@ -19,6 +20,8 @@ final _env = Platform.environment;
 final _database = Database.fromEnvironment();
 final _repository = PostgresFinanceRepository(_database);
 final _budgets = PostgresPayrollBudgets(_database);
+final _analytics = PostgresAnalyticsRepository(_database);
+final _reports = ReportSubmissions(_database, kind: 'finance');
 final _rates = RateSource(
   _env['CURRENCY'] ?? 'VND',
   InternalClient(
@@ -48,6 +51,8 @@ Handler middleware(Handler handler) {
       })
       .use(provider<FinanceRepository>((_) => _repository))
       .use(provider<PayrollBudgets>((_) => _budgets))
+      .use(provider<AnalyticsRepository>((_) => _analytics))
+      .use(provider<ReportSubmissions>((_) => _reports))
       .use(provider<RateSource>((_) => _rates))
       .use(correlationAndErrors())
       .use(metrics('finance'))

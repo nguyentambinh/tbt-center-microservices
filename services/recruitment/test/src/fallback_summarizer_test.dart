@@ -25,7 +25,7 @@ AiProvider _provider(
 }) => AiProvider(
   model: model,
   configured: configured,
-  summarize: (pdf, language) async {
+  summarize: (pdf, language, _) async {
     calls?.add(model);
     if (error != null) throw error;
     return {'fullName': 'Lê Minh Thư', 'by': model};

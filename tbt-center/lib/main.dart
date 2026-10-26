@@ -19,7 +19,6 @@ import 'core/locale/locale_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Lỗi bất đồng bộ không ai bắt: ghi log và báo cho người dùng thay vì để app im lặng.
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Lỗi chưa xử lý: $error\n$stack');
     reportFailure(error);

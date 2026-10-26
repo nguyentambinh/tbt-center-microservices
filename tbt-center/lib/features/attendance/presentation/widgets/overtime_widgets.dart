@@ -110,7 +110,7 @@ class _OvertimeForm extends ConsumerStatefulWidget {
 
 class _OvertimeFormState extends ConsumerState<_OvertimeForm> {
   final _reason = TextEditingController();
-  DateTime _date = DateTime.now();
+  late DateTime _date = ref.read(regionTodayProvider);
   double _hours = 2;
   bool _sending = false;
   String? _error;
@@ -122,7 +122,7 @@ class _OvertimeFormState extends ConsumerState<_OvertimeForm> {
   }
 
   Future<void> _pickDate() async {
-    final now = DateTime.now();
+    final now = ref.read(regionTodayProvider);
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,

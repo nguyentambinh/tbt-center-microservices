@@ -41,7 +41,7 @@ TABLES = {
     'currency': ['exchange_rates'],
 }
 
-PIPELINE = ['submitted', 'analyzed', 'screening', 'interview', 'offered', 'rejected']
+PIPELINE = ['submitted', 'analyzed', 'screening', 'interview', 'interviewed', 'rejected']
 
 # Chức vụ thứ i (theo thứ tự trong locales.py) thuộc phòng ban nào: quản lý dự án, kỹ sư → thiết kế,
 # an toàn, nhân sự, kế toán → tài chính, giám sát → thi công, hành chính.

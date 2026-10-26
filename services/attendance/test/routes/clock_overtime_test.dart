@@ -67,10 +67,24 @@ void main() {
       expect(h, (work: 4.5, overtime: 0.0, total: 4.5));
     });
 
-    test('ca dài trừ 1 tiếng nghỉ trưa, quá 8 tiếng là tăng ca', () {
+    test('làm quá 8 tiếng mà chưa có đơn tăng ca duyệt thì không tính', () {
       // 07:45 → 17:30 = 9 giờ 45 phút, trừ nghỉ trưa còn 8,75 giờ.
       final h = splitHours(const Duration(hours: 9, minutes: 45));
+      expect(h, (work: 8.0, overtime: 0.0, total: 8.0));
+    });
+
+    test('có đơn tăng ca duyệt thì tính phần làm thêm', () {
+      final h = splitHours(
+        const Duration(hours: 9, minutes: 45),
+        approvedOvertime: 2,
+      );
       expect(h, (work: 8.0, overtime: 0.75, total: 8.75));
+    });
+
+    test('tăng ca chỉ tính tới số giờ đã duyệt', () {
+      // 07:30 → 20:30 = 13 giờ, trừ nghỉ trưa còn 12 giờ: làm thêm 4 giờ.
+      final h = splitHours(const Duration(hours: 13), approvedOvertime: 2);
+      expect(h, (work: 8.0, overtime: 2.0, total: 10.0));
     });
   });
 

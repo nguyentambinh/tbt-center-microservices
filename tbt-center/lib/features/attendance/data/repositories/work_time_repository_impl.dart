@@ -39,6 +39,10 @@ class WorkTimeRepositoryImpl implements WorkTimeRepository {
       checkOut: d['checkOut'] as String?,
       totalHours: (d['totalHours'] as num?)?.toDouble(),
       overtimeHours: (d['overtimeHours'] as num?)?.toDouble(),
+      approvedOvertime: (d['approvedOvertime'] as num?)?.toDouble() ?? 0,
+      pendingOvertime: (d['pendingOvertime'] as num?)?.toDouble() ?? 0,
+      shiftStart: shift?['start'] as String?,
+      shiftEnd: shift?['end'] as String?,
     );
   }
 
