@@ -24,6 +24,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/proposal.dart';
 import '../providers/project_providers.dart';
 import '../widgets/project_widgets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Dự án theo hợp đồng và khách hàng (R100), cho tài chính, HR, quản lý.
 class ProjectsPage extends ConsumerStatefulWidget {
@@ -72,6 +73,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: TextField(
+              inputFormatters: InputRules.search,
               decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.searchProjects),
               onChanged: _search,
             ),
@@ -129,6 +131,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
                                       children: [
                                         TagChip(label: tierLabel(l10n, p.tier), color: context.tbt.brandGold, icon: Icons.layers_outlined),
                                         TagChip(label: warningLabel(l10n, p.warning), color: warningColor(context, p.warning), icon: Icons.schedule),
+                                        if (p.overdue) TagChip(label: l10n.projectOverdue, color: context.tbt.danger, icon: Icons.alarm),
                                       ],
                                     ),
                                     const SizedBox(height: 8),

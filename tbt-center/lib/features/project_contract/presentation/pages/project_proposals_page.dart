@@ -26,6 +26,7 @@ import '../../domain/entities/proposal.dart';
 import '../providers/project_providers.dart';
 import '../widgets/project_widgets.dart';
 import '../widgets/proposal_form.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 String proposalStatusLabel(AppLocalizations l10n, String status) => switch (status) {
       'awaiting_executive' => l10n.propAwaitingExecutive,
@@ -144,7 +145,7 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(l10n.note),
-          content: TextField(controller: controller, maxLines: 3, decoration: InputDecoration(hintText: l10n.proposalNoteHint)),
+          content: TextField(inputFormatters: InputRules.note, controller: controller, maxLines: 3, decoration: InputDecoration(hintText: l10n.proposalNoteHint)),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
             FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.send)),

@@ -8,7 +8,6 @@
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +18,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/candidate.dart';
 import '../providers/candidate_providers.dart';
 import 'interview_widgets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Thao tác của HR theo bước: chỉ đi tới, phỏng vấn xong (có biên bản) mới nhận việc
 class CandidateActions extends ConsumerStatefulWidget {
@@ -323,9 +323,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                 Expanded(
                   flex: 3,
                   child: TextField(
+                    inputFormatters: InputRules.decimal,
                     controller: _salary,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     decoration: InputDecoration(labelText: l10n.agreedSalary),
                     onChanged: (_) => setState(() {}),
                   ),
@@ -333,9 +333,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
+                    inputFormatters: InputRules.currency,
                     controller: _currency,
                     textCapitalization: TextCapitalization.characters,
-                    maxLength: 3,
                     decoration: InputDecoration(labelText: l10n.currency, counterText: ''),
                     onChanged: (_) => setState(() {}),
                   ),

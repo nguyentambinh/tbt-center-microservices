@@ -31,6 +31,7 @@ import '../payroll/presentation/providers/payroll_providers.dart';
 import '../profile/data/profile_repository.dart';
 import '../project_contract/presentation/providers/project_providers.dart';
 import '../resignations/data/resignation_repository.dart';
+import '../../core/widgets/input_rules.dart';
 
 /// Loại đơn trong hộp duyệt: văn phòng quản lý duyệt được mọi loại
 enum ApprovalKind { project, promotion, raise, leave, overtime, profile, resignation }
@@ -184,7 +185,7 @@ class _ApprovalInboxPageState extends ConsumerState<ApprovalInboxPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(approve ? l10n.approvalConfirm(item.title) : l10n.approvalRejectConfirm(item.title)),
-        content: TextField(controller: note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
+        content: TextField(inputFormatters: InputRules.note, controller: note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
           FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(approve ? l10n.approve : l10n.reject)),

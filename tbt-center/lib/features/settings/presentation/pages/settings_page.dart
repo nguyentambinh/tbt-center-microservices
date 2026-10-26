@@ -18,6 +18,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_mode.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../home/presentation/pages/home_page.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -160,12 +161,12 @@ class _SimulationCardState extends ConsumerState<_SimulationCard> {
             const SizedBox(height: 4),
             Text(l10n.simulateHint, style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 12),
-            TextField(controller: _ip, decoration: InputDecoration(labelText: l10n.simulateIp)),
+            TextField(inputFormatters: InputRules.ip, controller: _ip, decoration: InputDecoration(labelText: l10n.simulateIp)),
             const SizedBox(height: 8),
             TextField(
+              inputFormatters: InputRules.country,
               controller: _country,
               textCapitalization: TextCapitalization.characters,
-              maxLength: 2,
               decoration: InputDecoration(labelText: l10n.simulateCountry),
             ),
             Row(

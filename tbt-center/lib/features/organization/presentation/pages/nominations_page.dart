@@ -22,6 +22,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/organization.dart';
 import '../providers/organization_providers.dart';
 import '../widgets/org_actions.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Đề cử thăng chức: HR theo dõi, Ban lãnh đạo duyệt (đổi chức vụ và tăng lương)
 class NominationsPage extends ConsumerStatefulWidget {
@@ -48,7 +49,7 @@ class _NominationsPageState extends ConsumerState<NominationsPage> {
           children: [
             if (approve) Text(l10n.approvePromotionHint(n.employeeName, n.proposedPosition, NumberFormat.decimalPattern().format(n.raisePercent))),
             const SizedBox(height: 12),
-            TextField(controller: note, decoration: InputDecoration(labelText: l10n.decisionNote), maxLines: 2),
+            TextField(inputFormatters: InputRules.note, controller: note, decoration: InputDecoration(labelText: l10n.decisionNote), maxLines: 2),
           ],
         ),
         actions: [

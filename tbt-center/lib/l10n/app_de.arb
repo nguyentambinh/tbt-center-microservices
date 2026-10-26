@@ -1277,5 +1277,11 @@
   "nSalaryChanged": "Ihr neues Grundgehalt: {amount}",
   "nBonusGranted": "Bonus von {amount}: {reason}",
   "nPenaltyApplied": "Abzug von {amount}: {reason}",
-  "errProtectedDatabase": "Die Admin-Protokolldatenbank ist hier gesperrt"
+  "errProtectedDatabase": "Die Admin-Protokolldatenbank ist hier gesperrt",
+  "errPastDate": "Urlaub kann erst ab morgen beginnen",
+  "leaveAttach": "Nachweis anhängen (Word, PDF, Bild)",
+  "approvalsOthers": "Anträge von Mitarbeitenden ({n})",
+  "approvalsMine": "Ihre Anträge bei der Leitung ({n})",
+  "requestMineTag": "Ihrer",
+  "projectOverdue": "Überfällig"
 }

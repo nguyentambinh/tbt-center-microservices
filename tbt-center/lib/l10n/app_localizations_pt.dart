@@ -4339,4 +4339,26 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get errProtectedDatabase =>
       'O banco de registros do admin não pode ser consultado aqui';
+
+  @override
+  String get errPastDate => 'A licença só pode começar a partir de amanhã';
+
+  @override
+  String get leaveAttach => 'Anexar comprovante (Word, PDF, imagem)';
+
+  @override
+  String approvalsOthers(int n) {
+    return 'Pedidos de funcionários aguardando você ($n)';
+  }
+
+  @override
+  String approvalsMine(int n) {
+    return 'Seus pedidos aguardando o gestor ($n)';
+  }
+
+  @override
+  String get requestMineTag => 'Seu';
+
+  @override
+  String get projectOverdue => 'Atrasado';
 }

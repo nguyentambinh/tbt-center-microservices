@@ -20,6 +20,7 @@ import '../../../core/widgets/motion.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/resignation_repository.dart';
 import '../domain/resignation.dart';
+import '../../../core/widgets/input_rules.dart';
 
 final resignationRepositoryProvider = Provider.family<ResignationRepository, String>(
   (ref, region) => ResignationRepository(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region)),
@@ -198,6 +199,7 @@ class _ResignationDialogState extends State<_ResignationDialog> {
             },
           ),
           TextField(
+            inputFormatters: InputRules.note,
             controller: _reason,
             maxLines: 3,
             decoration: InputDecoration(labelText: l10n.resignationReason),

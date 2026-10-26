@@ -18,7 +18,9 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../notification/presentation/notification_target.dart' show RequesterHeader;
 import '../../domain/entities/attendance.dart';
+import '../../domain/entities/work_time.dart';
 import '../providers/attendance_providers.dart';
 import '../widgets/clock_card.dart';
 import '../widgets/leave_evidence.dart';
@@ -166,7 +168,14 @@ class _MyLeavesTab extends ConsumerWidget {
             onRefresh: () => ref.refresh(myLeavesProvider.future),
             child: ListView(
               padding: const EdgeInsets.only(bottom: 88),
-              children: [for (final leave in value) LeaveTile(leave: leave, mine: true)],
+              children: [
+                for (final leave in value)
+                  LeaveTile(
+                    leave: leave,
+                    mine: true,
+                    onTap: () => showRequestDetail(context, employeeId: leave.employeeId, child: LeaveTile(leave: leave, mine: true)),
+                  ),
+              ],
             ),
           ),
         AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(myLeavesProvider)),
@@ -220,6 +229,42 @@ class _ApprovalsTab extends ConsumerWidget {
       return EmptyView(message: l10n.noPending, icon: Icons.task_alt);
     }
 
+    List<Widget> leaveActions(LeaveRequest leave) => leave.employeeId == me
+        ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))]
+        : [
+            TextButton(onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: false)), child: Text(l10n.reject)),
+            FilledButton(onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: true)), child: Text(l10n.approve)),
+          ];
+    List<Widget> overtimeActions(OvertimeRequest request) => request.employeeId == me
+        ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))]
+        : [
+            TextButton(onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: false)), child: Text(l10n.reject)),
+            FilledButton(onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: true)), child: Text(l10n.approve)),
+          ];
+    Widget leaveTile(LeaveRequest leave) => LeaveTile(
+          leave: leave,
+          showEmployee: true,
+          mine: leave.employeeId == me,
+          actions: leaveActions(leave),
+          onTap: () => showRequestDetail(context, employeeId: leave.employeeId, child: LeaveTile(leave: leave, mine: leave.employeeId == me, actions: leaveActions(leave))),
+        );
+    Widget overtimeTile(OvertimeRequest request) => OvertimeTile(
+          request: request,
+          showEmployee: true,
+          mine: request.employeeId == me,
+          actions: overtimeActions(request),
+          onTap: () => showRequestDetail(context, employeeId: request.employeeId, child: OvertimeTile(request: request, mine: request.employeeId == me, actions: overtimeActions(request))),
+        );
+    // Đơn của nhân viên cần mình duyệt lên trước, đơn của chính mình (chờ cấp trên) để riêng
+    final otherLeaves = [for (final l in pendingLeaves) if (l.employeeId != me) l];
+    final otherOvertime = [for (final o in pendingOvertime) if (o.employeeId != me) o];
+    final myLeaves = [for (final l in pendingLeaves) if (l.employeeId == me) l];
+    final myOvertime = [for (final o in pendingOvertime) if (o.employeeId == me) o];
+    Widget heading(String text) => Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+        );
+
     return RefreshIndicator(
       onRefresh: () async {
         ref
@@ -228,36 +273,14 @@ class _ApprovalsTab extends ConsumerWidget {
       },
       child: ListView(
         children: [
-          for (final leave in pendingLeaves)
-            LeaveTile(
-              leave: leave,
-              showEmployee: true,
-              actions: leave.employeeId == me ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))] : [
-                TextButton(
-                  onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: false)),
-                  child: Text(l10n.reject),
-                ),
-                FilledButton(
-                  onPressed: () => _decide(context, ref, () => attendance.decide(leave.id, approve: true)),
-                  child: Text(l10n.approve),
-                ),
-              ],
-            ),
-          for (final request in pendingOvertime)
-            OvertimeTile(
-              request: request,
-              showEmployee: true,
-              actions: request.employeeId == me ? [Text(l10n.waitingSuperior, style: TextStyle(color: context.tbt.textSecondary))] : [
-                TextButton(
-                  onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: false)),
-                  child: Text(l10n.reject),
-                ),
-                FilledButton(
-                  onPressed: () => _decide(context, ref, () => workTime.decideOvertime(request.id, approve: true)),
-                  child: Text(l10n.approve),
-                ),
-              ],
-            ),
+          heading(l10n.approvalsOthers(otherLeaves.length + otherOvertime.length)),
+          for (final leave in otherLeaves) leaveTile(leave),
+          for (final request in otherOvertime) overtimeTile(request),
+          if (myLeaves.isNotEmpty || myOvertime.isNotEmpty) ...[
+            heading(l10n.approvalsMine(myLeaves.length + myOvertime.length)),
+            for (final leave in myLeaves) leaveTile(leave),
+            for (final request in myOvertime) overtimeTile(request),
+          ],
         ],
       ),
     );
@@ -265,11 +288,14 @@ class _ApprovalsTab extends ConsumerWidget {
 }
 
 class LeaveTile extends StatelessWidget {
-  const LeaveTile({super.key, required this.leave, this.showEmployee = false, this.actions = const [], this.mine = false});
+  const LeaveTile({super.key, required this.leave, this.showEmployee = false, this.actions = const [], this.mine = false, this.onTap});
 
   final LeaveRequest leave;
   final bool showEmployee;
   final List<Widget> actions;
+
+  /// Bấm vào thẻ để xem chi tiết đơn
+  final VoidCallback? onTap;
 
   /// Đơn của chính mình: còn chờ duyệt thì thêm được minh chứng
   final bool mine;
@@ -287,6 +313,9 @@ class LeaveTile extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -295,6 +324,7 @@ class LeaveTile extends StatelessWidget {
             Row(
               children: [
                 Expanded(child: Text(leave.leaveType, style: Theme.of(context).textTheme.titleMedium)),
+                if (mine && showEmployee) ...[MineTag(), const SizedBox(width: 6)],
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
@@ -320,6 +350,35 @@ class LeaveTile extends StatelessWidget {
           ],
         ),
       ),
+      ),
     );
   }
 }
+
+/// Nhãn "Đơn của bạn" trong danh sách duyệt
+class MineTag extends StatelessWidget {
+  const MineTag({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: context.tbt.info.withValues(alpha: 0.18)),
+        child: Text(AppLocalizations.of(context).requestMineTag, style: TextStyle(color: context.tbt.info, fontSize: 11, fontWeight: FontWeight.bold)),
+      );
+}
+
+/// Bảng chi tiết một đơn: người gửi (ảnh, chức vụ, phòng ban), nội dung, minh chứng, nút duyệt nếu có
+Future<void> showRequestDetail(BuildContext context, {required String employeeId, required Widget child}) => showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [RequesterHeader(employeeId: employeeId), child]),
+          ),
+        ),
+      ),
+    );

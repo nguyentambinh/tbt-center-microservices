@@ -23,7 +23,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/role_gem.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/tbt_logo.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -229,6 +230,7 @@ class _ManualIpDialogState extends ConsumerState<_ManualIpDialog> {
             Text(l10n.manualIpHint),
             const SizedBox(height: 12),
             TextField(
+              inputFormatters: InputRules.ip,
               controller: _field,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(hintText: sampleIps['de'], errorText: _error),

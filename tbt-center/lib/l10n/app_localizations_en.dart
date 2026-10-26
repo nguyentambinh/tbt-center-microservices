@@ -4342,4 +4342,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errProtectedDatabase =>
       'The admin log database cannot be queried here';
+
+  @override
+  String get errPastDate => 'Leave can only start from tomorrow';
+
+  @override
+  String get leaveAttach => 'Attach evidence (Word, PDF, image)';
+
+  @override
+  String approvalsOthers(int n) {
+    return 'Employee requests awaiting you ($n)';
+  }
+
+  @override
+  String approvalsMine(int n) {
+    return 'Your requests awaiting your manager ($n)';
+  }
+
+  @override
+  String get requestMineTag => 'Yours';
+
+  @override
+  String get projectOverdue => 'Overdue';
 }

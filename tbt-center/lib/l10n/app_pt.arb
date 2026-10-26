@@ -1277,5 +1277,11 @@
   "nSalaryChanged": "Seu novo salário base: {amount}",
   "nBonusGranted": "Você recebeu bônus de {amount}: {reason}",
   "nPenaltyApplied": "Penalidade de {amount}: {reason}",
-  "errProtectedDatabase": "O banco de registros do admin não pode ser consultado aqui"
+  "errProtectedDatabase": "O banco de registros do admin não pode ser consultado aqui",
+  "errPastDate": "A licença só pode começar a partir de amanhã",
+  "leaveAttach": "Anexar comprovante (Word, PDF, imagem)",
+  "approvalsOthers": "Pedidos de funcionários aguardando você ({n})",
+  "approvalsMine": "Seus pedidos aguardando o gestor ({n})",
+  "requestMineTag": "Seu",
+  "projectOverdue": "Atrasado"
 }

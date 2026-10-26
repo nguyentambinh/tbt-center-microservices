@@ -4340,4 +4340,27 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get errProtectedDatabase =>
       'Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây';
+
+  @override
+  String get errPastDate =>
+      'Chỉ xin nghỉ cho ngày tương lai (từ ngày mai trở đi)';
+
+  @override
+  String get leaveAttach => 'Đính kèm minh chứng (Word, PDF, ảnh)';
+
+  @override
+  String approvalsOthers(int n) {
+    return 'Đơn của nhân viên chờ bạn duyệt ($n)';
+  }
+
+  @override
+  String approvalsMine(int n) {
+    return 'Đơn của bạn đang chờ cấp trên ($n)';
+  }
+
+  @override
+  String get requestMineTag => 'Đơn của bạn';
+
+  @override
+  String get projectOverdue => 'Trễ hạn';
 }

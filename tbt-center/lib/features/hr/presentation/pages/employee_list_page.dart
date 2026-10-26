@@ -24,6 +24,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../organization/presentation/providers/organization_providers.dart';
 import '../../domain/entities/employee.dart';
 import '../providers/employee_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 class EmployeeListPage extends ConsumerStatefulWidget {
   const EmployeeListPage({super.key});
@@ -95,6 +96,7 @@ class _EmployeeListPageState extends ConsumerState<EmployeeListPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
+              inputFormatters: InputRules.search,
               onChanged: _onSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(

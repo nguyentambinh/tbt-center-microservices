@@ -4358,4 +4358,26 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get errProtectedDatabase =>
       'Die Admin-Protokolldatenbank ist hier gesperrt';
+
+  @override
+  String get errPastDate => 'Urlaub kann erst ab morgen beginnen';
+
+  @override
+  String get leaveAttach => 'Nachweis anhängen (Word, PDF, Bild)';
+
+  @override
+  String approvalsOthers(int n) {
+    return 'Anträge von Mitarbeitenden ($n)';
+  }
+
+  @override
+  String approvalsMine(int n) {
+    return 'Ihre Anträge bei der Leitung ($n)';
+  }
+
+  @override
+  String get requestMineTag => 'Ihrer';
+
+  @override
+  String get projectOverdue => 'Überfällig';
 }

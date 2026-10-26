@@ -21,6 +21,7 @@ import '../../domain/organization.dart';
 import '../providers/organization_providers.dart';
 import '../widgets/head_tag.dart';
 import '../widgets/org_actions.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Danh sách phòng ban: thêm, giải thể, mở chi tiết để điều chuyển
 class DepartmentsPage extends ConsumerStatefulWidget {
@@ -57,6 +58,7 @@ class _DepartmentsPageState extends ConsumerState<DepartmentsPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
+                  inputFormatters: InputRules.shortText,
                   controller: name,
                   autofocus: true,
                   decoration: InputDecoration(labelText: l10n.departmentName),

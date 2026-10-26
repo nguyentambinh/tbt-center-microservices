@@ -14,6 +14,7 @@ import '../../../../core/error/error_reporter.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/organization.dart';
 import '../providers/organization_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 void showDone(String message) => scaffoldMessengerKey.currentState
   ?..hideCurrentSnackBar()
@@ -144,6 +145,7 @@ Future<void> nominateEmployee(BuildContext context, WidgetRef ref, {required Str
                 Text(l10n.nominationGroupNote, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
               const SizedBox(height: 12),
               TextFormField(
+                inputFormatters: InputRules.decimal,
                 controller: percent,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(labelText: l10n.raisePercent, suffixText: '%'),
@@ -154,6 +156,7 @@ Future<void> nominateEmployee(BuildContext context, WidgetRef ref, {required Str
               ),
               const SizedBox(height: 12),
               TextFormField(
+                inputFormatters: InputRules.note,
                 controller: reason,
                 maxLines: 3,
                 decoration: InputDecoration(labelText: l10n.nominationReason),
@@ -233,6 +236,7 @@ Future<bool> archiveEmployee(BuildContext context, WidgetRef ref, {required Stri
               Text(l10n.archiveKeepsPersonal),
               const SizedBox(height: 12),
               TextFormField(
+                inputFormatters: InputRules.note,
                 controller: reason,
                 maxLines: 2,
                 decoration: InputDecoration(labelText: l10n.archiveReason),

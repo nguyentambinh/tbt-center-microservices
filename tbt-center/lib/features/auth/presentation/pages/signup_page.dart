@@ -21,6 +21,7 @@ import '../../../../core/locale/locale_providers.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Đăng ký ứng viên ở service recruitment của khu vực nộp hồ sơ (không cần đăng nhập)
 class SignupRepository {
@@ -145,11 +146,11 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         children: [
           Text(l10n.signupHint, style: TextStyle(color: context.tbt.textSecondary)),
           const SizedBox(height: 16),
-          TextField(controller: _name, enabled: !_codeSent, textCapitalization: TextCapitalization.words, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
+          TextField(inputFormatters: InputRules.name, controller: _name, enabled: !_codeSent, textCapitalization: TextCapitalization.words, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
           const SizedBox(height: 12),
-          TextField(controller: _email, enabled: !_codeSent, keyboardType: TextInputType.emailAddress, decoration: field(l10n.fieldEmail), onChanged: (_) => setState(() {})),
+          TextField(inputFormatters: InputRules.email, controller: _email, enabled: !_codeSent, keyboardType: TextInputType.emailAddress, decoration: field(l10n.fieldEmail), onChanged: (_) => setState(() {})),
           const SizedBox(height: 12),
-          TextField(controller: _phone, enabled: !_codeSent, keyboardType: TextInputType.phone, decoration: field(l10n.fieldPhone), onChanged: (_) => setState(() {})),
+          TextField(inputFormatters: InputRules.phone, controller: _phone, enabled: !_codeSent, keyboardType: TextInputType.phone, decoration: field(l10n.fieldPhone), onChanged: (_) => setState(() {})),
           const SizedBox(height: 16),
           if (!_codeSent)
             FilledButton(
@@ -169,13 +170,14 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               onChanged: (_) => setState(() {}),
             ),
             TextField(
+              inputFormatters: InputRules.password,
               controller: _password,
               obscureText: _hidden,
               decoration: field(l10n.newPassword, helper: l10n.passwordRule, suffix: IconButton(icon: Icon(_hidden ? Icons.visibility : Icons.visibility_off), onPressed: () => setState(() => _hidden = !_hidden))),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
-            TextField(controller: _confirm, obscureText: _hidden, decoration: field(l10n.confirmPassword), onChanged: (_) => setState(() {})),
+            TextField(inputFormatters: InputRules.password, controller: _confirm, obscureText: _hidden, decoration: field(l10n.confirmPassword), onChanged: (_) => setState(() {})),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: _busy || _code.text.length != 6 || !_passwordValid ? null : _verify,

@@ -218,6 +218,18 @@ void main() {
     expect(find.text('Không có đơn nào chờ duyệt'), findsOneWidget);
   });
 
+  testWidgets('duyệt đơn: tách đơn nhân viên, bấm vào thẻ mở chi tiết người gửi', (tester) async {
+    await pumpAttendance(tester, ['hr']);
+    await tester.tap(find.text('Duyệt đơn'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Đơn của nhân viên chờ bạn duyệt'), findsOneWidget);
+    await tester.ensureVisible(find.text('Đổ bê tông sàn tầng 3'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Đổ bê tông sàn tầng 3'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Người gửi'), findsWidgets);
+  });
+
   testWidgets('một nút chấm công: lần đầu vào ca, lần hai ra ca và hiện tổng giờ', (tester) async {
     await pumpAttendance(tester, ['employee']);
     expect(find.textContaining('Thi công công trình'), findsOneWidget);

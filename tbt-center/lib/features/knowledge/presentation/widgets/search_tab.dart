@@ -17,6 +17,7 @@ import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../providers/knowledge_providers.dart';
 import 'article_sheet.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Tìm bài theo từ khóa, gõ không dấu vẫn ra
 class SearchTab extends ConsumerStatefulWidget {
@@ -51,6 +52,7 @@ class _SearchTabState extends ConsumerState<SearchTab> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
           child: TextField(
+            inputFormatters: InputRules.search,
             onChanged: _onChanged,
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.knowledgeSearchHint),

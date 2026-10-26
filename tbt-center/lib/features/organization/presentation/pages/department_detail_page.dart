@@ -21,6 +21,7 @@ import '../../domain/organization.dart';
 import '../providers/organization_providers.dart';
 import '../widgets/head_tag.dart';
 import '../widgets/org_actions.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Thành viên phòng ban: trưởng phòng đầu tiên, còn lại theo tổng giờ làm
 class DepartmentDetailPage extends ConsumerWidget {
@@ -139,7 +140,7 @@ class DepartmentDetailPage extends ConsumerWidget {
                   ),
                 ],
                 const SizedBox(height: 12),
-                TextField(controller: note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
+                TextField(inputFormatters: InputRules.note, controller: note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
               ],
             ),
           ),

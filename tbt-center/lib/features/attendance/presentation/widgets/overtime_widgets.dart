@@ -18,7 +18,9 @@ import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/attendance.dart';
 import '../../domain/entities/work_time.dart';
+import '../pages/attendance_page.dart' show MineTag, showRequestDetail;
 import '../providers/attendance_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Tab đơn tăng ca của chính mình (R36).
 class MyOvertimeTab extends ConsumerWidget {
@@ -45,7 +47,14 @@ class MyOvertimeTab extends ConsumerWidget {
             onRefresh: () => ref.refresh(myOvertimeProvider.future),
             child: ListView(
               padding: const EdgeInsets.only(bottom: 88),
-              children: [for (final r in value) OvertimeTile(request: r)],
+              children: [
+                for (final r in value)
+                  OvertimeTile(
+                    request: r,
+                    mine: true,
+                    onTap: () => showRequestDetail(context, employeeId: r.employeeId, child: OvertimeTile(request: r, mine: true)),
+                  ),
+              ],
             ),
           ),
         AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(myOvertimeProvider)),
@@ -56,11 +65,15 @@ class MyOvertimeTab extends ConsumerWidget {
 }
 
 class OvertimeTile extends StatelessWidget {
-  const OvertimeTile({super.key, required this.request, this.showEmployee = false, this.actions = const []});
+  const OvertimeTile({super.key, required this.request, this.showEmployee = false, this.actions = const [], this.mine = false, this.onTap});
 
   final OvertimeRequest request;
   final bool showEmployee;
   final List<Widget> actions;
+  final bool mine;
+
+  /// Bấm vào thẻ để xem chi tiết đơn
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +86,9 @@ class OvertimeTile extends StatelessWidget {
     };
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -87,6 +103,7 @@ class OvertimeTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
+                if (mine && showEmployee) ...[const MineTag(), const SizedBox(width: 6)],
                 Text(label, style: TextStyle(color: color, fontSize: 12)),
               ],
             ),
@@ -96,6 +113,7 @@ class OvertimeTile extends StatelessWidget {
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [...actions.expand((a) => [a, const SizedBox(width: 8)])]),
           ],
         ),
+      ),
       ),
     );
   }
@@ -179,7 +197,7 @@ class _OvertimeFormState extends ConsumerState<_OvertimeForm> {
             label: hours.format(_hours),
             onChanged: (v) => setState(() => _hours = v),
           ),
-          TextField(controller: _reason, decoration: InputDecoration(labelText: l10n.reason)),
+          TextField(inputFormatters: InputRules.note, controller: _reason, decoration: InputDecoration(labelText: l10n.reason)),
           if (_error != null) ...[
             const SizedBox(height: 8),
             Text(_error!, style: TextStyle(color: context.tbt.danger)),

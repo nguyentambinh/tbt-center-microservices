@@ -18,6 +18,7 @@ import '../../domain/entities/knowledge_graph.dart';
 import '../providers/knowledge_providers.dart';
 import 'graph_canvas.dart';
 import 'graph_tab.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Vì sao có cạnh này: luật và các cạnh tiền đề (suy luận) hoặc câu trích trong bài (AI)
 void showEdgeExplanation(BuildContext context, GraphEdge edge, GraphNode other, VoidCallback onGo) {
@@ -108,6 +109,7 @@ class _NodePickerState extends ConsumerState<_NodePicker> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: TextField(
+                inputFormatters: InputRules.search,
                 onChanged: (v) {
                   _debounce?.cancel();
                   _debounce = Timer(const Duration(milliseconds: 300), () => setState(() => _query = v.trim()));

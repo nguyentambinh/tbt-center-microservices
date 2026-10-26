@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/candidate.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 String interviewStateName(AppLocalizations l10n, String state) => switch (state) {
       'awaiting_hr' => l10n.interviewAwaitingHr,
@@ -143,10 +144,10 @@ class _InterviewDialogState extends State<_InterviewDialog> {
             if (past) Padding(padding: const EdgeInsets.only(top: 6), child: Text(l10n.errTimeInPast, style: TextStyle(color: Theme.of(context).colorScheme.error))),
             if (widget.askLocation) ...[
               const SizedBox(height: 12),
-              TextField(controller: _location, decoration: InputDecoration(labelText: l10n.interviewLocation)),
+              TextField(inputFormatters: InputRules.shortText, controller: _location, decoration: InputDecoration(labelText: l10n.interviewLocation)),
             ],
             const SizedBox(height: 12),
-            TextField(controller: _note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
+            TextField(inputFormatters: InputRules.note, controller: _note, maxLines: 2, decoration: InputDecoration(labelText: l10n.note)),
           ],
         ),
       ),

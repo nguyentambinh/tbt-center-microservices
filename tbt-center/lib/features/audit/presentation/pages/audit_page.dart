@@ -24,6 +24,7 @@ import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/audit.dart';
 import '../providers/audit_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Dịch vụ có ghi sổ kiểm toán
 const auditServices = ['hr', 'attendance', 'recruitment', 'payroll', 'finance', 'project_contract', 'notification', 'integration'];
@@ -288,7 +289,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             onChanged: (v) => setState(() => _service = v),
           ),
           const SizedBox(height: 8),
-          TextField(controller: _type, decoration: InputDecoration(labelText: l10n.auditEventType, hintText: 'PayrollRunCompleted')),
+          TextField(inputFormatters: InputRules.search, controller: _type, decoration: InputDecoration(labelText: l10n.auditEventType, hintText: 'PayrollRunCompleted')),
           const SizedBox(height: 8),
           for (final (label, value, set) in [
             (l10n.auditFromTime, _from, (DateTime? v) => _from = v),

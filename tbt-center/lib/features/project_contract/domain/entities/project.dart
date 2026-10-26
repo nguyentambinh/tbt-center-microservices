@@ -56,6 +56,12 @@ class ProjectSummary {
   final double? valueUsd;
 
   bool get accepted => status == 'accepted';
+
+  /// Đã qua ngày kết thúc mà chưa nghiệm thu
+  bool get overdue {
+    final now = DateTime.now();
+    return !accepted && endDate != null && endDate!.isBefore(DateTime(now.year, now.month, now.day));
+  }
 }
 
 class ProjectContract {

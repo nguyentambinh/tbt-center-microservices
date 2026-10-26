@@ -7,13 +7,13 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/proposal.dart';
 import 'project_widgets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Tỷ giá gần đúng 1 USD = ? để báo phân cấp ngay trên form; server kiểm lại bằng tỷ giá thật
 const approxUsdRates = {'USD': 1.0, 'VND': 25400.0, 'EUR': 0.92, 'BRL': 5.6, 'ZAR': 18.0, 'AUD': 1.52};
@@ -125,13 +125,12 @@ class _ProposalFormState extends State<ProposalForm> {
             ),
           ),
         );
-    final money = [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(controller: _name, decoration: field(l10n.projectName), onChanged: (_) => _changed()),
+        TextField(inputFormatters: InputRules.shortText, controller: _name, decoration: field(l10n.projectName), onChanged: (_) => _changed()),
         const SizedBox(height: 12),
-        TextField(controller: _customer, decoration: field(l10n.customerName), onChanged: (_) => _changed()),
+        TextField(inputFormatters: InputRules.shortText, controller: _customer, decoration: field(l10n.customerName), onChanged: (_) => _changed()),
         const SizedBox(height: 8),
         SegmentedButton<String>(
           segments: [
@@ -145,21 +144,21 @@ class _ProposalFormState extends State<ProposalForm> {
           },
         ),
         const SizedBox(height: 12),
-        TextField(controller: _contact, decoration: field(l10n.customerContact), onChanged: (_) => _changed()),
+        TextField(inputFormatters: InputRules.shortText, controller: _contact, decoration: field(l10n.customerContact), onChanged: (_) => _changed()),
         const SizedBox(height: 12),
-        TextField(controller: _type, decoration: field(l10n.contractType), onChanged: (_) => _changed()),
+        TextField(inputFormatters: InputRules.shortText, controller: _type, decoration: field(l10n.contractType), onChanged: (_) => _changed()),
         const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               flex: 3,
-              child: TextField(controller: _value, keyboardType: TextInputType.number, inputFormatters: money, decoration: field(l10n.contractValue), onChanged: (_) => _changed()),
+              child: TextField(controller: _value, keyboardType: TextInputType.number, inputFormatters: InputRules.decimal, decoration: field(l10n.contractValue), onChanged: (_) => _changed()),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
+                inputFormatters: InputRules.currency,
                 controller: _currency,
-                maxLength: 3,
                 textCapitalization: TextCapitalization.characters,
                 decoration: field(l10n.currency).copyWith(counterText: ''),
                 onChanged: (_) => _changed(),
@@ -168,7 +167,7 @@ class _ProposalFormState extends State<ProposalForm> {
           ],
         ),
         const SizedBox(height: 12),
-        TextField(controller: _deposit, keyboardType: TextInputType.number, inputFormatters: money, decoration: field(l10n.depositAmount), onChanged: (_) => _changed()),
+        TextField(controller: _deposit, keyboardType: TextInputType.number, inputFormatters: InputRules.decimal, decoration: field(l10n.depositAmount), onChanged: (_) => _changed()),
         const SizedBox(height: 12),
         Row(
           children: [

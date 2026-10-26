@@ -20,6 +20,7 @@ import '../../../hr/domain/entities/employee.dart';
 import '../../domain/change_request.dart';
 import '../providers/profile_providers.dart';
 import 'profile_page.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Nhân viên sửa ô cần đổi rồi gửi đề xuất; chỉ trường đã đổi được gửi lên HR
 class ProfileEditPage extends ConsumerWidget {
@@ -150,6 +151,7 @@ class _EditFormState extends ConsumerState<_EditForm> {
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: TextFormField(
+                inputFormatters: InputRules.profileField(k),
                 controller: _fields[k],
                 decoration: InputDecoration(labelText: profileFieldLabel(l10n, k)),
                 keyboardType: numericProfileFields.contains(k)
@@ -167,7 +169,7 @@ class _EditFormState extends ConsumerState<_EditForm> {
                 },
               ),
             ),
-          TextField(controller: _reason, decoration: InputDecoration(labelText: l10n.changeReason), maxLines: 2),
+          TextField(inputFormatters: InputRules.note, controller: _reason, decoration: InputDecoration(labelText: l10n.changeReason), maxLines: 2),
           const SizedBox(height: 20),
           FilledButton.icon(
             icon: _sending ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.send),

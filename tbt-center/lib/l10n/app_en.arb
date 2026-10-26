@@ -1277,5 +1277,11 @@
   "nSalaryChanged": "Your new base salary: {amount}",
   "nBonusGranted": "You received a bonus of {amount}: {reason}",
   "nPenaltyApplied": "A penalty of {amount} was applied: {reason}",
-  "errProtectedDatabase": "The admin log database cannot be queried here"
+  "errProtectedDatabase": "The admin log database cannot be queried here",
+  "errPastDate": "Leave can only start from tomorrow",
+  "leaveAttach": "Attach evidence (Word, PDF, image)",
+  "approvalsOthers": "Employee requests awaiting you ({n})",
+  "approvalsMine": "Your requests awaiting your manager ({n})",
+  "requestMineTag": "Yours",
+  "projectOverdue": "Overdue"
 }

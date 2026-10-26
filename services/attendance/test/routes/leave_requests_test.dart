@@ -81,6 +81,28 @@ void main() {
       expect(v?.code, 'too_long');
     });
 
+    test('chỉ ngày tương lai: hôm nay hoặc ngày đã qua bị từ chối', () {
+      final today = DateTime(2026, 10, 26, 15, 30);
+      expect(
+        validateLeave(
+          fromDate: DateTime(2026, 10, 26),
+          toDate: DateTime(2026, 10, 27),
+          leaveType: 'Nghỉ phép',
+          today: today,
+        )?.code,
+        'past_date',
+      );
+      expect(
+        validateLeave(
+          fromDate: DateTime(2026, 10, 27),
+          toDate: DateTime(2026, 10, 27),
+          leaveType: 'Nghỉ phép',
+          today: today,
+        ),
+        isNull,
+      );
+    });
+
     test('hợp lệ', () {
       final v = validateLeave(
         fromDate: DateTime(2026, 11, 2),

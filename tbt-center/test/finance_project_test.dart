@@ -240,7 +240,10 @@ void main() {
 
     await tester.tap(find.text('Trả tiền'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.widgetWithText(TextFormField, 'Số tiền'), '-5');
+    // Ô số tiền chỉ nhận số: gõ dấu trừ hay chữ đều bị bỏ
+    await tester.enterText(find.widgetWithText(TextFormField, 'Số tiền'), '-5abc');
+    expect(find.widgetWithText(TextFormField, '5'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextFormField, 'Số tiền'), '0');
     await tester.tap(find.text('Lưu'));
     await tester.pumpAndSettle();
     expect(find.text('Số tiền không hợp lệ'), findsOneWidget);

@@ -22,6 +22,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/organization.dart';
 import '../providers/organization_providers.dart';
 import '../widgets/head_tag.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 final orgTreeProvider = FutureProvider.autoDispose<OrgTree>((ref) => ref.watch(organizationRepositoryProvider).orgTree());
 
@@ -98,6 +99,7 @@ class _OrgTreePageState extends ConsumerState<OrgTreePage> {
                     child: Row(children: [
                       Expanded(
                         child: TextField(
+                          inputFormatters: InputRules.search,
                           decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.orgTreeSearch, isDense: true),
                           onChanged: (v) => setState(() => _query = foldText(v)),
                         ),

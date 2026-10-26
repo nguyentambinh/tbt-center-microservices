@@ -144,6 +144,7 @@ class _DetailView extends ConsumerWidget {
           avatar: Icon(s.accepted ? Icons.task_alt : Icons.construction, size: 16),
           label: Text(s.accepted ? l10n.projectAcceptedOn(day(s.acceptedOn)) : l10n.projectInProgress),
         ),
+        if (s.overdue) Chip(avatar: Icon(Icons.alarm, size: 16, color: context.tbt.danger), label: Text(l10n.projectOverdue, style: TextStyle(color: context.tbt.danger))),
         for (final n in project.notices)
           Text(
             l10n.customerNotice(n.channel == 'email' ? 'Email' : 'SMS', n.status == 'sent' ? l10n.noticeSent : l10n.noticeQueued),

@@ -8,7 +8,6 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,6 +23,7 @@ import '../../l10n/app_localizations.dart';
 import '../organization/presentation/pages/org_tree_page.dart' show levelName;
 import '../organization/presentation/widgets/org_actions.dart' show showDone;
 import 'admin_repository.dart';
+import '../../core/widgets/input_rules.dart';
 
 /// Vai trò quản trị một nước được gán; quản trị tập đoàn gán thêm vai trò quản lý
 const _regionRoles = ['employee', 'hr', 'finance', 'auditor'];
@@ -217,6 +217,7 @@ class _AccountsTabState extends ConsumerState<_AccountsTab> {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
         child: TextField(
+          inputFormatters: InputRules.search,
           decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.adminSearchAccounts, isDense: true),
           onSubmitted: (v) => setState(() => _query = v.trim()),
         ),
@@ -359,7 +360,7 @@ class _CalendarTabState extends ConsumerState<_CalendarTab> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.adminAddHoliday),
-        content: TextField(controller: name, autofocus: true, decoration: InputDecoration(labelText: l10n.adminHolidayName)),
+        content: TextField(inputFormatters: InputRules.shortText, controller: name, autofocus: true, decoration: InputDecoration(labelText: l10n.adminHolidayName)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
           FilledButton(onPressed: () => Navigator.pop(context, name.text.trim().isNotEmpty), child: Text(l10n.save)),
@@ -461,7 +462,7 @@ class _PositionsTab extends ConsumerWidget {
           title: Text(position == null ? l10n.adminAddPosition : l10n.adminEditPosition),
           content: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              TextField(controller: name, decoration: InputDecoration(labelText: l10n.adminPositionName)),
+              TextField(inputFormatters: InputRules.shortText, controller: name, decoration: InputDecoration(labelText: l10n.adminPositionName)),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
                 initialValue: level,
@@ -471,9 +472,9 @@ class _PositionsTab extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               TextField(
+                inputFormatters: InputRules.decimal,
                 controller: coefficient,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
                 decoration: InputDecoration(labelText: l10n.adminCoefficient),
               ),
             ]),
@@ -598,7 +599,7 @@ class _DataTabState extends ConsumerState<_DataTab> {
                 onChanged: (v) => setState(() => _database = v ?? _database),
               ),
               const SizedBox(height: 12),
-              TextField(key: const Key('admin-sql'), controller: _sql, minLines: 3, maxLines: 8, style: mono, decoration: const InputDecoration(alignLabelWithHint: true)),
+              TextField(inputFormatters: InputRules.sql, key: const Key('admin-sql'), controller: _sql, minLines: 3, maxLines: 8, style: mono, decoration: const InputDecoration(alignLabelWithHint: true)),
               SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(l10n.adminSqlWrite), value: _write, onChanged: (v) => setState(() => _write = v)),
               FilledButton.icon(
                 onPressed: _running ? null : _run,

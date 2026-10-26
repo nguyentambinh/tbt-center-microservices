@@ -20,6 +20,7 @@ import '../providers/knowledge_providers.dart';
 import 'article_sheet.dart';
 import 'graph_canvas.dart';
 import 'graph_sheets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 String nodeTypeLabel(AppLocalizations l10n, NodeType type) => switch (type) {
       NodeType.concept => l10n.graphTypeConcept,
@@ -76,6 +77,7 @@ class _GraphTabState extends ConsumerState<GraphTab> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
           child: TextField(
+            inputFormatters: InputRules.search,
             controller: _search,
             onChanged: (v) {
               _debounce?.cancel();

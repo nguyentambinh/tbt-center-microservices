@@ -9,6 +9,7 @@
 import 'package:attendance_service/src/access.dart';
 import 'package:attendance_service/src/data/attendance_repository.dart';
 import 'package:attendance_service/src/domain/leave_request.dart';
+import 'package:attendance_service/src/region_time.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -67,6 +68,7 @@ Future<Response> _create(RequestContext context) async {
     fromDate: fromDate,
     toDate: toDate,
     leaveType: leaveType,
+    today: await regionNow(context),
   );
   if (violation != null) return ruleError(violation);
 

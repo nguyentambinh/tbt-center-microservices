@@ -22,6 +22,7 @@ import '../../../core/widgets/motion.dart';
 import '../../../l10n/app_localizations.dart';
 import '../data/report_repository.dart';
 import '../domain/report_submission.dart';
+import '../../../core/widgets/input_rules.dart';
 
 final reportRepositoryProvider = Provider.family<ReportRepository, String>(
   (ref, region) => ReportRepository(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(region)),
@@ -100,7 +101,7 @@ class _KindTab extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        content: TextField(controller: controller, maxLines: 3, decoration: InputDecoration(labelText: l10n.note)),
+        content: TextField(inputFormatters: InputRules.note, controller: controller, maxLines: 3, decoration: InputDecoration(labelText: l10n.note)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
           FilledButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: Text(l10n.send)),

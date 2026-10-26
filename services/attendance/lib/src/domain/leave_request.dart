@@ -71,10 +71,13 @@ class LeaveRuleViolation implements Exception {
 }
 
 /// Kiểm tra đơn trước khi ghi; trả lỗi đầu tiên gặp, `null` nếu hợp lệ.
+/// Đơn nghỉ chỉ cho ngày tương lai: ngày bắt đầu phải sau [today] (ngày của
+/// khu vực); không truyền [today] thì không kiểm
 LeaveRuleViolation? validateLeave({
   required DateTime? fromDate,
   required DateTime? toDate,
   required String? leaveType,
+  DateTime? today,
 }) {
   if (fromDate == null || toDate == null) {
     return const LeaveRuleViolation(
@@ -84,6 +87,13 @@ LeaveRuleViolation? validateLeave({
   }
   if (toDate.isBefore(fromDate)) {
     return const LeaveRuleViolation('invalid_dates', 'toDate before fromDate');
+  }
+  if (today != null &&
+      !fromDate.isAfter(DateTime(today.year, today.month, today.day))) {
+    return const LeaveRuleViolation(
+      'past_date',
+      'Leave can only start after today',
+    );
   }
   if (toDate.difference(fromDate).inDays + 1 > maxLeaveDays) {
     return const LeaveRuleViolation('too_long', 'At most 30 days per request');

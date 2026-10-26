@@ -15,6 +15,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/answer.dart';
 import '../providers/knowledge_providers.dart';
 import 'article_sheet.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Hỏi đáp với trợ lý AI, câu trả lời có trích dẫn nguồn
 class AskTab extends ConsumerStatefulWidget {
@@ -93,6 +94,7 @@ class _AskTabState extends ConsumerState<AskTab> {
               children: [
                 Expanded(
                   child: TextField(
+                    inputFormatters: InputRules.note,
                     controller: _input,
                     enabled: !busy,
                     minLines: 1,

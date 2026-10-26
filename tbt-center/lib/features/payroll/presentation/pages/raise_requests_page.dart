@@ -7,7 +7,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +21,7 @@ import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/payroll.dart';
 import '../providers/payroll_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 String raiseStatusLabel(AppLocalizations l10n, String status) => switch (status) {
       'awaiting_hr' => l10n.raiseAwaitingHr,
@@ -231,7 +231,7 @@ Future<({double? amount, String? note})?> _amountDialog(
                 TextField(
                   controller: amount,
                   keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  inputFormatters: InputRules.digits,
                   decoration: InputDecoration(
                     labelText: l10n.proposedSalary,
                     helperText: minimum == null ? null : l10n.raiseMinimum(NumberFormat.decimalPattern().format(minimum)),
@@ -239,6 +239,7 @@ Future<({double? amount, String? note})?> _amountDialog(
                   onChanged: (_) => setDialog(() {}),
                 ),
               TextField(
+                inputFormatters: InputRules.note,
                 controller: note,
                 maxLines: 3,
                 decoration: InputDecoration(labelText: askReason ? l10n.raiseReason : l10n.note),

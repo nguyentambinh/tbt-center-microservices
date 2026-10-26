@@ -2867,5 +2867,25 @@
       }
     }
   },
-  "errProtectedDatabase": "Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây"
+  "errProtectedDatabase": "Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây",
+  "errPastDate": "Chỉ xin nghỉ cho ngày tương lai (từ ngày mai trở đi)",
+  "leaveAttach": "Đính kèm minh chứng (Word, PDF, ảnh)",
+  "approvalsOthers": "Đơn của nhân viên chờ bạn duyệt ({n})",
+  "@approvalsOthers": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "approvalsMine": "Đơn của bạn đang chờ cấp trên ({n})",
+  "@approvalsMine": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "requestMineTag": "Đơn của bạn",
+  "projectOverdue": "Trễ hạn"
 }

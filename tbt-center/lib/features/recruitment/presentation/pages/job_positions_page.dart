@@ -7,7 +7,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/auth/auth_controller.dart';
@@ -20,6 +19,7 @@ import '../../domain/entities/job_position.dart';
 import '../providers/candidate_providers.dart';
 import '../widgets/position_widgets.dart';
 import '../widgets/stage_widgets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Ai mở, sửa vị trí tuyển dụng (Ban lãnh đạo chỉ xem)
 const positionManagerRoles = {'hr', 'admin'};
@@ -249,17 +249,17 @@ class _PositionDialogState extends State<_PositionDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: _title, decoration: InputDecoration(labelText: l10n.positionTitle), onChanged: (_) => setState(() {})),
-            TextField(controller: _department, decoration: InputDecoration(labelText: l10n.positionDepartment)),
+            TextField(inputFormatters: InputRules.shortText, controller: _title, decoration: InputDecoration(labelText: l10n.positionTitle), onChanged: (_) => setState(() {})),
+            TextField(inputFormatters: InputRules.shortText, controller: _department, decoration: InputDecoration(labelText: l10n.positionDepartment)),
             TextField(
               controller: _headcount,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: InputRules.digits,
               decoration: InputDecoration(labelText: l10n.positionHeadcount, errorText: headcountError),
               onChanged: (_) => setState(() {}),
             ),
-            TextField(controller: _description, maxLines: 3, decoration: InputDecoration(labelText: l10n.positionDescription)),
-            TextField(controller: _requirements, maxLines: 4, decoration: InputDecoration(labelText: l10n.positionRequirements, helperText: l10n.positionRequirementsHint, helperMaxLines: 2)),
+            TextField(inputFormatters: InputRules.longText, controller: _description, maxLines: 3, decoration: InputDecoration(labelText: l10n.positionDescription)),
+            TextField(inputFormatters: InputRules.longText, controller: _requirements, maxLines: 4, decoration: InputDecoration(labelText: l10n.positionRequirements, helperText: l10n.positionRequirementsHint, helperMaxLines: 2)),
           ],
         ),
       ),

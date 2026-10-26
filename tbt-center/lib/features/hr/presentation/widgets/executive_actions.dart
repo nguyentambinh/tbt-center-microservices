@@ -7,7 +7,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -17,7 +16,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../organization/presentation/providers/organization_providers.dart';
 import '../../../organization/presentation/widgets/org_actions.dart';
-import '../../data/direct_actions_repository.dart';
+import '../../data/direct_actions_repository.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Menu làm thẳng của văn phòng quản lý trên hồ sơ nhân viên
 class ExecutiveActionsMenu extends ConsumerWidget {
@@ -161,7 +161,7 @@ class _PositionDialogState extends ConsumerState<_PositionDialog> {
           },
         ),
         const SizedBox(height: 12),
-        TextField(controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReason)),
+        TextField(inputFormatters: InputRules.note, controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReason)),
       ],
     );
   }
@@ -224,12 +224,12 @@ class _SalaryDialogState extends ConsumerState<_SalaryDialog> {
         TextField(
           controller: _amount,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: InputRules.digits,
           decoration: InputDecoration(labelText: l10n.execNewSalary),
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 12),
-        TextField(controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReason)),
+        TextField(inputFormatters: InputRules.note, controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReason)),
       ],
     );
   }
@@ -288,12 +288,12 @@ class _BonusDialogState extends ConsumerState<_BonusDialog> {
         TextField(
           controller: _amount,
           keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          inputFormatters: InputRules.digits,
           decoration: InputDecoration(labelText: l10n.execAmount),
           onChanged: (_) => setState(() {}),
         ),
         const SizedBox(height: 12),
-        TextField(controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReasonRequired), onChanged: (_) => setState(() {})),
+        TextField(inputFormatters: InputRules.note, controller: _reason, maxLines: 2, decoration: InputDecoration(labelText: l10n.execReasonRequired), onChanged: (_) => setState(() {})),
       ],
     );
   }

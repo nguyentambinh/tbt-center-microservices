@@ -23,6 +23,7 @@ import '../providers/candidate_providers.dart';
 import '../widgets/interview_widgets.dart';
 import '../widgets/position_widgets.dart';
 import '../widgets/stage_widgets.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Chọn một tệp PDF trên máy (test thay bằng tệp giả)
 final pickPdfProvider = Provider<Future<({String name, List<int> bytes})?> Function()>((ref) => () async {
@@ -365,7 +366,7 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
           ),
           const SizedBox(height: 12),
         ] else ...[
-          TextField(controller: _name, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
+          TextField(inputFormatters: InputRules.name, controller: _name, decoration: field(l10n.fullName), onChanged: (_) => setState(() {})),
           const SizedBox(height: 12),
         ],
         switch (ref.watch(openPositionsProvider)) {
@@ -384,7 +385,7 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
               }),
             ),
           AsyncValue(isLoading: true) => const LinearProgressIndicator(),
-          _ => TextField(controller: _position, decoration: field(l10n.appliedPosition)),
+          _ => TextField(inputFormatters: InputRules.shortText, controller: _position, decoration: field(l10n.appliedPosition)),
         },
         const SizedBox(height: 8),
         OutlinedButton.icon(

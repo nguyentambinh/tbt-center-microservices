@@ -7769,6 +7769,42 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây'**
   String get errProtectedDatabase;
+
+  /// No description provided for @errPastDate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ xin nghỉ cho ngày tương lai (từ ngày mai trở đi)'**
+  String get errPastDate;
+
+  /// No description provided for @leaveAttach.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đính kèm minh chứng (Word, PDF, ảnh)'**
+  String get leaveAttach;
+
+  /// No description provided for @approvalsOthers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn của nhân viên chờ bạn duyệt ({n})'**
+  String approvalsOthers(int n);
+
+  /// No description provided for @approvalsMine.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn của bạn đang chờ cấp trên ({n})'**
+  String approvalsMine(int n);
+
+  /// No description provided for @requestMineTag.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn của bạn'**
+  String get requestMineTag;
+
+  /// No description provided for @projectOverdue.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trễ hạn'**
+  String get projectOverdue;
 }
 
 class _AppLocalizationsDelegate

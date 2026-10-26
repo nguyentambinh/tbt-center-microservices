@@ -21,6 +21,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../domain/change_request.dart';
 import '../providers/profile_providers.dart';
 import 'profile_page.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// HR duyệt đề xuất sửa thông tin cá nhân của nhân viên
 class ChangeRequestsPage extends ConsumerStatefulWidget {
@@ -40,7 +41,7 @@ class _ChangeRequestsPageState extends ConsumerState<ChangeRequestsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(approve ? l10n.approve : l10n.reject),
-        content: TextField(controller: note, decoration: InputDecoration(labelText: l10n.decisionNote), maxLines: 2),
+        content: TextField(inputFormatters: InputRules.note, controller: note, decoration: InputDecoration(labelText: l10n.decisionNote), maxLines: 2),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
           FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(approve ? l10n.approve : l10n.reject)),

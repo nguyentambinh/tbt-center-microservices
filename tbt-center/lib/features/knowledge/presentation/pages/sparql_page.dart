@@ -17,6 +17,7 @@ import '../../../../core/widgets/async_states.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/ontology.dart';
 import '../providers/knowledge_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Câu mẫu: tên hiển thị và câu SPARQL
 List<(String, String)> sparqlSamples(AppLocalizations l10n) => [
@@ -103,6 +104,7 @@ class _SparqlPageState extends ConsumerState<SparqlPage> {
           ),
           const SizedBox(height: 12),
           TextField(
+            inputFormatters: InputRules.longText,
             controller: _query,
             minLines: 4,
             maxLines: 10,

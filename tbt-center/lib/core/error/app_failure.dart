@@ -48,6 +48,7 @@ class AppFailure implements Exception {
         'overlap' => l10n.errOverlap,
         'too_long' => l10n.errTooLong,
         'invalid_dates' => l10n.errInvalidDates,
+        'past_date' => l10n.errPastDate,
         'already_decided' => l10n.errAlreadyDecided,
         'self_approval' => l10n.errSelfApproval,
         'period_locked' => l10n.errPeriodLocked,

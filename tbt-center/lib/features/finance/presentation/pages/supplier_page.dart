@@ -18,6 +18,7 @@ import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/finance.dart';
 import '../providers/finance_providers.dart';
+import '../../../../core/widgets/input_rules.dart';
 
 /// Đối chiếu công nợ một nhà cung cấp: lịch sử mua, trả, số còn nợ (R104).
 class SupplierPage extends ConsumerWidget {
@@ -232,11 +233,13 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
             const SizedBox(height: 12),
             if (widget.purchase)
               TextFormField(
+                inputFormatters: InputRules.shortText,
                 controller: _material,
                 decoration: InputDecoration(labelText: l10n.materialName),
                 validator: (v) => (v ?? '').trim().isEmpty ? l10n.errorValidation : null,
               ),
             TextFormField(
+              inputFormatters: InputRules.decimal,
               controller: _amount,
               decoration: InputDecoration(labelText: l10n.amount),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -246,7 +249,7 @@ class _EntryFormState extends ConsumerState<_EntryForm> {
               },
             ),
             if (!widget.purchase)
-              TextFormField(controller: _note, decoration: InputDecoration(labelText: l10n.note)),
+              TextFormField(inputFormatters: InputRules.note, controller: _note, decoration: InputDecoration(labelText: l10n.note)),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               icon: const Icon(Icons.event),
