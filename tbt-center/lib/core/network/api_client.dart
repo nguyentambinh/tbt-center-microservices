@@ -38,16 +38,18 @@ const cachedAt = 'cachedAt';
 const slowExpected = 'slowExpected';
 
 class _TbtInterceptor extends Interceptor {
-  _TbtInterceptor(this._ref, this._dio);
+  // Lấy sẵn lúc tạo: client cũ bị thay khi làm mới dữ liệu vẫn chạy nốt request đang dở
+  _TbtInterceptor(Ref ref, this._dio)
+      : _monitor = ref.read(connectionMonitorProvider.notifier),
+        _auth = ref.read(authControllerProvider.notifier),
+        _cache = ref.read(responseCacheProvider);
 
-  final Ref _ref;
   final Dio _dio;
+  final ConnectionMonitor _monitor;
+  final AuthController _auth;
+  final ResponseCache _cache;
   static const _uuid = Uuid();
   static const _writeMethods = {'POST', 'PUT', 'PATCH', 'DELETE'};
-
-  ConnectionMonitor get _monitor => _ref.read(connectionMonitorProvider.notifier);
-  AuthController get _auth => _ref.read(authControllerProvider.notifier);
-  ResponseCache get _cache => _ref.read(responseCacheProvider);
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
