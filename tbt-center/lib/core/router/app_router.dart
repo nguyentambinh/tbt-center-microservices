@@ -55,6 +55,7 @@ import '../../features/recruitment/presentation/pages/candidates_page.dart';
 import '../../features/recruitment/presentation/pages/my_application_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../auth/auth_controller.dart';
+import '../network/api_client.dart';
 import '../theme/role_gem.dart';
 import '../widgets/tbt_logo.dart';
 
@@ -127,6 +128,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: Routes.home,
     refreshListenable: authChanged,
+    observers: [FreshDataObserver(ref)],
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final location = state.matchedLocation;
@@ -264,4 +266,24 @@ class _SplashPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(body: Center(child: TbtLogo(gem: RoleGem.gold, height: 130)));
   }
+}
+
+/// Vào màn mới hoặc quay lại màn trước thì tạo lại client mạng: provider dữ liệu đang hiển thị gọi server lấy bản mới
+/// (dữ liệu lưu tạm chỉ dùng khi mất mạng); hộp thoại, bảng dưới không tính
+class FreshDataObserver extends NavigatorObserver {
+  FreshDataObserver(this._ref);
+
+  final Ref _ref;
+
+  void _refresh(Route<dynamic>? route) {
+    if (route is! PageRoute || _ref.read(authControllerProvider).value == null) return;
+    // Đổi provider ngoài lúc dựng khung hình
+    Future.microtask(() => _ref.invalidate(apiClientProvider));
+  }
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => _refresh(route);
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _refresh(route);
 }
