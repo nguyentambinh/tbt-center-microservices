@@ -19,6 +19,8 @@ import 'response_cache.dart';
 /// Dio duy nhất của app. Mọi lời gọi mạng đi qua đây để cùng được gắn header,
 /// báo tình trạng kết nối và dùng cache khi mất mạng.
 final apiClientProvider = Provider<Dio>((ref) {
+  // Đổi tài khoản thì tạo lại client, mọi provider dữ liệu phía sau tải lại theo người mới
+  ref.watch(authControllerProvider.select((s) => s.value?.subject));
   final dio = Dio(BaseOptions(
     connectTimeout: const Duration(seconds: 8),
     receiveTimeout: const Duration(seconds: 15),
