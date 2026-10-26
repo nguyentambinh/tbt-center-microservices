@@ -165,7 +165,7 @@ class _MyInterviewState extends ConsumerState<_MyInterview> {
         if (i.state == 'awaiting_candidate' && i.held) Text(l10n.interviewTimePassed, style: TextStyle(color: context.tbt.warning)),
         if (i.state == 'awaiting_candidate' && !i.held)
           FilledButton.icon(onPressed: _busy ? null : () => _respond('confirm'), icon: const Icon(Icons.check), label: Text(l10n.confirmTime)),
-        if (i.state == 'awaiting_candidate' || i.confirmed)
+        if (i.state == 'awaiting_candidate')
           OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),
         if (i.state == 'awaiting_hr') Text(l10n.waitingHrReply, style: TextStyle(color: context.tbt.textSecondary)),
       ],

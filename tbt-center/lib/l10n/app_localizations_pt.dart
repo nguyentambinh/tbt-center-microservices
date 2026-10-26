@@ -4477,4 +4477,8 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get interviewTimePassed => 'Este horário já passou, proponha outro';
+
+  @override
+  String get errInterviewLocked =>
+      'Os dois lados confirmaram o horário, ele não pode mais ser alterado';
 }

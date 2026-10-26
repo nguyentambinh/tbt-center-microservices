@@ -104,6 +104,15 @@ void main() {
       );
     });
 
+    test('hai bên đã xác nhận thì không bên nào đề xuất lại giờ', () {
+      for (final party in Party.values) {
+        expect(
+          () => nextInterviewState('confirmed', party, 'propose'),
+          _violation('interview_locked'),
+        );
+      }
+    });
+
     test('lịch đã hủy thì không trả lời được', () {
       expect(
         () => nextInterviewState('cancelled', Party.candidate, 'propose'),

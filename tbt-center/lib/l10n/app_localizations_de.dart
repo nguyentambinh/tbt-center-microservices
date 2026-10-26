@@ -4495,4 +4495,8 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get interviewTimePassed =>
       'Der Termin ist vorbei, bitte einen neuen vorschlagen';
+
+  @override
+  String get errInterviewLocked =>
+      'Beide Seiten haben den Termin bestätigt, er kann nicht mehr geändert werden';
 }

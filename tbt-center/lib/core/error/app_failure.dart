@@ -89,6 +89,7 @@ class AppFailure implements Exception {
         'invalid_transition' || 'use_interview' || 'use_minutes' || 'use_hire' || 'invalid_interview_action' || 'no_interview' || 'interview_exists' => l10n.errInvalidStep,
         'not_screened' => l10n.errNotScreened,
         'time_in_past' || 'time_required' => l10n.errTimeInPast,
+        'interview_locked' => l10n.errInterviewLocked,
         'interview_not_confirmed' => l10n.errInterviewNotConfirmed,
         'interview_not_held' => l10n.minutesAfterInterview,
         'not_interviewed' => l10n.errNotInterviewed,

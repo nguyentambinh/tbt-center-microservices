@@ -214,7 +214,7 @@ class _CandidateActionsState extends ConsumerState<CandidateActions> {
                 icon: const Icon(Icons.upload_file),
                 label: Text(l10n.uploadMinutes),
               ),
-            OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),
+            if (!interview.confirmed) OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),
             reject,
           ],
         'interviewed' => [

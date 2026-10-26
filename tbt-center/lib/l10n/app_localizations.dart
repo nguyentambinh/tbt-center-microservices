@@ -8021,6 +8021,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Đã qua giờ hẹn, hãy đề xuất giờ khác'**
   String get interviewTimePassed;
+
+  /// No description provided for @errInterviewLocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hai bên đã xác nhận giờ phỏng vấn, không đổi giờ được nữa'**
+  String get errInterviewLocked;
 }
 
 class _AppLocalizationsDelegate

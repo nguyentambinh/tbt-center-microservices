@@ -17,14 +17,20 @@ enum Party { hr, candidate }
 /// HR: đề xuất giờ, xác nhận giờ ứng viên đề xuất, hoặc từ chối ứng viên.
 /// Ứng viên: xác nhận giờ HR hẹn hoặc đề xuất giờ khác.
 String nextInterviewState(String state, Party party, String action) {
+  // Hai bên đã chốt giờ thì không bên nào đổi giờ nữa
+  if (state == 'confirmed' && action == 'propose') {
+    throw const CandidateRuleViolation(
+      'interview_locked',
+      'Interview time is confirmed by both sides',
+    );
+  }
   final next = switch ((party, action)) {
     (Party.hr, 'propose') when state != 'cancelled' => 'awaiting_candidate',
     (Party.hr, 'confirm') when state == 'awaiting_hr' => 'confirmed',
     (Party.hr, 'decline') when state != 'cancelled' => 'cancelled',
     (Party.candidate, 'confirm') when state == 'awaiting_candidate' =>
       'confirmed',
-    (Party.candidate, 'propose')
-        when state == 'awaiting_candidate' || state == 'confirmed' =>
+    (Party.candidate, 'propose') when state == 'awaiting_candidate' =>
       'awaiting_hr',
     _ => null,
   };

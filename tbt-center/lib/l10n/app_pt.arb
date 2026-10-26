@@ -1319,5 +1319,6 @@
   "riskHigh": "Risco alto",
   "riskMedium": "Risco médio",
   "riskLow": "Risco baixo",
-  "interviewTimePassed": "Este horário já passou, proponha outro"
+  "interviewTimePassed": "Este horário já passou, proponha outro",
+  "errInterviewLocked": "Os dois lados confirmaram o horário, ele não pode mais ser alterado"
 }

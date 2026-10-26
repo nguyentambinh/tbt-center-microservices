@@ -2930,5 +2930,6 @@
   "riskHigh": "Rủi ro cao",
   "riskMedium": "Rủi ro vừa",
   "riskLow": "Rủi ro thấp",
-  "interviewTimePassed": "Đã qua giờ hẹn, hãy đề xuất giờ khác"
+  "interviewTimePassed": "Đã qua giờ hẹn, hãy đề xuất giờ khác",
+  "errInterviewLocked": "Hai bên đã xác nhận giờ phỏng vấn, không đổi giờ được nữa"
 }

@@ -1319,5 +1319,6 @@
   "riskHigh": "Hohes Risiko",
   "riskMedium": "Mittleres Risiko",
   "riskLow": "Geringes Risiko",
-  "interviewTimePassed": "Der Termin ist vorbei, bitte einen neuen vorschlagen"
+  "interviewTimePassed": "Der Termin ist vorbei, bitte einen neuen vorschlagen",
+  "errInterviewLocked": "Beide Seiten haben den Termin bestätigt, er kann nicht mehr geändert werden"
 }

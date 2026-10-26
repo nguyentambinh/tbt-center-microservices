@@ -4480,4 +4480,8 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get interviewTimePassed => 'Đã qua giờ hẹn, hãy đề xuất giờ khác';
+
+  @override
+  String get errInterviewLocked =>
+      'Hai bên đã xác nhận giờ phỏng vấn, không đổi giờ được nữa';
 }
