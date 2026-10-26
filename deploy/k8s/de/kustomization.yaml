@@ -15,6 +15,8 @@ configMapGenerator:
     literals: [S3_PUBLIC_ENDPOINT=http://localhost:3910]
   - name: kong-config
     files: [../../kong/kong.yml]
+  - name: waf-exclusions
+    files: [../../waf/region-exclusions.conf]
   - name: postgres-scripts
     files: [../../postgres/primary-init.sh, ../../postgres/replica-entrypoint.sh]
   - name: garage-config

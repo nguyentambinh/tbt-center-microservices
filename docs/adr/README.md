@@ -36,3 +36,4 @@ Mỗi file ghi một quyết định kiến trúc, kèm bối cảnh, lý do và
 - [ADR 0032: Khu vực Đức chạy trên Kubernetes (k3s, dựng bằng k3d)](0032-kubernetes-khu-vuc-duc.md)
 - [ADR 0033: Chạy online trên một máy chủ thật (VPS)](0033-may-chu-that-vps.md)
 - [ADR 0034: Ảnh nhân viên, dự án lưu trong Garage của từng khu vực, đọc bằng URL ký sẵn](0034-anh-nhan-vien-du-an-trong-garage.md)
+- [ADR 0035: Phân cấp tài khoản nước, tập đoàn; văn phòng quản lý làm thẳng; service quản trị dữ liệu](0035-phan-cap-tai-khoan-quan-tri-du-lieu.md)

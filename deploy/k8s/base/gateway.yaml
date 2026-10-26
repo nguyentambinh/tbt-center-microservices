@@ -77,6 +77,10 @@ spec:
             - {name: MODSEC_AUDIT_LOG_FORMAT, value: JSON}
           ports:
             - {name: http, containerPort: 8080}
+          volumeMounts:
+            - name: waf-exclusions
+              mountPath: /etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+              subPath: region-exclusions.conf
           readinessProbe:
             tcpSocket: {port: http}
             periodSeconds: 5
@@ -87,6 +91,9 @@ spec:
           resources:
             requests: {cpu: 50m, memory: 64Mi}
             limits: {memory: 256Mi}
+      volumes:
+        - name: waf-exclusions
+          configMap: {name: waf-exclusions}
 ---
 # Cổng duy nhất mở ra ngoài cụm; k3d chuyển cổng 8000 của máy vào nodePort này
 apiVersion: v1
