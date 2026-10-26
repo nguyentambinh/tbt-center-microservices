@@ -4478,4 +4478,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get riskLow => 'Low risk';
+
+  @override
+  String get interviewTimePassed =>
+      'This time has passed, please propose another one';
 }

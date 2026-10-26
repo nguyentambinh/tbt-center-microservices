@@ -162,7 +162,8 @@ class _MyInterviewState extends ConsumerState<_MyInterview> {
     return InterviewCard(
       interview: i,
       actions: [
-        if (i.state == 'awaiting_candidate')
+        if (i.state == 'awaiting_candidate' && i.held) Text(l10n.interviewTimePassed, style: TextStyle(color: context.tbt.warning)),
+        if (i.state == 'awaiting_candidate' && !i.held)
           FilledButton.icon(onPressed: _busy ? null : () => _respond('confirm'), icon: const Icon(Icons.check), label: Text(l10n.confirmTime)),
         if (i.state == 'awaiting_candidate' || i.confirmed)
           OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),

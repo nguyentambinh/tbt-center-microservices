@@ -8015,6 +8015,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Rủi ro thấp'**
   String get riskLow;
+
+  /// No description provided for @interviewTimePassed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã qua giờ hẹn, hãy đề xuất giờ khác'**
+  String get interviewTimePassed;
 }
 
 class _AppLocalizationsDelegate

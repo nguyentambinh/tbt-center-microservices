@@ -1318,5 +1318,6 @@
   "auditLikelyBenign": "Possibly harmless if",
   "riskHigh": "High risk",
   "riskMedium": "Medium risk",
-  "riskLow": "Low risk"
+  "riskLow": "Low risk",
+  "interviewTimePassed": "This time has passed, please propose another one"
 }

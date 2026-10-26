@@ -4491,4 +4491,8 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get riskLow => 'Geringes Risiko';
+
+  @override
+  String get interviewTimePassed =>
+      'Der Termin ist vorbei, bitte einen neuen vorschlagen';
 }

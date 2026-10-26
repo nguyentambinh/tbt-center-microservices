@@ -2929,5 +2929,6 @@
   "auditLikelyBenign": "Có thể là bình thường nếu",
   "riskHigh": "Rủi ro cao",
   "riskMedium": "Rủi ro vừa",
-  "riskLow": "Rủi ro thấp"
+  "riskLow": "Rủi ro thấp",
+  "interviewTimePassed": "Đã qua giờ hẹn, hãy đề xuất giờ khác"
 }

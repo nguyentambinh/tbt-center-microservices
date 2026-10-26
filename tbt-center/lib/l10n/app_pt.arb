@@ -1318,5 +1318,6 @@
   "auditLikelyBenign": "Pode ser normal se",
   "riskHigh": "Risco alto",
   "riskMedium": "Risco médio",
-  "riskLow": "Risco baixo"
+  "riskLow": "Risco baixo",
+  "interviewTimePassed": "Este horário já passou, proponha outro"
 }

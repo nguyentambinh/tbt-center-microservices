@@ -243,6 +243,20 @@ void main() {
     expect(repository.responses, ['me:confirm']);
   });
 
+  testWidgets('lịch đã qua giờ thì ứng viên chỉ đề xuất giờ khác, không xác nhận được', (tester) async {
+    final repository = await pumpWithRoles(tester, ['candidate']);
+    repository.mine = Candidate(
+      id: 'C1',
+      fullName: 'Lê Minh Thư',
+      status: 'interview',
+      interview: Interview(scheduledAt: DateTime.now().subtract(const Duration(hours: 1)), state: 'awaiting_candidate', proposedBy: 'hr'),
+    );
+    await openHomeCard(tester, 'Hồ sơ ứng tuyển của tôi');
+    expect(find.text('Xác nhận giờ này'), findsNothing);
+    expect(find.text('Đã qua giờ hẹn, hãy đề xuất giờ khác'), findsOneWidget);
+    expect(find.text('Đề xuất giờ khác'), findsOneWidget);
+  });
+
   testWidgets('nhân viên thường không thấy thẻ Ứng viên', (tester) async {
     await pumpWithRoles(tester, ['employee']);
     expect(find.text('Ứng viên'), findsNothing);
