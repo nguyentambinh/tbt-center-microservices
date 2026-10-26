@@ -82,6 +82,24 @@ abstract interface class AuditRepository {
   Future<void> logAccess(AccessRecord record);
 
   Future<List<Map<String, dynamic>>> accessLog({int limit = 100});
+
+  /// Một sự kiện kèm giờ địa phương và điểm bất thường; `null` nếu không có
+  Future<Map<String, dynamic>?> event(int id);
+
+  /// Các sự kiện trước đó của cùng đối tượng (để AI hiểu ngữ cảnh)
+  Future<List<Map<String, dynamic>>> history(
+    String aggregateId, {
+    required int before,
+    int limit = 6,
+  });
+
+  Future<Map<String, dynamic>?> explanation(int id);
+
+  Future<void> saveExplanation(
+    int id,
+    Map<String, dynamic> explanation, {
+    required String source,
+  });
 }
 
 /// Điều kiện tra cứu sổ kiểm toán.
@@ -359,6 +377,69 @@ class PostgresAuditRepository implements AuditRepository {
         },
     ];
   }
+
+  @override
+  Future<Map<String, dynamic>?> event(int id) async {
+    final rows = await _db.query(
+      'select id, region, source_service, event_type, aggregate_id, payload, '
+      'occurred_at, received_at, prev_hash, hash, $_localHour::int as hour, '
+      '$afterHoursSql as after_hours, $failureSql as failure '
+      'from events where id = @id',
+      params: {'id': id},
+    );
+    if (rows.isEmpty) return null;
+    final r = rows.first;
+    return {
+      ..._json(r),
+      'localHour': r['hour'],
+      'anomalies': [
+        if (r['after_hours'] == true) 'after_hours',
+        if (r['failure'] == true) 'failure',
+      ],
+    };
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> history(
+    String aggregateId, {
+    required int before,
+    int limit = 6,
+  }) async {
+    final rows = await _db.query(
+      'select id, region, source_service, event_type, aggregate_id, payload, '
+      'occurred_at, received_at, hash from events '
+      'where aggregate_id = @agg and id < @before order by id desc '
+      'limit @limit',
+      params: {'agg': aggregateId, 'before': before, 'limit': limit},
+    );
+    return [for (final r in rows) _json(r)];
+  }
+
+  @override
+  Future<Map<String, dynamic>?> explanation(int id) async {
+    final rows = await _db.query(
+      'select explanation, source from event_explanations '
+      'where event_id = @id',
+      params: {'id': id},
+      fromPrimary: true,
+    );
+    if (rows.isEmpty) return null;
+    return {
+      ...rows.first['explanation'] as Map<String, dynamic>,
+      'source': rows.first['source'],
+    };
+  }
+
+  @override
+  Future<void> saveExplanation(
+    int id,
+    Map<String, dynamic> explanation, {
+    required String source,
+  }) => _db.execute(
+    'insert into event_explanations (event_id, explanation, source) '
+    'values (@id, @e::jsonb, @s) on conflict (event_id) do nothing',
+    params: {'id': id, 'e': jsonEncode(explanation), 's': source},
+  );
 
   Map<String, dynamic> _json(Map<String, dynamic> r) => {
     'id': r['id'],

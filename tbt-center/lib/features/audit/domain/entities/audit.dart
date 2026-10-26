@@ -17,6 +17,7 @@ class AuditEvent {
     required this.occurredAt,
     required this.hash,
     this.anomalies = const [],
+    this.payload = const {},
   });
 
   final int id;
@@ -29,7 +30,18 @@ class AuditEvent {
 
   /// `after_hours` (22h–6h giờ địa phương), `failure` (thất bại, từ chối, bù trừ)
   final List<String> anomalies;
+
+  /// Dữ liệu của sự kiện (ai làm, giá trị trước sau...)
+  final Map<String, dynamic> payload;
+
+  /// Người thực hiện ghi trong dữ liệu sự kiện, nếu có
+  String? get actor => '${payload['by'] ?? payload['changedBy'] ?? payload['decidedBy'] ?? payload['createdBy'] ?? payload['submittedBy'] ?? ''}'.trim().isEmpty
+      ? null
+      : '${payload['by'] ?? payload['changedBy'] ?? payload['decidedBy'] ?? payload['createdBy'] ?? payload['submittedBy']}';
 }
+
+/// AI giải thích điểm bất thường của một sự kiện
+typedef AnomalyExplanation = ({String summary, String whyFlagged, String risk, List<String> checks, String? likelyBenign});
 
 class ChainCheck {
   const ChainCheck({required this.checked, this.brokenAt});

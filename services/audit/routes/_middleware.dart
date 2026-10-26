@@ -8,6 +8,7 @@
 
 import 'dart:io';
 
+import 'package:audit_service/src/anomaly_explainer.dart';
 import 'package:audit_service/src/audit_access.dart';
 import 'package:audit_service/src/audit_repository.dart';
 import 'package:audit_service/src/dependencies.dart';
@@ -36,6 +37,7 @@ Handler middleware(Handler handler) {
         return handler(context);
       })
       .use(provider<AuditRepository>((_) => auditRepository))
+      .use(provider<AnomalyExplainer>((_) => anomalyExplainer))
       .use(provider<EventRelay?>((_) => eventRelay))
       .use(correlationAndErrors())
       .use(metrics('audit'))

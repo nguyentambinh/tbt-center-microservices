@@ -7805,6 +7805,216 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Trễ hạn'**
   String get projectOverdue;
+
+  /// No description provided for @reportMonth.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tháng báo cáo'**
+  String get reportMonth;
+
+  /// No description provided for @reportMonthDone.
+  ///
+  /// In vi, this message translates to:
+  /// **'đã được xác nhận'**
+  String get reportMonthDone;
+
+  /// No description provided for @errFuturePeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ báo cáo tháng hiện tại hoặc các tháng trước'**
+  String get errFuturePeriod;
+
+  /// No description provided for @errPeriodAcknowledged.
+  ///
+  /// In vi, this message translates to:
+  /// **'Báo cáo tháng này đã được cấp trên xác nhận, không gửi lại'**
+  String get errPeriodAcknowledged;
+
+  /// No description provided for @resignationAttachLetter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đính kèm đơn thôi việc'**
+  String get resignationAttachLetter;
+
+  /// No description provided for @resignationLetterHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt buộc: ảnh chụp đơn, file Word hoặc PDF (tối đa 10 MB)'**
+  String get resignationLetterHint;
+
+  /// No description provided for @resignationOpenLetter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở đơn: {name}'**
+  String resignationOpenLetter(String name);
+
+  /// No description provided for @resignationAiTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'AI phân tích đơn'**
+  String get resignationAiTitle;
+
+  /// No description provided for @resignationAiRetention.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gợi ý giữ chân'**
+  String get resignationAiRetention;
+
+  /// No description provided for @resignationAiConcerns.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần lưu ý'**
+  String get resignationAiConcerns;
+
+  /// No description provided for @resignationAiNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'AI chỉ tóm tắt để tham khảo, người duyệt quyết định'**
+  String get resignationAiNote;
+
+  /// No description provided for @errLetterRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần đính kèm đơn thôi việc (ảnh, Word hoặc PDF)'**
+  String get errLetterRequired;
+
+  /// No description provided for @rcCareer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phát triển sự nghiệp'**
+  String get rcCareer;
+
+  /// No description provided for @rcSalary.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lương, đãi ngộ'**
+  String get rcSalary;
+
+  /// No description provided for @rcWorkload.
+  ///
+  /// In vi, this message translates to:
+  /// **'Áp lực công việc'**
+  String get rcWorkload;
+
+  /// No description provided for @rcManagement.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý trực tiếp'**
+  String get rcManagement;
+
+  /// No description provided for @rcEnvironment.
+  ///
+  /// In vi, this message translates to:
+  /// **'Môi trường làm việc'**
+  String get rcEnvironment;
+
+  /// No description provided for @rcPersonal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lý do cá nhân'**
+  String get rcPersonal;
+
+  /// No description provided for @rcHealth.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sức khỏe'**
+  String get rcHealth;
+
+  /// No description provided for @rcRelocation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển nơi ở'**
+  String get rcRelocation;
+
+  /// No description provided for @rcOther.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khác'**
+  String get rcOther;
+
+  /// No description provided for @auditExportNow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xuất báo cáo'**
+  String get auditExportNow;
+
+  /// No description provided for @auditRecord.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đối tượng'**
+  String get auditRecord;
+
+  /// No description provided for @auditActor.
+  ///
+  /// In vi, this message translates to:
+  /// **'Người thực hiện'**
+  String get auditActor;
+
+  /// No description provided for @auditData.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dữ liệu của sự kiện'**
+  String get auditData;
+
+  /// No description provided for @auditWhyFlagged.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vì sao bị đánh dấu bất thường'**
+  String get auditWhyFlagged;
+
+  /// No description provided for @anomalyAfterHoursWhy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thao tác lúc 22h–6h theo giờ của nước đó, ngoài giờ làm việc thông thường'**
+  String get anomalyAfterHoursWhy;
+
+  /// No description provided for @anomalyFailureWhy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sự kiện thất bại, bị từ chối, phải bù trừ hoặc cần xử lý tay'**
+  String get anomalyFailureWhy;
+
+  /// No description provided for @auditAskAi.
+  ///
+  /// In vi, this message translates to:
+  /// **'AI phân tích điểm bất thường'**
+  String get auditAskAi;
+
+  /// No description provided for @auditAiTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'AI phân tích'**
+  String get auditAiTitle;
+
+  /// No description provided for @auditChecks.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cần kiểm tra'**
+  String get auditChecks;
+
+  /// No description provided for @auditLikelyBenign.
+  ///
+  /// In vi, this message translates to:
+  /// **'Có thể là bình thường nếu'**
+  String get auditLikelyBenign;
+
+  /// No description provided for @riskHigh.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rủi ro cao'**
+  String get riskHigh;
+
+  /// No description provided for @riskMedium.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rủi ro vừa'**
+  String get riskMedium;
+
+  /// No description provided for @riskLow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Rủi ro thấp'**
+  String get riskLow;
 }
 
 class _AppLocalizationsDelegate

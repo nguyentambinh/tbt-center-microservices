@@ -35,6 +35,31 @@ void checkCanSubmit(String? lastStatus) {
   }
 }
 
+/// Kỳ báo cáo dạng YYYY-MM: tháng hiện tại hoặc cũ hơn, tháng đã được cấp
+/// trên xác nhận thì không gửi lại (tháng bị trả lại thì gửi lại được)
+void checkReportPeriod(
+  String period, {
+  required DateTime now,
+  required Set<String> acknowledged,
+}) {
+  if (!RegExp(r'^\d{4}-(0[1-9]|1[0-2])$').hasMatch(period)) {
+    throw const ReportRuleViolation('invalid_period', 'Use YYYY-MM');
+  }
+  final current = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+  if (period.compareTo(current) > 0) {
+    throw const ReportRuleViolation(
+      'future_period',
+      'Only the current or a past month can be reported',
+    );
+  }
+  if (acknowledged.contains(period)) {
+    throw const ReportRuleViolation(
+      'period_acknowledged',
+      'This month was already acknowledged',
+    );
+  }
+}
+
 String nextReportStatus(String status, String action) =>
     switch ((status, action)) {
       ('submitted', 'acknowledge') => 'acknowledged',
@@ -89,6 +114,18 @@ class ReportSubmissions {
       parameters: {'kind': kind},
     );
     checkCanSubmit(last.isEmpty ? null : last.first[0] as String?);
+    final done = await tx.execute(
+      Sql.named(
+        'select distinct period from report_submissions '
+        "where kind = @kind and status = 'acknowledged'",
+      ),
+      parameters: {'kind': kind},
+    );
+    checkReportPeriod(
+      period,
+      now: DateTime.now(),
+      acknowledged: {for (final r in done) r[0]! as String},
+    );
     final rows = await tx.execute(
       Sql.named(
         'insert into report_submissions (kind, period, note, data, '

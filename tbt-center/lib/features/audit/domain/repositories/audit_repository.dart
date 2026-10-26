@@ -19,4 +19,7 @@ abstract interface class AuditRepository {
   Future<AuditExport> export(AuditQuery query);
 
   Future<List<AccessEntry>> accessLog();
+
+  /// AI giải thích vì sao sự kiện bị đánh dấu bất thường, cần kiểm tra gì
+  Future<AnomalyExplanation> explain(int id, {required String language});
 }

@@ -23,7 +23,10 @@ Future<Response> onRequest(RequestContext context) async {
   final reader = auditReader(context);
   if (reader is Response) return reader;
 
-  final filter = filterFrom(context.request.uri.queryParameters);
+  final filter = filterFrom(
+    context.request.uri.queryParameters,
+    region: readerRegion(reader as Claims),
+  );
   if (filter == null) {
     return apiError(400, 'invalid_dates', 'from, to must be YYYY-MM-DD');
   }
@@ -32,7 +35,7 @@ Future<Response> onRequest(RequestContext context) async {
   final export = exportCsv(rows);
   await repository.logAccess(
     accessOf(
-      reader as Claims,
+      reader,
       'export',
       filter: filter,
       rowCount: rows.length,

@@ -19,7 +19,10 @@ Future<Response> onRequest(RequestContext context) async {
   }
   final reader = auditReader(context);
   if (reader is Response) return reader;
-  final filter = filterFrom(context.request.uri.queryParameters);
+  final filter = filterFrom(
+    context.request.uri.queryParameters,
+    region: readerRegion(reader as Claims),
+  );
   if (filter == null) {
     return apiError(400, 'invalid_filter', 'Check dates and anomaly');
   }
@@ -27,7 +30,7 @@ Future<Response> onRequest(RequestContext context) async {
   final stats = await repository.stats(filter);
   await repository.logAccess(
     accessOf(
-      reader as Claims,
+      reader,
       'stats',
       filter: filter,
       rowCount: stats['total'] as int? ?? 0,

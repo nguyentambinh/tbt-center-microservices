@@ -4380,4 +4380,115 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get projectOverdue => 'Überfällig';
+
+  @override
+  String get reportMonth => 'Berichtsmonat';
+
+  @override
+  String get reportMonthDone => 'bereits bestätigt';
+
+  @override
+  String get errFuturePeriod => 'Nur der aktuelle oder ein vergangener Monat';
+
+  @override
+  String get errPeriodAcknowledged => 'Dieser Monat wurde bereits bestätigt';
+
+  @override
+  String get resignationAttachLetter => 'Kündigungsschreiben anhängen';
+
+  @override
+  String get resignationLetterHint =>
+      'Pflicht: Foto, Word oder PDF (max. 10 MB)';
+
+  @override
+  String resignationOpenLetter(String name) {
+    return 'Schreiben öffnen: $name';
+  }
+
+  @override
+  String get resignationAiTitle => 'KI-Auswertung des Schreibens';
+
+  @override
+  String get resignationAiRetention => 'Ideen zum Halten';
+
+  @override
+  String get resignationAiConcerns => 'Prüfen';
+
+  @override
+  String get resignationAiNote =>
+      'Nur KI-Zusammenfassung; die Entscheidung liegt bei Ihnen';
+
+  @override
+  String get errLetterRequired => 'Bitte das Kündigungsschreiben anhängen';
+
+  @override
+  String get rcCareer => 'Karriere';
+
+  @override
+  String get rcSalary => 'Vergütung';
+
+  @override
+  String get rcWorkload => 'Arbeitslast';
+
+  @override
+  String get rcManagement => 'Führung';
+
+  @override
+  String get rcEnvironment => 'Arbeitsumfeld';
+
+  @override
+  String get rcPersonal => 'Persönlich';
+
+  @override
+  String get rcHealth => 'Gesundheit';
+
+  @override
+  String get rcRelocation => 'Umzug';
+
+  @override
+  String get rcOther => 'Sonstiges';
+
+  @override
+  String get auditExportNow => 'Exportieren';
+
+  @override
+  String get auditRecord => 'Datensatz';
+
+  @override
+  String get auditActor => 'Ausgeführt von';
+
+  @override
+  String get auditData => 'Ereignisdaten';
+
+  @override
+  String get auditWhyFlagged => 'Warum markiert';
+
+  @override
+  String get anomalyAfterHoursWhy =>
+      'Zwischen 22 und 6 Uhr Ortszeit, außerhalb der Arbeitszeit';
+
+  @override
+  String get anomalyFailureWhy =>
+      'Fehlgeschlagen, abgelehnt, kompensiert oder manuell zu prüfen';
+
+  @override
+  String get auditAskAi => 'KI zur Auffälligkeit fragen';
+
+  @override
+  String get auditAiTitle => 'KI-Analyse';
+
+  @override
+  String get auditChecks => 'Zu prüfen';
+
+  @override
+  String get auditLikelyBenign => 'Möglicherweise harmlos, wenn';
+
+  @override
+  String get riskHigh => 'Hohes Risiko';
+
+  @override
+  String get riskMedium => 'Mittleres Risiko';
+
+  @override
+  String get riskLow => 'Geringes Risiko';
 }

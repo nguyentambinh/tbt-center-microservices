@@ -4363,4 +4363,118 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get projectOverdue => 'Trễ hạn';
+
+  @override
+  String get reportMonth => 'Tháng báo cáo';
+
+  @override
+  String get reportMonthDone => 'đã được xác nhận';
+
+  @override
+  String get errFuturePeriod =>
+      'Chỉ báo cáo tháng hiện tại hoặc các tháng trước';
+
+  @override
+  String get errPeriodAcknowledged =>
+      'Báo cáo tháng này đã được cấp trên xác nhận, không gửi lại';
+
+  @override
+  String get resignationAttachLetter => 'Đính kèm đơn thôi việc';
+
+  @override
+  String get resignationLetterHint =>
+      'Bắt buộc: ảnh chụp đơn, file Word hoặc PDF (tối đa 10 MB)';
+
+  @override
+  String resignationOpenLetter(String name) {
+    return 'Mở đơn: $name';
+  }
+
+  @override
+  String get resignationAiTitle => 'AI phân tích đơn';
+
+  @override
+  String get resignationAiRetention => 'Gợi ý giữ chân';
+
+  @override
+  String get resignationAiConcerns => 'Cần lưu ý';
+
+  @override
+  String get resignationAiNote =>
+      'AI chỉ tóm tắt để tham khảo, người duyệt quyết định';
+
+  @override
+  String get errLetterRequired =>
+      'Cần đính kèm đơn thôi việc (ảnh, Word hoặc PDF)';
+
+  @override
+  String get rcCareer => 'Phát triển sự nghiệp';
+
+  @override
+  String get rcSalary => 'Lương, đãi ngộ';
+
+  @override
+  String get rcWorkload => 'Áp lực công việc';
+
+  @override
+  String get rcManagement => 'Quản lý trực tiếp';
+
+  @override
+  String get rcEnvironment => 'Môi trường làm việc';
+
+  @override
+  String get rcPersonal => 'Lý do cá nhân';
+
+  @override
+  String get rcHealth => 'Sức khỏe';
+
+  @override
+  String get rcRelocation => 'Chuyển nơi ở';
+
+  @override
+  String get rcOther => 'Khác';
+
+  @override
+  String get auditExportNow => 'Xuất báo cáo';
+
+  @override
+  String get auditRecord => 'Đối tượng';
+
+  @override
+  String get auditActor => 'Người thực hiện';
+
+  @override
+  String get auditData => 'Dữ liệu của sự kiện';
+
+  @override
+  String get auditWhyFlagged => 'Vì sao bị đánh dấu bất thường';
+
+  @override
+  String get anomalyAfterHoursWhy =>
+      'Thao tác lúc 22h–6h theo giờ của nước đó, ngoài giờ làm việc thông thường';
+
+  @override
+  String get anomalyFailureWhy =>
+      'Sự kiện thất bại, bị từ chối, phải bù trừ hoặc cần xử lý tay';
+
+  @override
+  String get auditAskAi => 'AI phân tích điểm bất thường';
+
+  @override
+  String get auditAiTitle => 'AI phân tích';
+
+  @override
+  String get auditChecks => 'Cần kiểm tra';
+
+  @override
+  String get auditLikelyBenign => 'Có thể là bình thường nếu';
+
+  @override
+  String get riskHigh => 'Rủi ro cao';
+
+  @override
+  String get riskMedium => 'Rủi ro vừa';
+
+  @override
+  String get riskLow => 'Rủi ro thấp';
 }

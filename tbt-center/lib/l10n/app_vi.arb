@@ -2887,5 +2887,47 @@
     }
   },
   "requestMineTag": "Đơn của bạn",
-  "projectOverdue": "Trễ hạn"
+  "projectOverdue": "Trễ hạn",
+  "reportMonth": "Tháng báo cáo",
+  "reportMonthDone": "đã được xác nhận",
+  "errFuturePeriod": "Chỉ báo cáo tháng hiện tại hoặc các tháng trước",
+  "errPeriodAcknowledged": "Báo cáo tháng này đã được cấp trên xác nhận, không gửi lại",
+  "resignationAttachLetter": "Đính kèm đơn thôi việc",
+  "resignationLetterHint": "Bắt buộc: ảnh chụp đơn, file Word hoặc PDF (tối đa 10 MB)",
+  "resignationOpenLetter": "Mở đơn: {name}",
+  "@resignationOpenLetter": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "resignationAiTitle": "AI phân tích đơn",
+  "resignationAiRetention": "Gợi ý giữ chân",
+  "resignationAiConcerns": "Cần lưu ý",
+  "resignationAiNote": "AI chỉ tóm tắt để tham khảo, người duyệt quyết định",
+  "errLetterRequired": "Cần đính kèm đơn thôi việc (ảnh, Word hoặc PDF)",
+  "rcCareer": "Phát triển sự nghiệp",
+  "rcSalary": "Lương, đãi ngộ",
+  "rcWorkload": "Áp lực công việc",
+  "rcManagement": "Quản lý trực tiếp",
+  "rcEnvironment": "Môi trường làm việc",
+  "rcPersonal": "Lý do cá nhân",
+  "rcHealth": "Sức khỏe",
+  "rcRelocation": "Chuyển nơi ở",
+  "rcOther": "Khác",
+  "auditExportNow": "Xuất báo cáo",
+  "auditRecord": "Đối tượng",
+  "auditActor": "Người thực hiện",
+  "auditData": "Dữ liệu của sự kiện",
+  "auditWhyFlagged": "Vì sao bị đánh dấu bất thường",
+  "anomalyAfterHoursWhy": "Thao tác lúc 22h–6h theo giờ của nước đó, ngoài giờ làm việc thông thường",
+  "anomalyFailureWhy": "Sự kiện thất bại, bị từ chối, phải bù trừ hoặc cần xử lý tay",
+  "auditAskAi": "AI phân tích điểm bất thường",
+  "auditAiTitle": "AI phân tích",
+  "auditChecks": "Cần kiểm tra",
+  "auditLikelyBenign": "Có thể là bình thường nếu",
+  "riskHigh": "Rủi ro cao",
+  "riskMedium": "Rủi ro vừa",
+  "riskLow": "Rủi ro thấp"
 }

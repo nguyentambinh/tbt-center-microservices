@@ -16,6 +16,8 @@ import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/error/error_reporter.dart';
 import '../../../../core/export/table_export.dart';
+import '../../../../core/error/app_failure.dart';
+import '../../../../core/locale/event_names.dart';
 import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
@@ -73,8 +75,11 @@ class _AuditPageState extends ConsumerState<AuditPage> {
         );
       });
 
-  Future<void> _signedExport() => _run(() async {
-        final export = await ref.read(auditRepositoryProvider).export(_query);
+  Future<void> _signedExport() async {
+    final picked = await showModalBottomSheet<AuditQuery>(context: context, isScrollControlled: true, builder: (_) => _FilterSheet(initial: _query, forExport: true));
+    if (picked == null || !mounted) return;
+    await _run(() async {
+        final export = await ref.read(auditRepositoryProvider).export(picked);
         ref.invalidate(auditAccessLogProvider);
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
@@ -101,6 +106,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
           ),
         );
       });
+  }
 
   ExportTable? _table() {
     final events = ref.read(auditEventsProvider(_query)).value;
@@ -240,9 +246,12 @@ String _describe(AppLocalizations l10n, AuditQuery q) => [
     ].join(' · ');
 
 class _FilterSheet extends StatefulWidget {
-  const _FilterSheet({required this.initial});
+  const _FilterSheet({required this.initial, this.forExport = false});
 
   final AuditQuery initial;
+
+  /// Mở trước khi xuất báo cáo: nút cuối là Xuất
+  final bool forExport;
 
   @override
   State<_FilterSheet> createState() => _FilterSheetState();
@@ -250,6 +259,8 @@ class _FilterSheet extends StatefulWidget {
 
 class _FilterSheetState extends State<_FilterSheet> {
   late String? _service = widget.initial.service;
+  late String? _region = widget.initial.region;
+  late String? _anomaly = widget.initial.anomaly;
   late final _type = TextEditingController(text: widget.initial.type ?? '');
   late DateTime? _from = widget.initial.from;
   late DateTime? _to = widget.initial.to;
@@ -280,6 +291,26 @@ class _FilterSheetState extends State<_FilterSheet> {
           Text(l10n.auditFilter, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           DropdownButtonFormField<String?>(
+            initialValue: _region,
+            decoration: InputDecoration(labelText: l10n.filterRegion),
+            items: [
+              DropdownMenuItem(child: Text(l10n.allRegions)),
+              for (final r in Env.regions) DropdownMenuItem(value: r, child: Text(l10n.regionName(r))),
+            ],
+            onChanged: (v) => setState(() => _region = v),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String?>(
+            initialValue: _anomaly,
+            decoration: InputDecoration(labelText: l10n.anomalyAny),
+            items: [
+              DropdownMenuItem(child: Text(l10n.filterAll)),
+              for (final a in ['any', 'after_hours', 'failure']) DropdownMenuItem(value: a, child: Text(_anomalyName(l10n, a))),
+            ],
+            onChanged: (v) => setState(() => _anomaly = v),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String?>(
             initialValue: _service,
             decoration: InputDecoration(labelText: l10n.auditService),
             items: [
@@ -309,14 +340,14 @@ class _FilterSheetState extends State<_FilterSheet> {
           const SizedBox(height: 8),
           FilledButton(
             onPressed: () => Navigator.pop(context, (
-              region: widget.initial.region,
+              region: _region,
               type: _type.text.trim().isEmpty ? null : _type.text.trim(),
               service: _service,
-              anomaly: widget.initial.anomaly,
+              anomaly: _anomaly,
               from: _from,
               to: _to,
             )),
-            child: Text(l10n.apply),
+            child: Text(widget.forExport ? l10n.auditExportNow : l10n.apply),
           ),
         ],
       ),
@@ -343,8 +374,9 @@ class _EventsList extends ConsumerWidget {
             itemBuilder: (context, i) {
               final e = value[i];
               return ListTile(
+                onTap: () => showModalBottomSheet<void>(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => AuditEventDetail(event: e)),
                 leading: Text('#${e.id}', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-                title: Text(e.eventType),
+                title: Text(eventName(l10n, e.eventType)),
                 subtitle: Text(
                   '${l10n.regionName(e.region)} · ${e.sourceService} · ${DateFormat.yMMMd(locale).add_Hm().format(e.occurredAt)}\n'
                   'hash ${e.hash.substring(0, 16)}…',
@@ -364,6 +396,135 @@ class _EventsList extends ConsumerWidget {
       AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(auditEventsProvider(query))),
       _ => const SkeletonList(),
     };
+  }
+}
+
+/// Chi tiết một dòng sổ kiểm toán: tên dễ đọc, ai làm, giờ địa phương, dữ liệu,
+/// vì sao bị đánh dấu bất thường, AI giải thích và gợi ý cần kiểm tra
+class AuditEventDetail extends ConsumerStatefulWidget {
+  const AuditEventDetail({super.key, required this.event});
+
+  final AuditEvent event;
+
+  @override
+  ConsumerState<AuditEventDetail> createState() => _AuditEventDetailState();
+}
+
+class _AuditEventDetailState extends ConsumerState<AuditEventDetail> {
+  Future<AnomalyExplanation>? _explanation;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final e = widget.event;
+    final mono = TextStyle(fontFamily: 'monospace', fontSize: 12, color: context.tbt.textSecondary);
+    Widget row(String label, String value) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            SizedBox(width: 110, child: Text(label, style: TextStyle(color: context.tbt.textSecondary))),
+            Expanded(child: SelectableText(value)),
+          ]),
+        );
+    return SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          children: [
+            Text(eventName(l10n, e.eventType), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text('#${e.id} · ${e.eventType}', style: mono),
+            const SizedBox(height: 12),
+            row(l10n.filterRegion, l10n.regionName(e.region)),
+            row(l10n.auditService, e.sourceService),
+            row(l10n.auditTime, DateFormat.yMMMMd(locale).add_Hms().format(e.occurredAt)),
+            row(l10n.auditRecord, e.aggregateId),
+            if (e.actor case final actor?) row(l10n.auditActor, actor),
+            if (e.anomalies.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(l10n.auditWhyFlagged, style: TextStyle(fontWeight: FontWeight.bold, color: context.tbt.caution)),
+              for (final a in e.anomalies)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text('• ${a == 'after_hours' ? l10n.anomalyAfterHoursWhy : l10n.anomalyFailureWhy}'),
+                ),
+              const SizedBox(height: 8),
+              if (_explanation == null)
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.auto_awesome),
+                  label: Text(l10n.auditAskAi),
+                  onPressed: () {
+                    final future = ref.read(auditRepositoryProvider).explain(e.id, language: Localizations.localeOf(context).languageCode);
+                    setState(() {
+                      _explanation = future;
+                    });
+                  },
+                )
+              else
+                FutureBuilder<AnomalyExplanation>(
+                  future: _explanation,
+                  builder: (context, snap) => switch (snap) {
+                    AsyncSnapshot(:final data?) => _ExplanationCard(explanation: data),
+                    AsyncSnapshot(:final error?) => Text(error is AppFailure ? error.message(l10n) : l10n.errorUnknown, style: TextStyle(color: context.tbt.danger)),
+                    _ => const LinearProgressIndicator(),
+                  },
+                ),
+            ],
+            if (e.payload.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(l10n.auditData, style: const TextStyle(fontWeight: FontWeight.bold)),
+              for (final entry in e.payload.entries) row(entry.key, '${entry.value}'),
+            ],
+            const SizedBox(height: 12),
+            Text('SHA-256 ${e.hash}', style: mono),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExplanationCard extends StatelessWidget {
+  const _ExplanationCard({required this.explanation});
+
+  final AnomalyExplanation explanation;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final x = explanation;
+    final (riskLabel, riskColor) = switch (x.risk) {
+      'high' => (l10n.riskHigh, context.tbt.danger),
+      'medium' => (l10n.riskMedium, context.tbt.caution),
+      _ => (l10n.riskLow, context.tbt.success),
+    };
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: context.tbt.info.withValues(alpha: 0.10)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(Icons.auto_awesome, size: 16, color: context.tbt.info),
+          const SizedBox(width: 6),
+          Expanded(child: Text(l10n.auditAiTitle, style: TextStyle(fontWeight: FontWeight.bold, color: context.tbt.info))),
+          Chip(visualDensity: VisualDensity.compact, label: Text(riskLabel, style: TextStyle(color: riskColor))),
+        ]),
+        Text(x.summary),
+        const SizedBox(height: 6),
+        Text(x.whyFlagged),
+        if (x.checks.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(l10n.auditChecks, style: const TextStyle(fontWeight: FontWeight.bold)),
+          for (final c in x.checks) Text('• $c'),
+        ],
+        if (x.likelyBenign case final b? when b.trim().isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text('${l10n.auditLikelyBenign}: $b', style: TextStyle(color: context.tbt.textSecondary)),
+        ],
+        const SizedBox(height: 4),
+        Text(l10n.resignationAiNote, style: TextStyle(fontSize: 11, color: context.tbt.textSecondary)),
+      ]),
+    );
   }
 }
 

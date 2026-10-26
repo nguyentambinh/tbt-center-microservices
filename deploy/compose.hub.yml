@@ -76,7 +76,8 @@ services:
       dockerfile: deploy/docker/service.Dockerfile
       args: {SERVICE: audit}
     restart: unless-stopped
-    env_file: [secrets/postgres.env, secrets/sync.env, secrets/rabbitmq.env]
+    # Khóa AI để giải thích điểm bất thường cho người kiểm toán
+    env_file: [secrets/postgres.env, secrets/sync.env, secrets/rabbitmq.env, secrets/anthropic.env, secrets/gemini.env]
     environment:
       RABBITMQ_HOST: rabbitmq
       EUREKA_URL: http://eureka:8761/eureka/

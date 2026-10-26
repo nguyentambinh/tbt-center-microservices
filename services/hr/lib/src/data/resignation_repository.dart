@@ -6,6 +6,8 @@
  * Ngày:   2026-10-25
  */
 
+import 'dart:convert';
+
 import 'package:postgres/postgres.dart';
 import 'package:tbt_common/tbt_common.dart';
 
@@ -56,6 +58,17 @@ String nextResignationStatus(
   return next;
 }
 
+/// Bản đơn thôi việc đã tải lên kho của khu vực
+typedef ResignationLetter = ({String key, String name, String mime});
+
+/// Đơn nhận: Word, PDF, ảnh JPG/PNG
+const resignationLetterTypes = {
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+};
+
 abstract interface class ResignationRepository {
   Future<List<Map<String, dynamic>>> list({String? employeeId, String? status});
 
@@ -66,6 +79,16 @@ abstract interface class ResignationRepository {
     String employeeId, {
     required DateTime lastDay,
     required String reason,
+    ResignationLetter? letter,
+  });
+
+  /// Khóa object của bản đơn; `null` nếu không có đơn hay chưa đính kèm
+  Future<String?> letterKey(int id);
+
+  Future<void> saveAnalysis(
+    int id,
+    Map<String, dynamic> analysis, {
+    required String source,
   });
 
   Future<Map<String, dynamic>> setStatus(
@@ -84,7 +107,7 @@ class PostgresResignationRepository implements ResignationRepository {
   static const _columns =
       'r.id, r.employee_id, r.last_day, r.reason, r.status, r.decided_by, '
       "r.note, r.created_at, r.updated_at, e.family_name || ' ' || "
-      'e.given_name as name';
+      'e.given_name as name, r.letter_name, r.ai_analysis, r.ai_source';
 
   @override
   Future<List<Map<String, dynamic>>> list({
@@ -119,6 +142,7 @@ class PostgresResignationRepository implements ResignationRepository {
     String employeeId, {
     required DateTime lastDay,
     required String reason,
+    ResignationLetter? letter,
   }) async {
     checkNotice(lastDay, DateTime.now());
     final id = await _db.transaction((tx) async {
@@ -144,10 +168,18 @@ class PostgresResignationRepository implements ResignationRepository {
       }
       final rows = await tx.execute(
         Sql.named(
-          'insert into resignations (employee_id, last_day, reason) '
-          'values (@id, @day, @reason) returning id',
+          'insert into resignations (employee_id, last_day, reason, '
+          'letter_key, letter_name, letter_mime) values (@id, @day, @reason, '
+          '@key, @name, @mime) returning id',
         ),
-        parameters: {'id': employeeId, 'day': lastDay, 'reason': reason},
+        parameters: {
+          'id': employeeId,
+          'day': lastDay,
+          'reason': reason,
+          'key': letter?.key,
+          'name': letter?.name,
+          'mime': letter?.mime,
+        },
       );
       final id = rows.first[0]! as int;
       await _outbox(tx, id, employeeId, 'ResignationRequested', lastDay);
@@ -155,6 +187,27 @@ class PostgresResignationRepository implements ResignationRepository {
     });
     return (await find(id))!;
   }
+
+  @override
+  Future<String?> letterKey(int id) async {
+    final rows = await _db.query(
+      'select letter_key from resignations where id = @id',
+      params: {'id': id},
+      fromPrimary: true,
+    );
+    return rows.isEmpty ? null : rows.first['letter_key'] as String?;
+  }
+
+  @override
+  Future<void> saveAnalysis(
+    int id,
+    Map<String, dynamic> analysis, {
+    required String source,
+  }) => _db.execute(
+    'update resignations set ai_analysis = @a::jsonb, ai_source = @s '
+    'where id = @id',
+    params: {'id': id, 'a': jsonEncode(analysis), 's': source},
+  );
 
   @override
   Future<Map<String, dynamic>> setStatus(
@@ -217,5 +270,8 @@ class PostgresResignationRepository implements ResignationRepository {
     'note': r['note'],
     'createdAt': (r['created_at'] as DateTime).toUtc().toIso8601String(),
     'updatedAt': (r['updated_at'] as DateTime).toUtc().toIso8601String(),
+    'letterName': r['letter_name'],
+    'aiAnalysis': r['ai_analysis'],
+    'aiSource': r['ai_source'],
   };
 }

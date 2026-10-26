@@ -23,12 +23,14 @@ class FakeResignationRepository extends ResignationRepository {
   List<Resignation> items;
   final actions = <String>[];
   DateTime? sentDay;
+  String? sentLetter;
 
   @override
   Future<List<Resignation>> list({String? status}) async => items;
 
   @override
-  Future<Resignation> submit({required DateTime lastDay, required String reason}) async {
+  Future<Resignation> submit({required DateTime lastDay, required String reason, required ({String name, List<int> bytes}) letter, required String language}) async {
+    sentLetter = letter.name;
     sentDay = lastDay;
     final r = _resignation('pending', lastDay: lastDay, reason: reason);
     items = [r];
@@ -55,7 +57,11 @@ Resignation _resignation(String status, {DateTime? lastDay, String reason = 'Chu
 Future<void> _pump(WidgetTester tester, FakeResignationRepository repository, {required List<String> roles, String? employeeId}) async {
   final overrides = await testOverrides(language: 'vi', store: MemorySessionStore(fakeSession(token: fakeJwt(roles: roles, employeeId: employeeId))));
   await tester.pumpWidget(ProviderScope(
-    overrides: [...overrides, resignationRepositoryProvider.overrideWith((ref, region) => repository)],
+    overrides: [
+      ...overrides,
+      resignationRepositoryProvider.overrideWith((ref, region) => repository),
+      pickLetterProvider.overrideWithValue(() async => (name: 'don-thoi-viec.pdf', bytes: [0x25, 0x50, 0x44, 0x46])),
+    ],
     child: const TbtApp(),
   ));
   await tester.pumpAndSettle();
@@ -73,10 +79,15 @@ void main() {
     expect(tester.widget<FilledButton>(send).onPressed, isNull);
     await tester.enterText(find.byType(TextField), 'Chuyển về quê');
     await tester.pump();
+    // Chưa đính kèm đơn thì chưa gửi được
+    expect(tester.widget<FilledButton>(send).onPressed, isNull);
+    await tester.tap(find.text('Đính kèm đơn thôi việc'));
+    await tester.pumpAndSettle();
     await tester.tap(send);
     await tester.pumpAndSettle();
     final now = DateTime.now();
     expect(repository.sentDay, DateTime(now.year, now.month, now.day + resignationNoticeDays));
+    expect(repository.sentLetter, 'don-thoi-viec.pdf');
     expect(find.text('Chờ HR duyệt'), findsOneWidget);
     // Đang có đơn mở thì không gửi thêm
     expect(find.byType(FloatingActionButton), findsNothing);

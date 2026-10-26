@@ -6,9 +6,11 @@
  * Ngày:   2026-10-25
  */
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/config/env.dart';
@@ -65,9 +67,13 @@ class ResignationsPage extends ConsumerWidget {
     }
 
     Future<void> submit() async {
-      final input = await showDialog<({DateTime lastDay, String reason})>(context: context, builder: (_) => const _ResignationDialog());
-      if (input == null) return;
-      await run(() => ref.read(resignationRepositoryProvider(region)).submit(lastDay: input.lastDay, reason: input.reason), l10n.resignationSent);
+      final input = await showDialog<({DateTime lastDay, String reason, ({String name, List<int> bytes}) letter})>(context: context, builder: (_) => const _ResignationDialog());
+      if (input == null || !context.mounted) return;
+      final language = Localizations.localeOf(context).languageCode;
+      await run(
+        () => ref.read(resignationRepositoryProvider(region)).submit(lastDay: input.lastDay, reason: input.reason, letter: input.letter, language: language),
+        l10n.resignationSent,
+      );
     }
 
     return Scaffold(
@@ -148,6 +154,20 @@ class ResignationCard extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(l10n.resignationLastDayOn(date), style: Theme.of(context).textTheme.titleMedium),
             Text(r.reason),
+            if (r.letterName case final name?)
+              TextButton.icon(
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                icon: const Icon(Icons.description_outlined, size: 18),
+                label: Text(l10n.resignationOpenLetter(name), overflow: TextOverflow.ellipsis),
+                onPressed: () async {
+                  try {
+                    await launchUrl(await repo.letterUrl(r.id), mode: LaunchMode.externalApplication);
+                  } on Object catch (e) {
+                    reportFailure(e);
+                  }
+                },
+              ),
+            if (handler && !mine && r.aiAnalysis != null) _AiAnalysis(analysis: r.aiAnalysis!),
             if (r.decidedBy != null) Text(r.decidedBy!, style: TextStyle(color: context.tbt.textSecondary, fontSize: 12)),
             if (buttons.isNotEmpty) ...[const SizedBox(height: 8), Wrap(spacing: 8, runSpacing: 8, children: buttons)],
           ],
@@ -157,20 +177,97 @@ class ResignationCard extends ConsumerWidget {
   }
 }
 
-class _ResignationDialog extends StatefulWidget {
+/// AI phân tích đơn thôi việc: tóm tắt, lý do chính, nhóm lý do, gợi ý giữ chân
+class _AiAnalysis extends StatelessWidget {
+  const _AiAnalysis({required this.analysis});
+
+  final Map<String, dynamic> analysis;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    List<String> list(String key) => [for (final v in analysis[key] as List? ?? const []) '$v'];
+    final concerns = '${analysis['concerns'] ?? ''}'.trim();
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: context.tbt.info.withValues(alpha: 0.10)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(Icons.auto_awesome, size: 16, color: context.tbt.info),
+          const SizedBox(width: 6),
+          Expanded(child: Text(l10n.resignationAiTitle, style: TextStyle(fontWeight: FontWeight.bold, color: context.tbt.info))),
+          if (analysis['category'] case final String c) Chip(visualDensity: VisualDensity.compact, label: Text(resignationCategory(l10n, c))),
+        ]),
+        Text('${analysis['summary'] ?? ''}'),
+        for (final reason in list('mainReasons')) Text('• $reason'),
+        if (list('retentionIdeas').isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(l10n.resignationAiRetention, style: const TextStyle(fontWeight: FontWeight.bold)),
+          for (final idea in list('retentionIdeas')) Text('• $idea'),
+        ],
+        if (concerns.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text('${l10n.resignationAiConcerns}: $concerns', style: TextStyle(color: context.tbt.caution)),
+        ],
+        const SizedBox(height: 4),
+        Text(l10n.resignationAiNote, style: TextStyle(fontSize: 11, color: context.tbt.textSecondary)),
+      ]),
+    );
+  }
+}
+
+String resignationCategory(AppLocalizations l10n, String c) => switch (c) {
+      'career' => l10n.rcCareer,
+      'salary' => l10n.rcSalary,
+      'workload' => l10n.rcWorkload,
+      'management' => l10n.rcManagement,
+      'environment' => l10n.rcEnvironment,
+      'personal' => l10n.rcPersonal,
+      'health' => l10n.rcHealth,
+      'relocation' => l10n.rcRelocation,
+      _ => l10n.rcOther,
+    };
+
+/// Chọn bản đơn thôi việc; test thay bằng tệp giả
+final pickLetterProvider = Provider<Future<({String name, List<int> bytes})?> Function()>((ref) => () async {
+      final picked = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['docx', 'pdf', 'jpg', 'jpeg', 'png']);
+      return picked == null ? null : (name: picked.name, bytes: await picked.readAsBytes());
+    });
+
+class _ResignationDialog extends ConsumerStatefulWidget {
   const _ResignationDialog();
 
   @override
-  State<_ResignationDialog> createState() => _ResignationDialogState();
+  ConsumerState<_ResignationDialog> createState() => _ResignationDialogState();
 }
 
-class _ResignationDialogState extends State<_ResignationDialog> {
+class _ResignationDialogState extends ConsumerState<_ResignationDialog> {
   final _reason = TextEditingController();
   late final DateTime _earliest = () {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day + resignationNoticeDays);
   }();
   late DateTime _lastDay = _earliest;
+
+  /// Bản đơn bắt buộc (Word, PDF, ảnh, tối đa 10 MB)
+  ({String name, List<int> bytes})? _letter;
+  String? _error;
+
+  Future<void> _pickLetter() async {
+    final l10n = AppLocalizations.of(context);
+    final picked = await ref.read(pickLetterProvider)();
+    if (picked == null) return;
+    setState(() {
+      if (picked.bytes.length > 10 * 1024 * 1024) {
+        _error = l10n.errFileTooLarge;
+      } else {
+        _letter = picked;
+        _error = null;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -205,12 +302,19 @@ class _ResignationDialogState extends State<_ResignationDialog> {
             decoration: InputDecoration(labelText: l10n.resignationReason),
             onChanged: (_) => setState(() {}),
           ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _pickLetter,
+            icon: Icon(_letter == null ? Icons.attach_file : Icons.description),
+            label: Text(_letter?.name ?? l10n.resignationAttachLetter, overflow: TextOverflow.ellipsis),
+          ),
+          Text(_error ?? l10n.resignationLetterHint, style: TextStyle(fontSize: 12, color: _error == null ? context.tbt.textSecondary : context.tbt.danger)),
         ],
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
         FilledButton(
-          onPressed: _reason.text.trim().isEmpty ? null : () => Navigator.pop(context, (lastDay: _lastDay, reason: _reason.text.trim())),
+          onPressed: _reason.text.trim().isEmpty || _letter == null ? null : () => Navigator.pop(context, (lastDay: _lastDay, reason: _reason.text.trim(), letter: _letter!)),
           child: Text(l10n.send),
         ),
       ],

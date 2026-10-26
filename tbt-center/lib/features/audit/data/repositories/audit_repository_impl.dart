@@ -54,6 +54,7 @@ class AuditRepositoryImpl implements AuditRepository {
           occurredAt: DateTime.parse(e['occurredAt'] as String).toLocal(),
           hash: e['hash'] as String,
           anomalies: [for (final a in e['anomalies'] as List? ?? const []) '$a'],
+          payload: e['payload'] as Map<String, dynamic>? ?? const {},
         ),
     ];
   }
@@ -80,6 +81,22 @@ class AuditRepositoryImpl implements AuditRepository {
   Future<ChainCheck> verify() async {
     final d = await _get<Map<String, dynamic>>('$_root/verify');
     return ChainCheck(checked: (d['checked'] as num).toInt(), brokenAt: (d['brokenAt'] as num?)?.toInt());
+  }
+
+  @override
+  Future<AnomalyExplanation> explain(int id, {required String language}) async {
+    try {
+      final d = (await _dio.post<Map<String, dynamic>>('$_root/$id/explain', queryParameters: {'language': language}, options: Options(extra: {noCache: true}))).data ?? const {};
+      return (
+        summary: d['summary'] as String? ?? '',
+        whyFlagged: d['whyFlagged'] as String? ?? '',
+        risk: d['risk'] as String? ?? 'low',
+        checks: [for (final c in d['checks'] as List? ?? const []) '$c'],
+        likelyBenign: d['likelyBenign'] as String?,
+      );
+    } on DioException catch (e) {
+      throw e.error is AppFailure ? e.error! : AppFailure.fromDio(e);
+    }
   }
 
   @override

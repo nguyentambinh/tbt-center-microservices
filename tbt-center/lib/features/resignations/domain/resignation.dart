@@ -21,6 +21,8 @@ class Resignation {
     required this.createdAt,
     this.decidedBy,
     this.note,
+    this.letterName,
+    this.aiAnalysis,
   });
 
   final int id;
@@ -32,6 +34,13 @@ class Resignation {
   final DateTime createdAt;
   final String? decidedBy;
   final String? note;
+
+  /// Tên tệp đơn đã nộp (ảnh, Word, PDF)
+  final String? letterName;
+
+  /// AI phân tích đơn cho cấp trên: summary, mainReasons, category, tone,
+  /// retentionIdeas, concerns
+  final Map<String, dynamic>? aiAnalysis;
 
   bool get open => status == 'pending' || status == 'approved';
 

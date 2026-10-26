@@ -57,6 +57,15 @@ class FakeAuditRepository implements AuditRepository {
   Future<ChainCheck> verify() async => const ChainCheck(checked: 26);
 
   @override
+  Future<AnomalyExplanation> explain(int id, {required String language}) async => (
+        summary: 'Chốt sổ tháng 5 lúc nửa đêm',
+        whyFlagged: 'Thao tác ngoài giờ làm việc',
+        risk: 'medium',
+        checks: const ['Ai đã chốt sổ', 'Có ủy quyền không'],
+        likelyBenign: 'Kế toán làm thêm cuối kỳ',
+      );
+
+  @override
   Future<AuditExport> export(AuditQuery query) async =>
       AuditExport(rowCount: 23, checksum: '9fffd22d' * 8, csv: 'id,region\n');
 
@@ -92,7 +101,8 @@ void main() {
   testWidgets('kiểm chuỗi băm, xuất có mã SHA-256, lọc theo khu vực', (tester) async {
     final audit = await _pump(tester, ['auditor']);
     await openHomeCard(tester, 'Sổ kiểm toán');
-    expect(find.text('FinancePeriodClosed'), findsOneWidget);
+    // Tên sự kiện dễ đọc thay cho tên kỹ thuật
+    expect(find.text('Chốt sổ tài chính tháng'), findsOneWidget);
     // Kiểm toán viên không có tab "Ai đã truy cập".
     expect(find.text('Ai đã truy cập'), findsNothing);
 
@@ -105,6 +115,9 @@ void main() {
 
     await tester.tap(find.byTooltip('Xuất CSV có mã SHA-256'));
     await tester.pumpAndSettle();
+    // Lọc trước khi xuất
+    await tester.tap(find.text('Xuất báo cáo'));
+    await tester.pumpAndSettle();
     expect(find.text('Đã xuất 23 dòng'), findsOneWidget);
     expect(find.text('9fffd22d' * 8), findsOneWidget);
     await tester.tap(find.text('Đóng'));
@@ -113,6 +126,24 @@ void main() {
     await tester.tap(find.text('Đức'));
     await tester.pumpAndSettle();
     expect(audit.regionsAsked, [null, 'de']);
+  });
+
+  testWidgets('bấm một dòng xem chi tiết, AI giải thích điểm bất thường', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.5;
+    addTearDown(tester.view.reset);
+    await _pump(tester, ['auditor']);
+    await openHomeCard(tester, 'Sổ kiểm toán');
+    await tester.tap(find.text('Chốt sổ tài chính tháng'));
+    await tester.pumpAndSettle();
+    expect(find.text('Vì sao bị đánh dấu bất thường'), findsOneWidget);
+    await tester.ensureVisible(find.text('AI phân tích điểm bất thường'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('AI phân tích điểm bất thường'));
+    await tester.pumpAndSettle();
+    expect(find.text('Chốt sổ tháng 5 lúc nửa đêm'), findsOneWidget);
+    expect(find.text('Rủi ro vừa'), findsOneWidget);
+    expect(find.text('• Có ủy quyền không'), findsOneWidget);
   });
 
   testWidgets('lọc bất thường, xem biểu đồ 2D rồi 3D', (tester) async {

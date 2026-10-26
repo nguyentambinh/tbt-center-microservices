@@ -4364,4 +4364,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectOverdue => 'Overdue';
+
+  @override
+  String get reportMonth => 'Report month';
+
+  @override
+  String get reportMonthDone => 'already acknowledged';
+
+  @override
+  String get errFuturePeriod =>
+      'Only the current or a past month can be reported';
+
+  @override
+  String get errPeriodAcknowledged =>
+      'This month was already acknowledged and cannot be sent again';
+
+  @override
+  String get resignationAttachLetter => 'Attach resignation letter';
+
+  @override
+  String get resignationLetterHint =>
+      'Required: photo, Word or PDF (max 10 MB)';
+
+  @override
+  String resignationOpenLetter(String name) {
+    return 'Open letter: $name';
+  }
+
+  @override
+  String get resignationAiTitle => 'AI reading of the letter';
+
+  @override
+  String get resignationAiRetention => 'Ideas to retain';
+
+  @override
+  String get resignationAiConcerns => 'Check';
+
+  @override
+  String get resignationAiNote =>
+      'AI summary for reference only; the reviewer decides';
+
+  @override
+  String get errLetterRequired =>
+      'Please attach the resignation letter (photo, Word or PDF)';
+
+  @override
+  String get rcCareer => 'Career';
+
+  @override
+  String get rcSalary => 'Pay';
+
+  @override
+  String get rcWorkload => 'Workload';
+
+  @override
+  String get rcManagement => 'Management';
+
+  @override
+  String get rcEnvironment => 'Work environment';
+
+  @override
+  String get rcPersonal => 'Personal';
+
+  @override
+  String get rcHealth => 'Health';
+
+  @override
+  String get rcRelocation => 'Relocation';
+
+  @override
+  String get rcOther => 'Other';
+
+  @override
+  String get auditExportNow => 'Export';
+
+  @override
+  String get auditRecord => 'Record';
+
+  @override
+  String get auditActor => 'Done by';
+
+  @override
+  String get auditData => 'Event data';
+
+  @override
+  String get auditWhyFlagged => 'Why it was flagged';
+
+  @override
+  String get anomalyAfterHoursWhy =>
+      'Done between 22:00 and 06:00 local time, outside normal hours';
+
+  @override
+  String get anomalyFailureWhy =>
+      'The event failed, was rejected, compensated or needs manual handling';
+
+  @override
+  String get auditAskAi => 'Ask AI about this anomaly';
+
+  @override
+  String get auditAiTitle => 'AI analysis';
+
+  @override
+  String get auditChecks => 'What to check';
+
+  @override
+  String get auditLikelyBenign => 'Possibly harmless if';
+
+  @override
+  String get riskHigh => 'High risk';
+
+  @override
+  String get riskMedium => 'Medium risk';
+
+  @override
+  String get riskLow => 'Low risk';
 }

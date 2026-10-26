@@ -22,7 +22,7 @@ Future<Response> onRequest(RequestContext context) async {
   final claims = reader as Claims;
 
   final query = context.request.uri.queryParameters;
-  final filter = filterFrom(query);
+  final filter = filterFrom(query, region: readerRegion(claims));
   if (filter == null) {
     return apiError(400, 'invalid_dates', 'from, to must be YYYY-MM-DD');
   }

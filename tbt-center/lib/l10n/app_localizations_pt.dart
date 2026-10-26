@@ -4361,4 +4361,117 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get projectOverdue => 'Atrasado';
+
+  @override
+  String get reportMonth => 'Mês do relatório';
+
+  @override
+  String get reportMonthDone => 'já confirmado';
+
+  @override
+  String get errFuturePeriod => 'Só o mês atual ou anteriores';
+
+  @override
+  String get errPeriodAcknowledged =>
+      'Este mês já foi confirmado e não pode ser reenviado';
+
+  @override
+  String get resignationAttachLetter => 'Anexar carta de demissão';
+
+  @override
+  String get resignationLetterHint =>
+      'Obrigatório: foto, Word ou PDF (máx. 10 MB)';
+
+  @override
+  String resignationOpenLetter(String name) {
+    return 'Abrir carta: $name';
+  }
+
+  @override
+  String get resignationAiTitle => 'Análise da carta pela IA';
+
+  @override
+  String get resignationAiRetention => 'Ideias para reter';
+
+  @override
+  String get resignationAiConcerns => 'Atenção';
+
+  @override
+  String get resignationAiNote =>
+      'Resumo da IA só para referência; quem decide é você';
+
+  @override
+  String get errLetterRequired =>
+      'Anexe a carta de demissão (foto, Word ou PDF)';
+
+  @override
+  String get rcCareer => 'Carreira';
+
+  @override
+  String get rcSalary => 'Salário';
+
+  @override
+  String get rcWorkload => 'Carga de trabalho';
+
+  @override
+  String get rcManagement => 'Gestão';
+
+  @override
+  String get rcEnvironment => 'Ambiente';
+
+  @override
+  String get rcPersonal => 'Pessoal';
+
+  @override
+  String get rcHealth => 'Saúde';
+
+  @override
+  String get rcRelocation => 'Mudança';
+
+  @override
+  String get rcOther => 'Outro';
+
+  @override
+  String get auditExportNow => 'Exportar';
+
+  @override
+  String get auditRecord => 'Registro';
+
+  @override
+  String get auditActor => 'Feito por';
+
+  @override
+  String get auditData => 'Dados do evento';
+
+  @override
+  String get auditWhyFlagged => 'Por que foi sinalizado';
+
+  @override
+  String get anomalyAfterHoursWhy =>
+      'Feito entre 22h e 6h no horário local, fora do expediente';
+
+  @override
+  String get anomalyFailureWhy =>
+      'Falhou, foi recusado, compensado ou precisa de ação manual';
+
+  @override
+  String get auditAskAi => 'Pedir análise da IA';
+
+  @override
+  String get auditAiTitle => 'Análise da IA';
+
+  @override
+  String get auditChecks => 'O que verificar';
+
+  @override
+  String get auditLikelyBenign => 'Pode ser normal se';
+
+  @override
+  String get riskHigh => 'Risco alto';
+
+  @override
+  String get riskMedium => 'Risco médio';
+
+  @override
+  String get riskLow => 'Risco baixo';
 }

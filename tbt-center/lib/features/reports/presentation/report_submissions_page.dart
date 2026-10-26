@@ -110,6 +110,45 @@ class _KindTab extends ConsumerWidget {
     );
   }
 
+  /// Chọn tháng báo cáo: tháng hiện tại hoặc 11 tháng trước; tháng đã được xác nhận thì khóa
+  Future<(String, String)?> _submitDialog(BuildContext context, List<ReportSubmission> sent) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final months = [for (var i = 0; i < 12; i++) DateTime(now.year, now.month - i).toIso8601String().substring(0, 7)];
+    final done = {for (final r in sent) if (r.status == 'acknowledged') r.period};
+    var period = months.firstWhere((m) => !done.contains(m), orElse: () => months.first);
+    final note = TextEditingController();
+    return showDialog<(String, String)>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.submitReport),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            DropdownButtonFormField<String>(
+              initialValue: period,
+              decoration: InputDecoration(labelText: l10n.reportMonth),
+              items: [
+                for (final m in months)
+                  DropdownMenuItem(
+                    value: m,
+                    enabled: !done.contains(m),
+                    child: Text(done.contains(m) ? '$m · ${l10n.reportMonthDone}' : m, style: done.contains(m) ? TextStyle(color: context.tbt.textSecondary) : null),
+                  ),
+              ],
+              onChanged: (v) => setState(() => period = v ?? period),
+            ),
+            const SizedBox(height: 12),
+            TextField(inputFormatters: InputRules.note, controller: note, maxLines: 3, decoration: InputDecoration(labelText: l10n.note)),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+            FilledButton(onPressed: done.contains(period) ? null : () => Navigator.pop(context, (period, note.text.trim())), child: Text(l10n.send)),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _run(BuildContext context, WidgetRef ref, Future<Object?> Function() action, String done) async {
     try {
       await action();
@@ -128,8 +167,6 @@ class _KindTab extends ConsumerWidget {
     final repo = ref.read(reportRepositoryProvider(region));
     final author = roles.any(reportAuthorRoles[kind]!.contains);
     final reviewer = roles.contains('executive');
-    final now = DateTime.now();
-    final period = DateTime(now.year, now.month - 1).toIso8601String().substring(0, 7);
     return switch (items) {
       AsyncValue(:final value?) => Scaffold(
           floatingActionButton: author
@@ -137,8 +174,9 @@ class _KindTab extends ConsumerWidget {
                   onPressed: value.isNotEmpty && value.first.waiting
                       ? null
                       : () async {
-                          final note = await _note(context, l10n.submitReportTitle(period));
-                          if (note == null || !context.mounted) return;
+                          final picked = await _submitDialog(context, value);
+                          if (picked == null || !context.mounted) return;
+                          final (period, note) = picked;
                           await _run(context, ref, () => repo.submit(kind, period: period, note: note.isEmpty ? null : note), l10n.reportSent);
                         },
                   icon: const Icon(Icons.outbox_outlined),

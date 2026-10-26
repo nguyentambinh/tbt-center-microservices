@@ -27,8 +27,16 @@ Object auditReader(RequestContext context) {
   };
 }
 
-/// Đọc điều kiện tra cứu từ query; `null` nếu ngày sai dạng.
-AuditFilter? filterFrom(Map<String, String> query) {
+/// Người đọc một nước (quản trị, văn phòng nước) chỉ xem sổ của nước mình;
+/// cấp tập đoàn và kiểm toán độc lập xem mọi nước
+String? readerRegion(Claims claims) =>
+    claims.isGroup || claims.hasAnyRole(const {'auditor'})
+    ? null
+    : claims.region;
+
+/// Đọc điều kiện tra cứu từ query; `null` nếu ngày sai dạng. [region] là
+/// khu vực bắt buộc của người đọc (ghi đè khu vực trong query)
+AuditFilter? filterFrom(Map<String, String> query, {String? region}) {
   DateTime? day(String key) =>
       query[key] == null ? null : DateTime.tryParse(query[key]!);
   final from = day('from');
@@ -42,7 +50,7 @@ AuditFilter? filterFrom(Map<String, String> query) {
     return null;
   }
   return AuditFilter(
-    region: query['region'],
+    region: region ?? query['region'],
     eventType: query['type'],
     service: query['service'],
     anomaly: anomaly,
