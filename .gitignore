@@ -1,20 +1,16 @@
-# Secret: chỉ commit file *.env.example
 deploy/secrets/*.env
 deploy/secrets/*.json
 deploy/secrets/*.txt
 deploy/secrets/*.properties
 deploy/secrets/*.jks
 
-# Sinh ra từ kong.template.yml bằng deploy/scripts/sync-kong-jwt.sh
 deploy/kong/kong.yml
 
-# Dart / Flutter
 .dart_tool/
 build/
 .dart_frog/
 pubspec_overrides.yaml
 
-# File phục vụ trợ lý AI, chỉ để trên máy
 CLAUDE.md
 CLAUDE.local.md
 AGENTS.md
@@ -29,23 +25,18 @@ AGENTS.md
 /thuyettrinh.md
 /FileTest/
 
-# Hướng dẫn riêng cho người làm (cách test, IP thử, ghi chú cá nhân), chỉ để trên máy
 /docs/ip-thu-nghiem.md
 /docs/huong-dan/
 
-# Bảng IP DB-IP Lite, tải bằng deploy/scripts/geo-download.sh
 deploy/geo/data/
 
-# Bản sao lưu database, tạo bằng deploy/scripts/backup.sh
 deploy/backups/
 
-# Python, IDE
 __pycache__/
 .idea/
 .vscode/
 *.iml
 
-# File Word, Excel, PowerPoint tự soạn: chỉ để trên máy
 *.doc
 *.docx
 *.xls
@@ -54,11 +45,10 @@ __pycache__/
 *.ppt
 *.pptx
 ~$*
-BaoCao/
-# Cấu hình máy chủ thật (tên miền, IP)
+
 deploy/vps/vps.env
 deploy/k8s/de-vps/
 tbt-center/config/vps.json
 /APKPure/
-# Ảnh nhân viên, dự án đã xử lý (tải lên Garage, không lên git)
+
 deploy/media/
