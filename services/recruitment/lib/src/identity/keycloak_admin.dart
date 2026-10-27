@@ -161,9 +161,10 @@ class KeycloakAdmin implements IdentityAdmin {
       'enabled': true,
       'emailVerified': true,
       'firstName': fullName,
-      'attributes': {
-        'phone': [phone],
-      },
+      if (phone.isNotEmpty)
+        'attributes': {
+          'phone': [phone],
+        },
       'credentials': [
         {'type': 'password', 'value': password, 'temporary': false},
       ],

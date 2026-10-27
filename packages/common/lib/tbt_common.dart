@@ -19,6 +19,7 @@ export 'src/datastore/secure_rows.dart';
 export 'src/db/database.dart';
 export 'src/db/outbox.dart';
 export 'src/discovery/eureka.dart';
+export 'src/http/approval_scope.dart';
 export 'src/http/claims.dart';
 export 'src/http/idempotency.dart';
 export 'src/http/internal.dart';

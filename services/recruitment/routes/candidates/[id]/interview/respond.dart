@@ -12,10 +12,10 @@ import 'package:recruitment_service/src/interviews.dart';
 import 'package:recruitment_service/src/responses.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-const _actions = {'confirm', 'propose', 'decline'};
+const _actions = {'propose', 'decline'};
 
 /// POST /candidates/{id}/interview/respond  {action, scheduledAt, note}:
-/// HR xác nhận, đề xuất lại giờ hoặc từ chối ứng viên
+/// HR đặt lại giờ hoặc từ chối ứng viên
 Future<Response> onRequest(RequestContext context, String id) async {
   if (context.request.method != HttpMethod.post) {
     return apiError(405, 'method_not_allowed', 'POST only');

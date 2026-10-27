@@ -30,8 +30,8 @@ class SignupRepository {
   final Dio _dio;
   final String baseUrl;
 
-  Future<void> sendCode({required String email, required String fullName, required String phone, required String language}) =>
-      _post('send', {'email': email, 'fullName': fullName, 'phone': phone, 'language': language});
+  Future<void> sendCode({required String email, required String fullName, required String language}) =>
+      _post('send', {'email': email, 'fullName': fullName, 'language': language});
 
   Future<void> verify({required String email, required String code, required String password}) =>
       _post('verify', {'email': email, 'code': code, 'password': password});
@@ -49,7 +49,7 @@ final signupRepositoryProvider = Provider<SignupRepository>(
   (ref) => SignupRepository(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(ref.watch(submitRegionProvider))),
 );
 
-/// Màn đăng ký: họ tên, email, số điện thoại → mã 6 số gửi về email → đặt mật khẩu → tạo tài khoản
+/// Màn đăng ký: họ tên, email → mã 6 số gửi về email → đặt mật khẩu → tạo tài khoản
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
 
@@ -60,7 +60,6 @@ class SignupPage extends ConsumerStatefulWidget {
 class _SignupPageState extends ConsumerState<SignupPage> {
   final _name = TextEditingController();
   final _email = TextEditingController();
-  final _phone = TextEditingController();
   final _code = TextEditingController();
   final _password = TextEditingController();
   final _confirm = TextEditingController();
@@ -76,13 +75,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   @override
   void dispose() {
     _timer?.cancel();
-    for (final c in [_name, _email, _phone, _code, _password, _confirm]) {
+    for (final c in [_name, _email, _code, _password, _confirm]) {
       c.dispose();
     }
     super.dispose();
   }
 
-  bool get _detailsValid => _name.text.trim().length >= 2 && _emailPattern.hasMatch(_email.text.trim()) && _phone.text.replaceAll(RegExp(r'\D'), '').length >= 8;
+  bool get _detailsValid => _name.text.trim().length >= 2 && _emailPattern.hasMatch(_email.text.trim());
 
   bool get _passwordValid {
     final p = _password.text;
@@ -107,7 +106,6 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         await ref.read(signupRepositoryProvider).sendCode(
               email: _email.text.trim(),
               fullName: _name.text.trim(),
-              phone: _phone.text.trim(),
               language: Localizations.localeOf(context).languageCode,
             );
         _timer?.cancel();
@@ -151,7 +149,6 @@ class _SignupPageState extends ConsumerState<SignupPage> {
           const SizedBox(height: 12),
           TextField(inputFormatters: InputRules.email, controller: _email, enabled: !_codeSent, keyboardType: TextInputType.emailAddress, decoration: field(l10n.fieldEmail), onChanged: (_) => setState(() {})),
           const SizedBox(height: 12),
-          TextField(inputFormatters: InputRules.phone, controller: _phone, enabled: !_codeSent, keyboardType: TextInputType.phone, decoration: field(l10n.fieldPhone), onChanged: (_) => setState(() {})),
           const SizedBox(height: 16),
           if (!_codeSent)
             FilledButton(

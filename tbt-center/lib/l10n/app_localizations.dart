@@ -8019,7 +8019,7 @@ abstract class AppLocalizations {
   /// No description provided for @interviewTimePassed.
   ///
   /// In vi, this message translates to:
-  /// **'Đã qua giờ hẹn, hãy đề xuất giờ khác'**
+  /// **'Đã qua giờ hẹn, HR cần hẹn lại giờ khác'**
   String get interviewTimePassed;
 
   /// No description provided for @errInterviewLocked.

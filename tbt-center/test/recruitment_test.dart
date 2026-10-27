@@ -179,23 +179,17 @@ void main() {
     expect(find.text('Hẹn phỏng vấn'), findsOneWidget);
   });
 
-  testWidgets('ứng viên đề xuất giờ thì HR thấy nút xác nhận', (tester) async {
+  testWidgets('HR chờ ứng viên xác nhận, không có nút xác nhận thay', (tester) async {
     final repository = await pumpWithRoles(tester, ['hr']);
     repository
       ..detailStatus = 'interview'
-      ..detailInterview = Interview(scheduledAt: DateTime.now().add(const Duration(days: 2)), state: 'awaiting_hr', proposedBy: 'candidate', location: 'Tầng 5');
+      ..detailInterview = Interview(scheduledAt: DateTime.now().add(const Duration(days: 2)), state: 'awaiting_candidate', proposedBy: 'hr', location: 'Tầng 5');
     await openHomeCard(tester, 'Ứng viên');
     await tester.tap(find.text('Lê Minh Thư'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Chờ HR xác nhận lại'), findsOneWidget);
     expect(find.text('Tải biên bản phỏng vấn'), findsNothing);
-    final confirm = find.text('Xác nhận giờ này');
-    await tester.ensureVisible(confirm);
-    await tester.pumpAndSettle();
-    await tester.tap(confirm);
-    await tester.pumpAndSettle();
-    expect(repository.responses, ['hr:confirm']);
+    expect(find.text('Xác nhận giờ này'), findsNothing);
   });
 
   testWidgets('chưa tới giờ phỏng vấn thì chưa tải biên bản được', (tester) async {
@@ -237,13 +231,13 @@ void main() {
     await openHomeCard(tester, 'Hồ sơ ứng tuyển của tôi');
     expect(find.text('Lịch phỏng vấn'), findsOneWidget);
     expect(find.text('Tầng 5, 12 Lê Lợi'), findsOneWidget);
-    expect(find.text('Đề xuất giờ khác'), findsOneWidget);
+    expect(find.text('Đề xuất giờ khác'), findsNothing);
     await tester.tap(find.text('Xác nhận giờ này'));
     await tester.pumpAndSettle();
     expect(repository.responses, ['me:confirm']);
   });
 
-  testWidgets('lịch đã qua giờ thì ứng viên chỉ đề xuất giờ khác, không xác nhận được', (tester) async {
+  testWidgets('lịch đã qua giờ thì ứng viên không xác nhận được, chờ HR hẹn lại', (tester) async {
     final repository = await pumpWithRoles(tester, ['candidate']);
     repository.mine = Candidate(
       id: 'C1',
@@ -253,8 +247,8 @@ void main() {
     );
     await openHomeCard(tester, 'Hồ sơ ứng tuyển của tôi');
     expect(find.text('Xác nhận giờ này'), findsNothing);
-    expect(find.text('Đã qua giờ hẹn, hãy đề xuất giờ khác'), findsOneWidget);
-    expect(find.text('Đề xuất giờ khác'), findsOneWidget);
+    expect(find.text('Đã qua giờ hẹn, HR cần hẹn lại giờ khác'), findsOneWidget);
+    expect(find.text('Đề xuất giờ khác'), findsNothing);
   });
 
   testWidgets('nhân viên thường không thấy thẻ Ứng viên', (tester) async {

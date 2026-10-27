@@ -4479,7 +4479,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get riskLow => 'Rủi ro thấp';
 
   @override
-  String get interviewTimePassed => 'Đã qua giờ hẹn, hãy đề xuất giờ khác';
+  String get interviewTimePassed => 'Đã qua giờ hẹn, HR cần hẹn lại giờ khác';
 
   @override
   String get errInterviewLocked =>

@@ -1319,6 +1319,6 @@
   "riskHigh": "High risk",
   "riskMedium": "Medium risk",
   "riskLow": "Low risk",
-  "interviewTimePassed": "This time has passed, please propose another one",
+  "interviewTimePassed": "This time has passed, HR needs to schedule a new one",
   "errInterviewLocked": "Both sides confirmed this interview time, it can no longer be changed"
 }

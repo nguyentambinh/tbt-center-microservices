@@ -79,27 +79,24 @@ void main() {
       );
     });
 
-    test('ứng viên đề xuất giờ khác thì chờ HR, HR đề xuất lại', () {
-      final s1 = nextInterviewState(
-        'awaiting_candidate',
-        Party.candidate,
-        'propose',
-      );
-      expect(s1, 'awaiting_hr');
+    test('HR đặt lại giờ khi chưa chốt', () {
       expect(
-        nextInterviewState(s1, Party.hr, 'propose'),
+        nextInterviewState('awaiting_candidate', Party.hr, 'propose'),
         'awaiting_candidate',
       );
-      expect(nextInterviewState(s1, Party.hr, 'confirm'), 'confirmed');
     });
 
-    test('không tự xác nhận giờ của chính mình', () {
+    test('ứng viên không đề xuất giờ, HR không xác nhận thay', () {
       expect(
-        () => nextInterviewState('awaiting_candidate', Party.hr, 'confirm'),
+        () => nextInterviewState(
+          'awaiting_candidate',
+          Party.candidate,
+          'propose',
+        ),
         _violation('invalid_interview_action'),
       );
       expect(
-        () => nextInterviewState('awaiting_hr', Party.candidate, 'confirm'),
+        () => nextInterviewState('awaiting_candidate', Party.hr, 'confirm'),
         _violation('invalid_interview_action'),
       );
     });

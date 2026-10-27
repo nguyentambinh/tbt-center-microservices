@@ -4476,7 +4476,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get riskLow => 'Risco baixo';
 
   @override
-  String get interviewTimePassed => 'Este horário já passou, proponha outro';
+  String get interviewTimePassed =>
+      'Este horário já passou, o RH precisa marcar outro';
 
   @override
   String get errInterviewLocked =>

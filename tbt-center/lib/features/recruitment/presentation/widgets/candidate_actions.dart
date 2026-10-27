@@ -201,13 +201,7 @@ class _CandidateActionsState extends ConsumerState<CandidateActions> {
             reject,
           ],
         'interview' => [
-            if (interview!.state == 'awaiting_hr' && interview.held) Text(l10n.interviewTimePassed, style: TextStyle(color: context.tbt.warning)),
-            if (interview.state == 'awaiting_hr' && !interview.held)
-              FilledButton.icon(
-                onPressed: _busy ? null : () => _run(() => repo.respondInterview(_c.id, action: 'confirm'), l10n.interviewConfirmedDone),
-                icon: const Icon(Icons.check),
-                label: Text(l10n.confirmTime),
-              ),
+            if (interview!.state == 'awaiting_candidate' && interview.held) Text(l10n.interviewTimePassed, style: TextStyle(color: context.tbt.warning)),
             if (interview.confirmed)
               FilledButton.icon(
                 onPressed: _busy || !interview.held ? null : _uploadMinutes,

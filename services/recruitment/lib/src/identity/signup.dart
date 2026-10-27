@@ -31,7 +31,7 @@ class SignupViolation implements Exception {
 final _email = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 final _phone = RegExp(r'^\+?[0-9 .-]{8,16}$');
 
-/// Họ tên 2–80 ký tự, email hợp lệ, số điện thoại 8–16 chữ số
+/// Họ tên 2–80 ký tự, email hợp lệ, số điện thoại (nếu có) 8–16 chữ số
 ({String email, String fullName, String phone}) checkSignupInput(
   Object? email,
   Object? fullName,
@@ -46,7 +46,7 @@ final _phone = RegExp(r'^\+?[0-9 .-]{8,16}$');
   if (n.length < 2 || n.length > 80) {
     throw const SignupViolation(400, 'invalid_name', 'Full name 2-80 chars');
   }
-  if (!_phone.hasMatch(p)) {
+  if (p.isNotEmpty && !_phone.hasMatch(p)) {
     throw const SignupViolation(400, 'invalid_phone', 'Phone is not valid');
   }
   return (email: e, fullName: n, phone: p);

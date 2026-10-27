@@ -4494,7 +4494,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get interviewTimePassed =>
-      'Der Termin ist vorbei, bitte einen neuen vorschlagen';
+      'Der Termin ist vorbei, HR muss einen neuen ansetzen';
 
   @override
   String get errInterviewLocked =>

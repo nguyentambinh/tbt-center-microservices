@@ -119,7 +119,7 @@ class _ApplicationView extends StatelessWidget {
 }
 
 
-/// Ứng viên xác nhận giờ HR hẹn hoặc đề xuất giờ khác
+/// Ứng viên xác nhận giờ HR hẹn; quá giờ thì chờ HR hẹn lại
 class _MyInterview extends ConsumerStatefulWidget {
   const _MyInterview({required this.interview});
 
@@ -132,27 +132,20 @@ class _MyInterview extends ConsumerStatefulWidget {
 class _MyInterviewState extends ConsumerState<_MyInterview> {
   bool _busy = false;
 
-  Future<void> _respond(String action, {DateTime? at, String? note}) async {
+  Future<void> _confirm() async {
     final l10n = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
-      await ref.read(candidateRepositoryProvider).respondMyInterview(action: action, at: at, note: note);
+      await ref.read(candidateRepositoryProvider).respondMyInterview(action: 'confirm');
       ref.invalidate(myApplicationProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(action == 'confirm' ? l10n.interviewConfirmedDone : l10n.interviewSent), behavior: SnackBarBehavior.floating),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.interviewConfirmedDone), behavior: SnackBarBehavior.floating));
       }
     } on Object catch (e) {
       reportFailure(e);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
-  }
-
-  Future<void> _propose() async {
-    final picked = await showInterviewDialog(context, title: AppLocalizations.of(context).proposeOtherTime, initial: widget.interview.scheduledAt);
-    if (picked != null) await _respond('propose', at: picked.at, note: picked.note);
   }
 
   @override
@@ -164,10 +157,7 @@ class _MyInterviewState extends ConsumerState<_MyInterview> {
       actions: [
         if (i.state == 'awaiting_candidate' && i.held) Text(l10n.interviewTimePassed, style: TextStyle(color: context.tbt.warning)),
         if (i.state == 'awaiting_candidate' && !i.held)
-          FilledButton.icon(onPressed: _busy ? null : () => _respond('confirm'), icon: const Icon(Icons.check), label: Text(l10n.confirmTime)),
-        if (i.state == 'awaiting_candidate')
-          OutlinedButton.icon(onPressed: _busy ? null : _propose, icon: const Icon(Icons.schedule), label: Text(l10n.proposeOtherTime)),
-        if (i.state == 'awaiting_hr') Text(l10n.waitingHrReply, style: TextStyle(color: context.tbt.textSecondary)),
+          FilledButton.icon(onPressed: _busy ? null : _confirm, icon: const Icon(Icons.check), label: Text(l10n.confirmTime)),
       ],
     );
   }
@@ -259,7 +249,6 @@ class _ApplicationForm extends ConsumerStatefulWidget {
 class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
   late final _name = TextEditingController(text: widget.current?.fullName);
   late final _email = TextEditingController(text: widget.current?.email);
-  late final _phone = TextEditingController(text: widget.current?.phone);
   late final _position = TextEditingController(text: widget.current?.appliedPosition);
   late bool _consent = widget.current?.consentAi ?? false;
   late Set<int> _positions = {for (final p in widget.current?.positions ?? const []) p.id};
@@ -275,7 +264,7 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
 
   @override
   void dispose() {
-    for (final c in [_name, _email, _phone, _position]) {
+    for (final c in [_name, _email, _position]) {
       c.dispose();
     }
     super.dispose();
@@ -315,7 +304,6 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
       await ref.read(candidateRepositoryProvider).saveMyApplication(CandidateInput(
             fullName: account?.fullName ?? _name.text.trim(),
             email: account?.claims['email'] as String? ?? _email.text.trim(),
-            phone: account?.claims['phone_number'] as String? ?? _phone.text.trim(),
             appliedPosition: usePicker ? null : _position.text.trim(),
             consentAi: _consent,
             positionIds: usePicker ? _positions.toList() : null,
@@ -360,7 +348,6 @@ class _ApplicationFormState extends ConsumerState<_ApplicationForm> {
                   const SizedBox(height: 6),
                   Text(account.fullName ?? account.username, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   if (account.claims['email'] case final String email) Text(email),
-                  if (account.claims['phone_number'] case final String phone) Text(phone),
                 ],
               ),
             ),

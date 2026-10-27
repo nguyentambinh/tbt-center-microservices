@@ -14,8 +14,8 @@ import 'package:tbt_common/tbt_common.dart';
 enum Party { hr, candidate }
 
 /// Trạng thái kế tiếp của lịch phỏng vấn khi [party] làm [action].
-/// HR: đề xuất giờ, xác nhận giờ ứng viên đề xuất, hoặc từ chối ứng viên.
-/// Ứng viên: xác nhận giờ HR hẹn hoặc đề xuất giờ khác.
+/// HR: đặt giờ (đặt lại được khi quá giờ) hoặc từ chối ứng viên.
+/// Ứng viên: chỉ xác nhận giờ HR hẹn.
 String nextInterviewState(String state, Party party, String action) {
   // Hai bên đã chốt giờ thì không bên nào đổi giờ nữa
   if (state == 'confirmed' && action == 'propose') {
@@ -26,12 +26,9 @@ String nextInterviewState(String state, Party party, String action) {
   }
   final next = switch ((party, action)) {
     (Party.hr, 'propose') when state != 'cancelled' => 'awaiting_candidate',
-    (Party.hr, 'confirm') when state == 'awaiting_hr' => 'confirmed',
     (Party.hr, 'decline') when state != 'cancelled' => 'cancelled',
     (Party.candidate, 'confirm') when state == 'awaiting_candidate' =>
       'confirmed',
-    (Party.candidate, 'propose') when state == 'awaiting_candidate' =>
-      'awaiting_hr',
     _ => null,
   };
   if (next == null) {
