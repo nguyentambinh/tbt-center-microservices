@@ -23,7 +23,7 @@ typedef DataOverview = ({List<DbInfo> databases, Map<String, int>? accounts});
 typedef AdminUser = ({String id, String username, String name, String? email, bool enabled, String? region, String? employeeId, List<String> roles});
 typedef Backup = ({String name, int sizeBytes, DateTime createdAt, String downloadUrl});
 typedef Holiday = ({DateTime date, String name});
-typedef PositionItem = ({String id, String name, int level, double coefficient, int holders});
+typedef PositionItem = ({String id, String name, int level, int holders});
 
 /// Quản trị dữ liệu khu vực: thống kê, tài khoản, lịch làm việc, chức vụ, sao lưu
 class AdminRepository {
@@ -115,9 +115,9 @@ class AdminRepository {
     return [for (final p in d['items'] as List? ?? const []) _position(p as Map<String, dynamic>)];
   }
 
-  Future<void> savePosition({String? id, required String name, required int level, required double coefficient}) => _send(() => id == null
-      ? _dio.post<Map<String, dynamic>>('$baseUrl/hr/positions', data: {'name': name, 'level': level, 'coefficient': coefficient})
-      : _dio.patch<Map<String, dynamic>>('$baseUrl/hr/positions/$id', data: {'name': name, 'level': level, 'coefficient': coefficient}));
+  Future<void> savePosition({String? id, required String name, required int level}) => _send(() => id == null
+      ? _dio.post<Map<String, dynamic>>('$baseUrl/hr/positions', data: {'name': name, 'level': level})
+      : _dio.patch<Map<String, dynamic>>('$baseUrl/hr/positions/$id', data: {'name': name, 'level': level}));
 
   Future<void> deletePosition(String id) => _send(() => _dio.delete<Map<String, dynamic>>('$baseUrl/hr/positions/$id'));
 
@@ -143,7 +143,6 @@ class AdminRepository {
         id: p['id'] as String,
         name: p['name'] as String? ?? '',
         level: (p['level'] as num? ?? 1).toInt(),
-        coefficient: (p['coefficient'] as num? ?? 1).toDouble(),
         holders: (p['holders'] as num? ?? 0).toInt(),
       );
 

@@ -1205,7 +1205,6 @@
   "adminEditPosition": "Editar cargo",
   "adminPositionName": "Nome do cargo",
   "adminPositionLevel": "Nível",
-  "adminCoefficient": "Coeficiente salarial",
   "adminHolders": "{n} ocupantes",
   "adminDeletePosition": "Excluir cargo",
   "adminBackups": "Backups",

@@ -15,7 +15,7 @@ import 'package:hr_service/src/responses.dart';
 import 'package:tbt_common/tbt_common.dart';
 
 /// GET  /positions  chức vụ kèm cấp, hệ số, số người giữ
-/// POST /positions  {name, level, coefficient}  quản trị thêm chức vụ
+/// POST /positions  {name, level}  quản trị thêm chức vụ
 Future<Response> onRequest(RequestContext context) async {
   final catalog = context.read<PositionCatalog>();
   if (context.request.method == HttpMethod.get) {
@@ -33,7 +33,7 @@ Future<Response> onRequest(RequestContext context) async {
     final created = await catalog.create(
       name: body['name'] as String? ?? '',
       level: (body['level'] as num?)?.toInt() ?? 1,
-      coefficient: (body['coefficient'] as num?)?.toDouble() ?? 1,
+      coefficient: 1,
       by: claims.username,
     );
     return Response.json(statusCode: HttpStatus.created, body: created);

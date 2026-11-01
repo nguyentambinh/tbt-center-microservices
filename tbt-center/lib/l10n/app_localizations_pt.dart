@@ -4120,9 +4120,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminPositionLevel => 'Nível';
 
   @override
-  String get adminCoefficient => 'Coeficiente salarial';
-
-  @override
   String adminHolders(int n) {
     return '$n ocupantes';
   }

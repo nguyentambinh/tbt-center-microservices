@@ -492,7 +492,7 @@ class _PositionsTab extends ConsumerWidget {
                   child: ListTile(
                     leading: CircleAvatar(child: Text('${p.level}')),
                     title: Text(p.name),
-                    subtitle: Text('${levelName(l10n, p.level)} · ${l10n.adminCoefficient} ${p.coefficient} · ${l10n.adminHolders(p.holders)}'),
+                    subtitle: Text('${levelName(l10n, p.level)} · ${l10n.adminHolders(p.holders)}'),
                     trailing: const Icon(Icons.edit_outlined),
                     onTap: () => _edit(context, ref, p),
                   ),
@@ -508,7 +508,6 @@ class _PositionsTab extends ConsumerWidget {
   Future<void> _edit(BuildContext context, WidgetRef ref, PositionItem? position) async {
     final l10n = AppLocalizations.of(context);
     final name = TextEditingController(text: position?.name);
-    final coefficient = TextEditingController(text: '${position?.coefficient ?? 1}');
     var level = position?.level ?? 1;
     final action = await showDialog<String>(
       context: context,
@@ -524,13 +523,6 @@ class _PositionsTab extends ConsumerWidget {
                 decoration: InputDecoration(labelText: l10n.adminPositionLevel),
                 items: [for (var lv = 1; lv <= 6; lv++) DropdownMenuItem(value: lv, child: Text('$lv · ${levelName(l10n, lv)}'))],
                 onChanged: (v) => setState(() => level = v ?? level),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                inputFormatters: InputRules.decimal,
-                controller: coefficient,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(labelText: l10n.adminCoefficient),
               ),
             ]),
           ),
@@ -553,7 +545,6 @@ class _PositionsTab extends ConsumerWidget {
           id: position?.id,
           name: name.text.trim(),
           level: level,
-          coefficient: double.tryParse(coefficient.text.replaceAll(',', '.')) ?? 1,
         );
       }
       ref.invalidate(adminPositionsProvider);

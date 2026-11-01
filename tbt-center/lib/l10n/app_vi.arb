@@ -2792,7 +2792,6 @@
   "adminEditPosition": "Sửa chức vụ",
   "adminPositionName": "Tên chức vụ",
   "adminPositionLevel": "Cấp",
-  "adminCoefficient": "Hệ số lương",
   "adminHolders": "{n} người đang giữ",
   "@adminHolders": {
     "placeholders": {

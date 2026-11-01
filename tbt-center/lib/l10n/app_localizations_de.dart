@@ -4136,9 +4136,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminPositionLevel => 'Ebene';
 
   @override
-  String get adminCoefficient => 'Gehaltsfaktor';
-
-  @override
   String adminHolders(int n) {
     return '$n Personen';
   }

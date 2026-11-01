@@ -1205,7 +1205,6 @@
   "adminEditPosition": "Position bearbeiten",
   "adminPositionName": "Positionsname",
   "adminPositionLevel": "Ebene",
-  "adminCoefficient": "Gehaltsfaktor",
   "adminHolders": "{n} Personen",
   "adminDeletePosition": "Position löschen",
   "adminBackups": "Sicherungen",

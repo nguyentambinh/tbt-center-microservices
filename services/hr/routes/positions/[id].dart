@@ -14,7 +14,7 @@ import 'package:hr_service/src/data/position_catalog.dart';
 import 'package:hr_service/src/responses.dart';
 import 'package:tbt_common/tbt_common.dart';
 
-/// PATCH  /positions/{id}  {name, level, coefficient}  quản trị sửa
+/// PATCH  /positions/{id}  {name, level}  quản trị sửa
 /// DELETE /positions/{id}  quản trị xóa chức vụ không còn ai giữ
 Future<Response> onRequest(RequestContext context, String id) async {
   final claims = context.read<Claims>();
@@ -31,7 +31,6 @@ Future<Response> onRequest(RequestContext context, String id) async {
           by: claims.username,
           name: body['name'] as String?,
           level: (body['level'] as num?)?.toInt(),
-          coefficient: (body['coefficient'] as num?)?.toDouble(),
         );
         return updated == null
             ? apiError(HttpStatus.notFound, 'not_found', 'No position $id')

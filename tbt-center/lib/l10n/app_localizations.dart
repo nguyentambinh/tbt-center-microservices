@@ -7332,12 +7332,6 @@ abstract class AppLocalizations {
   /// **'Cấp'**
   String get adminPositionLevel;
 
-  /// No description provided for @adminCoefficient.
-  ///
-  /// In vi, this message translates to:
-  /// **'Hệ số lương'**
-  String get adminCoefficient;
-
   /// No description provided for @adminHolders.
   ///
   /// In vi, this message translates to:

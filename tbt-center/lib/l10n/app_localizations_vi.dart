@@ -4125,9 +4125,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get adminPositionLevel => 'Cấp';
 
   @override
-  String get adminCoefficient => 'Hệ số lương';
-
-  @override
   String adminHolders(int n) {
     return '$n người đang giữ';
   }
