@@ -193,6 +193,7 @@ class CandidateRepositoryImpl implements CandidateRepository {
 
 Candidate candidateFromJson(Map<String, dynamic> json) => Candidate(
       id: json['id'] as String,
+      region: json['region'] as String?,
       fullName: json['fullName'] as String? ?? '',
       status: json['status'] as String? ?? 'submitted',
       email: json['email'] as String?,

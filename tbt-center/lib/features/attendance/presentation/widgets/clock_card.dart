@@ -6,6 +6,8 @@
  * Ngày:   2026-10-15
  */
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -28,6 +30,22 @@ class ClockCard extends ConsumerStatefulWidget {
 
 class _ClockCardState extends ConsumerState<ClockCard> {
   bool _sending = false;
+  Timer? _ticker;
+
+  /// Đang chờ tới giờ mở chấm vào thì hỏi lại server mỗi phút để nút tự sáng
+  @override
+  void initState() {
+    super.initState();
+    _ticker = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (ref.read(clockTodayProvider).value?.beforeClockIn ?? false) ref.invalidate(clockTodayProvider);
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
 
   Future<void> _clock() async {
     final l10n = AppLocalizations.of(context);
@@ -95,6 +113,8 @@ class _ClockCardState extends ConsumerState<ClockCard> {
                     const SizedBox(height: 4),
                     Text(note, style: TextStyle(color: context.tbt.textSecondary)),
                   ],
+                  if (value.beforeClockIn) Text(l10n.clockOpensAt(value.clockInFrom!), style: TextStyle(color: context.tbt.textSecondary)),
+                  if (value.afterClockOut) Text(l10n.clockClosedAt(value.clockOutUntil!), style: TextStyle(color: context.tbt.textSecondary)),
                 ],
                 const SizedBox(height: 12),
                 SizedBox(
@@ -108,7 +128,7 @@ class _ClockCardState extends ConsumerState<ClockCard> {
                             ClockToday(checkIn: null) => l10n.clockIn,
                             _ => l10n.clockOut,
                           }),
-                    onPressed: _sending || !value.hasShift || value.done ? null : _clock,
+                    onPressed: _sending || !value.hasShift || value.done || value.beforeClockIn || value.afterClockOut ? null : _clock,
                   ),
                 ),
               ],

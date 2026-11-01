@@ -41,9 +41,15 @@ Future<Response> _list(RequestContext context) async {
     employeeId: employee,
     status: query['status'],
   );
+  // Danh sách duyệt không hiện đơn phải để cấp trên duyệt
+  final waiting = query['status'] == 'pending' && employee == null;
   return Response.json(
     body: {
-      'items': [for (final item in items) item.toJson()],
+      'items': [
+        for (final item in items)
+          if (!waiting || !isPeerApprover(item.requesterRoles, claims))
+            item.toJson(),
+      ],
     },
   );
 }
@@ -79,6 +85,7 @@ Future<Response> _create(RequestContext context) async {
       toDate: toDate!,
       leaveType: leaveType!.trim(),
       reason: (body['reason'] as String?)?.trim(),
+      requesterRoles: requesterRolesOf(context.read<Claims>()),
     );
     return Response.json(statusCode: 201, body: leave.toJson());
   } on LeaveRuleViolation catch (e) {

@@ -436,6 +436,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errTooLong => 'Ein Antrag darf höchstens 30 Tage umfassen';
 
   @override
+  String get errFieldTooLong => 'Die Eingabe ist zu lang, bitte kürzen';
+
+  @override
   String get errInvalidDates => 'Das Enddatum muss nach dem Startdatum liegen';
 
   @override
@@ -2799,6 +2802,159 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Schicht ist vorbei, Einstempeln nicht mehr möglich';
 
   @override
+  String get adminBackupUpload => 'Datei hochladen';
+
+  @override
+  String get adminBackupUploaded =>
+      'Sicherung hochgeladen, dort Wiederherstellen wählen';
+
+  @override
+  String get adminRestore => 'Wiederherstellen';
+
+  @override
+  String adminRestoreConfirm(String region, String name, String code) {
+    return 'Sicherung $name ergänzt fehlende Zeilen in $region. Vorhandene, auch neuere Daten bleiben erhalten; danach gelöschte Zeilen kommen zurück. Geben Sie $code ein.';
+  }
+
+  @override
+  String adminRestoreDone(int n) {
+    return '$n fehlende Zeilen ergänzt';
+  }
+
+  @override
+  String get errGroupAdminOnly => 'Nur Konzern-Admins können das';
+
+  @override
+  String get errInvalidBackup => 'Keine gültige Sicherungsdatei';
+
+  @override
+  String get errWrongRegion => 'Diese Sicherung gehört zu einem anderen Land';
+
+  @override
+  String get errRestoreNotConfirmed => 'Bestätigungscode falsch';
+
+  @override
+  String get evBackupRestored => 'Admin hat Daten wiederhergestellt';
+
+  @override
+  String get errGroupDemotion =>
+      'Ein Konto auf Konzernebene kann nicht zurückgestuft werden';
+
+  @override
+  String get adminImpersonate => 'Dieses Konto öffnen';
+
+  @override
+  String adminImpersonateConfirm(String name) {
+    return 'Konto von $name öffnen? Sie handeln bis zu 15 Minuten als diese Person; jeder Zugriff wird protokolliert.';
+  }
+
+  @override
+  String impersonatingAs(String name) {
+    return 'Ansicht als $name';
+  }
+
+  @override
+  String get impersonationExit => 'Beenden';
+
+  @override
+  String get errHigherAccount =>
+      'Konten gleicher oder höherer Ebene können nicht geöffnet werden';
+
+  @override
+  String get errAccountDisabled => 'Dieses Konto ist gesperrt';
+
+  @override
+  String get evAccountImpersonated => 'Admin hat ein anderes Konto geöffnet';
+
+  @override
+  String get regionAll => 'Alle';
+
+  @override
+  String get errPickRegion => 'Wählen Sie zuerst ein Land unter Ansicht';
+
+  @override
+  String get errPeerApproval => 'Dieser Antrag geht an die nächsthöhere Ebene';
+
+  @override
+  String get errClockTooEarly =>
+      'Zu früh zum Einstempeln, möglich ab 30 Minuten vor Schichtbeginn';
+
+  @override
+  String get errClockOutClosed =>
+      'Ausstempeln nicht mehr möglich, nur bis 30 Minuten nach Schichtende';
+
+  @override
+  String get errInvalidEmployees => 'Wählen Sie 1 bis 200 Mitarbeitende';
+
+  @override
+  String get errInvalidWeekdays => 'Wählen Sie mindestens einen Wochentag';
+
+  @override
+  String clockOpensAt(String time) {
+    return 'Einstempeln ab $time';
+  }
+
+  @override
+  String clockClosedAt(String time) {
+    return 'Ausstempeln endete um $time';
+  }
+
+  @override
+  String get scheduleManage => 'Arbeitspläne';
+
+  @override
+  String get scheduleManageHint => 'Pläne und Zeiten je Projekt festlegen';
+
+  @override
+  String get scheduleRange => 'Zeitraum';
+
+  @override
+  String get schedulePickRange => 'Tippen, um Start und Ende zu wählen';
+
+  @override
+  String get scheduleShiftName => 'Schichtname (optional)';
+
+  @override
+  String get scheduleProject => 'Projekt';
+
+  @override
+  String scheduleAllMembers(int n) {
+    return 'Alle Mitglieder ($n)';
+  }
+
+  @override
+  String get scheduleViewDays => 'Tage ansehen';
+
+  @override
+  String get scheduleNoShift => 'Keine Schicht';
+
+  @override
+  String get scheduleSave => 'Plan speichern';
+
+  @override
+  String get scheduleClear => 'Plan in diesem Zeitraum entfernen';
+
+  @override
+  String get scheduleClearConfirm =>
+      'Plan der gewählten Personen in diesem Zeitraum entfernen? Bereits gestempelte Tage bleiben erhalten.';
+
+  @override
+  String scheduleSaved(int n) {
+    return '$n Arbeitstage aktualisiert';
+  }
+
+  @override
+  String nScheduleChanged(String date) {
+    return 'Ihr Arbeitsplan ab $date wurde aktualisiert';
+  }
+
+  @override
+  String get evScheduleChanged => 'Personal hat Arbeitspläne festgelegt';
+
+  @override
+  String get evScheduleCleared => 'Personal hat Arbeitspläne entfernt';
+
+  @override
   String get errTooManyFiles => 'Höchstens 5 Dateien pro Antrag';
 
   @override
@@ -3991,39 +4147,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminDeletePosition => 'Position löschen';
 
   @override
-  String get adminSql => 'SQL-Abfrage';
-
-  @override
-  String get adminSqlHint =>
-      'Standardmäßig nur lesen; jede Ausführung wird protokolliert';
-
-  @override
-  String get adminSqlWrite => 'Schreiben erlauben (INSERT, UPDATE, DELETE)';
-
-  @override
-  String get adminSqlWriteConfirm =>
-      'Dies ändert echte Daten und wird protokolliert. Ausführen?';
-
-  @override
-  String get adminSqlRun => 'Ausführen';
-
-  @override
-  String adminSqlRows(int n) {
-    return '$n Zeilen';
-  }
-
-  @override
-  String adminSqlAffected(int n) {
-    return '$n Zeilen betroffen';
-  }
-
-  @override
-  String get adminSqlTruncated => 'Nur die ersten 500 Zeilen';
-
-  @override
-  String get adminTechnical => 'Technische Details';
-
-  @override
   String get adminBackups => 'Sicherungen';
 
   @override
@@ -4048,20 +4171,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get errInUse =>
       'Die Position ist noch besetzt und kann nicht gelöscht werden';
-
-  @override
-  String get errReadOnly =>
-      'Die Anweisung schreibt Daten; Schreiben erlauben einschalten, wenn gewollt';
-
-  @override
-  String get errSqlError =>
-      'Die Anweisung schlug fehl, siehe technische Details';
-
-  @override
-  String get errUnknownDatabase => 'Datenbank aus der Liste wählen';
-
-  @override
-  String get errEmptySql => 'SQL-Anweisung eingeben';
 
   @override
   String get errStorageUnavailable =>
@@ -4354,10 +4463,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String nPenaltyApplied(String amount, String reason) {
     return 'Abzug von $amount: $reason';
   }
-
-  @override
-  String get errProtectedDatabase =>
-      'Die Admin-Protokolldatenbank ist hier gesperrt';
 
   @override
   String get errPastDate => 'Urlaub kann erst ab morgen beginnen';

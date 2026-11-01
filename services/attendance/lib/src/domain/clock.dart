@@ -44,5 +44,37 @@ double _round(double hours) => (hours * 100).round() / 100;
 /// Giờ dạng `HH:mm:ss` nên so chuỗi là so giờ.
 bool canCheckIn(String now, String shiftEnd) => now.compareTo(shiftEnd) <= 0;
 
+/// Chấm vào sớm nhất và chấm ra muộn nhất so với giờ ca.
+const clockWindow = Duration(minutes: 30);
+
+int _minutes(String hhmm) {
+  final parts = hhmm.split(':');
+  return int.parse(parts[0]) * 60 + int.parse(parts[1]);
+}
+
+String _hhmm(int minutes) =>
+    '${(minutes ~/ 60).toString().padLeft(2, '0')}:'
+    '${(minutes % 60).toString().padLeft(2, '0')}';
+
+/// Giờ sớm nhất được chấm vào, không lùi qua 00:00 của ngày trước
+String clockInFrom(String shiftStart) {
+  final from = _minutes(shiftStart) - clockWindow.inMinutes;
+  return _hhmm(from < 0 ? 0 : from);
+}
+
+/// Giờ muộn nhất được chấm ra: hết ca + [clockWindow] + tăng ca đã duyệt,
+/// tối đa 23:59 vì công tính trong ngày
+String clockOutUntil(String shiftEnd, double approvedOvertime) {
+  final until =
+      _minutes(shiftEnd) +
+      clockWindow.inMinutes +
+      (approvedOvertime * 60).round();
+  return _hhmm(until > 1439 ? 1439 : until);
+}
+
+/// Giờ dạng `HH:mm` hoặc `HH:mm:ss`, so theo phút
+bool isBefore(String now, String limit) => _minutes(now) < _minutes(limit);
+bool isAfter(String now, String limit) => _minutes(now) > _minutes(limit);
+
 /// Một lượt chấm công: vào ca (lần đầu trong ngày) hay ra ca (lần thứ hai).
 enum ClockAction { checkIn, checkOut }

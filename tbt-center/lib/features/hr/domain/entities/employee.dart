@@ -16,6 +16,7 @@ class EmployeeSummary {
     this.position,
     this.department,
     this.company,
+    this.region,
   });
 
   final String id;
@@ -26,6 +27,9 @@ class EmployeeSummary {
   final String? position;
   final String? department;
   final String? company;
+
+  /// Có khi xem gộp mọi nước
+  final String? region;
 
   /// Tên đầy đủ theo thứ tự của dữ liệu: ở VN họ trước tên, nước khác tên trước họ.
   String fullName({required bool familyFirst}) =>

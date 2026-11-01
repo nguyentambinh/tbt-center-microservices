@@ -22,7 +22,6 @@ abstract final class InputRules {
   static final shortText = text(120);
   static final note = text(1000);
   static final longText = text(4000);
-  static final sql = text(5000);
   static final password = text(64);
 
   /// Họ tên: chữ cái mọi ngôn ngữ, dấu cách, nháy đơn, chấm, gạch nối

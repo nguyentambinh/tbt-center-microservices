@@ -72,6 +72,7 @@ class HireOffer {
 class Candidate {
   const Candidate({
     required this.id,
+    this.region,
     required this.fullName,
     required this.status,
     this.email,
@@ -86,6 +87,8 @@ class Candidate {
     this.viewedAt,
   });
 
+  /// Có khi xem gộp mọi nước
+  final String? region;
   final String id;
   final String fullName;
   final String status;

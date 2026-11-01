@@ -36,6 +36,7 @@ import 'providers/notification_providers.dart';
 String? notificationRoute(String kind) => switch (kind) {
       'leave_requested' || 'overtime_requested' => '${Routes.attendance}?tab=approvals',
       'leave_approved' || 'leave_rejected' || 'overtime_approved' || 'overtime_rejected' => Routes.attendance,
+      'schedule_changed' => Routes.workCalendar,
       'candidate_applied' || 'interview_confirmed_hr' || 'interview_proposed' => Routes.candidates,
       'candidate_status' || 'interview_scheduled' || 'interview_confirmed' => Routes.myApplication,
       'payroll_paid' || 'payroll_failed' || 'payroll_needs_attention' => Routes.payrollRuns,

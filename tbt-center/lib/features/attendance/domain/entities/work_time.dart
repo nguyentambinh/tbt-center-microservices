@@ -23,6 +23,9 @@ class ClockToday {
     this.overtimeHours,
     this.shiftStart,
     this.shiftEnd,
+    this.now,
+    this.clockInFrom,
+    this.clockOutUntil,
     this.approvedOvertime = 0,
     this.pendingOvertime = 0,
   });
@@ -34,6 +37,11 @@ class ClockToday {
   /// Giờ ca `HH:mm`; qua [shiftEnd] mà chưa vào ca thì không chấm vào được
   final String? shiftStart;
   final String? shiftEnd;
+
+  /// Giờ khu vực lúc tải và khung giờ chấm công `HH:mm`, server tính theo ca
+  final String? now;
+  final String? clockInFrom;
+  final String? clockOutUntil;
 
   /// Hệ số lương của ngày (ngày thường, chủ nhật, ngày lễ), R34.
   final double? coefficient;
@@ -49,6 +57,9 @@ class ClockToday {
   final double pendingOvertime;
 
   bool get done => checkOut != null;
+
+  bool get beforeClockIn => checkIn == null && now != null && clockInFrom != null && now!.compareTo(clockInFrom!) < 0;
+  bool get afterClockOut => checkIn != null && !done && now != null && clockOutUntil != null && now!.compareTo(clockOutUntil!) > 0;
 }
 
 /// Kết quả một lượt bấm: vào ca hay ra ca, ra ca thì kèm tổng giờ (R33).

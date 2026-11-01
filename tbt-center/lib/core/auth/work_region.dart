@@ -17,6 +17,7 @@ class WorkRegion extends Notifier<String> {
   @override
   String build() => ref.watch(authControllerProvider.select((s) => s.value?.region)) ?? 'vn';
 
+  /// Tài khoản tập đoàn được chọn thêm [Env.allRegions] để xem gộp mọi nước
   void select(String region) {
     final session = ref.read(authControllerProvider).value;
     if (session != null && (session.isGroup || region == session.region)) state = region;

@@ -434,6 +434,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get errTooLong => 'Um pedido pode ter no máximo 30 dias';
 
   @override
+  String get errFieldTooLong => 'O texto é muito longo, encurte-o';
+
+  @override
   String get errInvalidDates => 'A data final deve ser após a inicial';
 
   @override
@@ -2787,6 +2790,159 @@ class AppLocalizationsPt extends AppLocalizations {
       'O turno terminou, não é mais possível registrar entrada';
 
   @override
+  String get adminBackupUpload => 'Enviar arquivo';
+
+  @override
+  String get adminBackupUploaded => 'Backup enviado, escolha Restaurar nele';
+
+  @override
+  String get adminRestore => 'Restaurar';
+
+  @override
+  String adminRestoreConfirm(String region, String name, String code) {
+    return 'O backup $name adiciona as linhas que faltam em $region. Dados existentes, mesmo mais novos, são mantidos; linhas apagadas depois do backup voltam. Digite $code para confirmar.';
+  }
+
+  @override
+  String adminRestoreDone(int n) {
+    return '$n linhas ausentes adicionadas';
+  }
+
+  @override
+  String get errGroupAdminOnly => 'Só o admin do grupo pode fazer isso';
+
+  @override
+  String get errInvalidBackup => 'Arquivo de backup inválido';
+
+  @override
+  String get errWrongRegion => 'Este backup é de outro país';
+
+  @override
+  String get errRestoreNotConfirmed => 'Código de confirmação incorreto';
+
+  @override
+  String get evBackupRestored => 'Admin restaurou dados de um backup';
+
+  @override
+  String get errGroupDemotion =>
+      'Uma conta de nível grupo não pode voltar ao nível regional';
+
+  @override
+  String get adminImpersonate => 'Abrir esta conta';
+
+  @override
+  String adminImpersonateConfirm(String name) {
+    return 'Abrir a conta de $name? Você age como essa pessoa por até 15 minutos; cada acesso fica registrado.';
+  }
+
+  @override
+  String impersonatingAs(String name) {
+    return 'Vendo como $name';
+  }
+
+  @override
+  String get impersonationExit => 'Sair';
+
+  @override
+  String get errHigherAccount =>
+      'Não é possível abrir contas do mesmo nível ou superior';
+
+  @override
+  String get errAccountDisabled => 'Esta conta está bloqueada';
+
+  @override
+  String get evAccountImpersonated => 'Admin abriu outra conta';
+
+  @override
+  String get regionAll => 'Todos';
+
+  @override
+  String get errPickRegion => 'Escolha um país em Visualizando primeiro';
+
+  @override
+  String get errPeerApproval =>
+      'Este pedido vai para um nível superior, você não pode decidir';
+
+  @override
+  String get errClockTooEarly =>
+      'Ainda é cedo, o ponto abre 30 minutos antes do turno';
+
+  @override
+  String get errClockOutClosed =>
+      'O ponto de saída fechou, só até 30 minutos após o turno';
+
+  @override
+  String get errInvalidEmployees => 'Escolha de 1 a 200 funcionários';
+
+  @override
+  String get errInvalidWeekdays => 'Escolha pelo menos um dia da semana';
+
+  @override
+  String clockOpensAt(String time) {
+    return 'O ponto abre às $time';
+  }
+
+  @override
+  String clockClosedAt(String time) {
+    return 'O ponto de saída fechou às $time';
+  }
+
+  @override
+  String get scheduleManage => 'Escalas de trabalho';
+
+  @override
+  String get scheduleManageHint => 'Defina escalas e horários por projeto';
+
+  @override
+  String get scheduleRange => 'Período';
+
+  @override
+  String get schedulePickRange => 'Toque para escolher início e fim';
+
+  @override
+  String get scheduleShiftName => 'Nome do turno (opcional)';
+
+  @override
+  String get scheduleProject => 'Projeto';
+
+  @override
+  String scheduleAllMembers(int n) {
+    return 'Todos os membros ($n)';
+  }
+
+  @override
+  String get scheduleViewDays => 'Ver cada dia';
+
+  @override
+  String get scheduleNoShift => 'Sem turno';
+
+  @override
+  String get scheduleSave => 'Salvar escala';
+
+  @override
+  String get scheduleClear => 'Remover escala neste período';
+
+  @override
+  String get scheduleClearConfirm =>
+      'Remover a escala das pessoas escolhidas neste período? Dias com ponto registrado permanecem.';
+
+  @override
+  String scheduleSaved(int n) {
+    return '$n dias de trabalho atualizados';
+  }
+
+  @override
+  String nScheduleChanged(String date) {
+    return 'Sua escala a partir de $date foi atualizada';
+  }
+
+  @override
+  String get evScheduleChanged => 'RH definiu escalas';
+
+  @override
+  String get evScheduleCleared => 'RH removeu escalas';
+
+  @override
   String get errTooManyFiles => 'No máximo 5 arquivos por pedido';
 
   @override
@@ -3975,39 +4131,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminDeletePosition => 'Excluir cargo';
 
   @override
-  String get adminSql => 'Consulta SQL';
-
-  @override
-  String get adminSqlHint =>
-      'Somente leitura por padrão; cada execução vai para a auditoria';
-
-  @override
-  String get adminSqlWrite => 'Permitir escrita (INSERT, UPDATE, DELETE)';
-
-  @override
-  String get adminSqlWriteConfirm =>
-      'Isto altera dados reais e fica na auditoria. Executar?';
-
-  @override
-  String get adminSqlRun => 'Executar';
-
-  @override
-  String adminSqlRows(int n) {
-    return '$n linhas';
-  }
-
-  @override
-  String adminSqlAffected(int n) {
-    return '$n linhas afetadas';
-  }
-
-  @override
-  String get adminSqlTruncated => 'Mostrando as primeiras 500 linhas';
-
-  @override
-  String get adminTechnical => 'Detalhes técnicos';
-
-  @override
   String get adminBackups => 'Backups';
 
   @override
@@ -4030,20 +4153,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get errInUse => 'Ainda há alguém neste cargo, não dá para excluir';
-
-  @override
-  String get errReadOnly =>
-      'O comando altera dados; ative Permitir escrita se for intencional';
-
-  @override
-  String get errSqlError =>
-      'O comando falhou, veja os detalhes técnicos abaixo';
-
-  @override
-  String get errUnknownDatabase => 'Escolha um banco da lista';
-
-  @override
-  String get errEmptySql => 'Digite um comando SQL';
 
   @override
   String get errStorageUnavailable =>
@@ -4335,10 +4444,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String nPenaltyApplied(String amount, String reason) {
     return 'Penalidade de $amount: $reason';
   }
-
-  @override
-  String get errProtectedDatabase =>
-      'O banco de registros do admin não pode ser consultado aqui';
 
   @override
   String get errPastDate => 'A licença só pode começar a partir de amanhã';

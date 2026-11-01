@@ -218,6 +218,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
 
   static ProjectSummary _summary(Map<String, dynamic> p) => ProjectSummary(
         id: p['id'] as String,
+        region: p['region'] as String?,
         name: p['name'] as String?,
         customerName: p['customerName'] as String?,
         deposit: _number(p['deposit']),

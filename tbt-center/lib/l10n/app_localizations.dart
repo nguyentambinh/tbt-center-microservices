@@ -888,6 +888,12 @@ abstract class AppLocalizations {
   /// **'Mỗi đơn nghỉ tối đa 30 ngày'**
   String get errTooLong;
 
+  /// No description provided for @errFieldTooLong.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung nhập quá dài, hãy rút ngắn lại'**
+  String get errFieldTooLong;
+
   /// No description provided for @errInvalidDates.
   ///
   /// In vi, this message translates to:
@@ -4974,6 +4980,264 @@ abstract class AppLocalizations {
   /// **'Đã qua giờ kết thúc ca nên không chấm vào được nữa'**
   String get errShiftEnded;
 
+  /// No description provided for @adminBackupUpload.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tải tệp lên'**
+  String get adminBackupUpload;
+
+  /// No description provided for @adminBackupUploaded.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã tải bản sao lưu lên, chọn Khôi phục ở bản đó'**
+  String get adminBackupUploaded;
+
+  /// No description provided for @adminRestore.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khôi phục'**
+  String get adminRestore;
+
+  /// No description provided for @adminRestoreConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản {name} sẽ bổ sung vào {region} những dòng đang thiếu. Dữ liệu đang có, kể cả mới hơn, được giữ nguyên, dòng đã xóa sau lúc sao lưu sẽ quay lại. Nhập {code} để xác nhận.'**
+  String adminRestoreConfirm(String region, String name, String code);
+
+  /// No description provided for @adminRestoreDone.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã bổ sung {n} dòng còn thiếu'**
+  String adminRestoreDone(int n);
+
+  /// No description provided for @errGroupAdminOnly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ quản trị tập đoàn làm được thao tác này'**
+  String get errGroupAdminOnly;
+
+  /// No description provided for @errInvalidBackup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tệp này không phải bản sao lưu hợp lệ'**
+  String get errInvalidBackup;
+
+  /// No description provided for @errWrongRegion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản sao lưu này của nước khác, chọn đúng nước ở nút Đang xem'**
+  String get errWrongRegion;
+
+  /// No description provided for @errRestoreNotConfirmed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mã xác nhận chưa đúng'**
+  String get errRestoreNotConfirmed;
+
+  /// No description provided for @evBackupRestored.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản trị khôi phục dữ liệu từ bản sao lưu'**
+  String get evBackupRestored;
+
+  /// No description provided for @errGroupDemotion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản đã lên cấp tập đoàn thì không hạ về khu vực được'**
+  String get errGroupDemotion;
+
+  /// No description provided for @adminImpersonate.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vào tài khoản này'**
+  String get adminImpersonate;
+
+  /// No description provided for @adminImpersonateConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Vào tài khoản {name}? Bạn làm việc như người đó trong tối đa 15 phút, mọi lần vào đều ghi sổ kiểm toán.'**
+  String adminImpersonateConfirm(String name);
+
+  /// No description provided for @impersonatingAs.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang xem với tư cách {name}'**
+  String impersonatingAs(String name);
+
+  /// No description provided for @impersonationExit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thoát'**
+  String get impersonationExit;
+
+  /// No description provided for @errHigherAccount.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không vào được tài khoản cùng cấp hoặc cấp cao hơn'**
+  String get errHigherAccount;
+
+  /// No description provided for @errAccountDisabled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tài khoản này đang bị khóa'**
+  String get errAccountDisabled;
+
+  /// No description provided for @evAccountImpersonated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản trị vào tài khoản khác'**
+  String get evAccountImpersonated;
+
+  /// No description provided for @regionAll.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả'**
+  String get regionAll;
+
+  /// No description provided for @errPickRegion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn một nước ở nút Đang xem trước khi thao tác hoặc xem số liệu riêng'**
+  String get errPickRegion;
+
+  /// No description provided for @errPeerApproval.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đơn này do cấp trên duyệt, bạn không duyệt được'**
+  String get errPeerApproval;
+
+  /// No description provided for @errClockTooEarly.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa tới giờ chấm vào, chỉ chấm được từ 30 phút trước giờ vào ca'**
+  String get errClockTooEarly;
+
+  /// No description provided for @errClockOutClosed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã quá giờ chấm ra, chỉ chấm được tới 30 phút sau giờ hết ca'**
+  String get errClockOutClosed;
+
+  /// No description provided for @errInvalidEmployees.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn từ 1 đến 200 nhân viên'**
+  String get errInvalidEmployees;
+
+  /// No description provided for @errInvalidWeekdays.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ít nhất một thứ trong tuần'**
+  String get errInvalidWeekdays;
+
+  /// No description provided for @clockOpensAt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở chấm vào lúc {time}'**
+  String clockOpensAt(String time);
+
+  /// No description provided for @clockClosedAt.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đóng chấm ra lúc {time}'**
+  String clockClosedAt(String time);
+
+  /// No description provided for @scheduleManage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xếp lịch làm việc'**
+  String get scheduleManage;
+
+  /// No description provided for @scheduleManageHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đặt lịch, giờ làm theo dự án'**
+  String get scheduleManageHint;
+
+  /// No description provided for @scheduleRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khoảng ngày'**
+  String get scheduleRange;
+
+  /// No description provided for @schedulePickRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chạm để chọn ngày bắt đầu và kết thúc'**
+  String get schedulePickRange;
+
+  /// No description provided for @scheduleShiftName.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tên ca (không bắt buộc)'**
+  String get scheduleShiftName;
+
+  /// No description provided for @scheduleProject.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dự án'**
+  String get scheduleProject;
+
+  /// No description provided for @scheduleAllMembers.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả thành viên ({n})'**
+  String scheduleAllMembers(int n);
+
+  /// No description provided for @scheduleViewDays.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem lịch từng ngày'**
+  String get scheduleViewDays;
+
+  /// No description provided for @scheduleNoShift.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có lịch'**
+  String get scheduleNoShift;
+
+  /// No description provided for @scheduleSave.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu lịch'**
+  String get scheduleSave;
+
+  /// No description provided for @scheduleClear.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ lịch trong khoảng này'**
+  String get scheduleClear;
+
+  /// No description provided for @scheduleClearConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ lịch của những người đã chọn trong khoảng ngày này? Ngày đã chấm công vẫn giữ nguyên.'**
+  String get scheduleClearConfirm;
+
+  /// No description provided for @scheduleSaved.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã cập nhật {n} ngày làm việc'**
+  String scheduleSaved(int n);
+
+  /// No description provided for @nScheduleChanged.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch làm việc của bạn từ {date} vừa được cập nhật'**
+  String nScheduleChanged(String date);
+
+  /// No description provided for @evScheduleChanged.
+  ///
+  /// In vi, this message translates to:
+  /// **'HR đặt lịch làm việc'**
+  String get evScheduleChanged;
+
+  /// No description provided for @evScheduleCleared.
+  ///
+  /// In vi, this message translates to:
+  /// **'HR bỏ lịch làm việc'**
+  String get evScheduleCleared;
+
   /// No description provided for @errTooManyFiles.
   ///
   /// In vi, this message translates to:
@@ -7086,60 +7350,6 @@ abstract class AppLocalizations {
   /// **'Xóa chức vụ'**
   String get adminDeletePosition;
 
-  /// No description provided for @adminSql.
-  ///
-  /// In vi, this message translates to:
-  /// **'Truy vấn SQL'**
-  String get adminSql;
-
-  /// No description provided for @adminSqlHint.
-  ///
-  /// In vi, this message translates to:
-  /// **'Mặc định chỉ đọc; mỗi lần chạy đều được ghi vào sổ kiểm toán'**
-  String get adminSqlHint;
-
-  /// No description provided for @adminSqlWrite.
-  ///
-  /// In vi, this message translates to:
-  /// **'Cho phép ghi (INSERT, UPDATE, DELETE)'**
-  String get adminSqlWrite;
-
-  /// No description provided for @adminSqlWriteConfirm.
-  ///
-  /// In vi, this message translates to:
-  /// **'Câu lệnh sẽ sửa dữ liệu thật và được ghi vào sổ kiểm toán. Chạy?'**
-  String get adminSqlWriteConfirm;
-
-  /// No description provided for @adminSqlRun.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chạy'**
-  String get adminSqlRun;
-
-  /// No description provided for @adminSqlRows.
-  ///
-  /// In vi, this message translates to:
-  /// **'{n} dòng'**
-  String adminSqlRows(int n);
-
-  /// No description provided for @adminSqlAffected.
-  ///
-  /// In vi, this message translates to:
-  /// **'Đã tác động {n} dòng'**
-  String adminSqlAffected(int n);
-
-  /// No description provided for @adminSqlTruncated.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chỉ hiện 500 dòng đầu'**
-  String get adminSqlTruncated;
-
-  /// No description provided for @adminTechnical.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chi tiết kỹ thuật'**
-  String get adminTechnical;
-
   /// No description provided for @adminBackups.
   ///
   /// In vi, this message translates to:
@@ -7187,30 +7397,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Còn người giữ chức vụ này nên chưa xóa được'**
   String get errInUse;
-
-  /// No description provided for @errReadOnly.
-  ///
-  /// In vi, this message translates to:
-  /// **'Câu lệnh có ghi dữ liệu; bật Cho phép ghi nếu thật sự muốn sửa'**
-  String get errReadOnly;
-
-  /// No description provided for @errSqlError.
-  ///
-  /// In vi, this message translates to:
-  /// **'Câu lệnh không chạy được, xem chi tiết kỹ thuật bên dưới'**
-  String get errSqlError;
-
-  /// No description provided for @errUnknownDatabase.
-  ///
-  /// In vi, this message translates to:
-  /// **'Chọn cơ sở dữ liệu trong danh sách'**
-  String get errUnknownDatabase;
-
-  /// No description provided for @errEmptySql.
-  ///
-  /// In vi, this message translates to:
-  /// **'Nhập câu lệnh SQL'**
-  String get errEmptySql;
 
   /// No description provided for @errStorageUnavailable.
   ///
@@ -7763,12 +7949,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Bạn bị phạt {amount}: {reason}'**
   String nPenaltyApplied(String amount, String reason);
-
-  /// No description provided for @errProtectedDatabase.
-  ///
-  /// In vi, this message translates to:
-  /// **'Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây'**
-  String get errProtectedDatabase;
 
   /// No description provided for @errPastDate.
   ///

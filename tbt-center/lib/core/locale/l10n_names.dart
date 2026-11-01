@@ -21,6 +21,7 @@ extension LocalizedNames on AppLocalizations {
       };
 
   String regionName(String region) => switch (region) {
+        'all' => regionAll,
         'de' => regionDe,
         'us' => regionUs,
         'br' => regionBr,

@@ -81,4 +81,60 @@ void main() {
       'self_change',
     );
   });
+
+  group('vào thay tài khoản', () {
+    String? refusal(List<String> targetRoles, {bool group = false}) =>
+        impersonationRefusal(
+          actor: _admin(group: group),
+          target: _hrDe,
+          targetRoles: targetRoles,
+          serviceRegion: 'de',
+        );
+
+    test('vào được nhân sự cấp dưới', () {
+      expect(refusal(['hr']), isNull);
+    });
+
+    test('không vào được tài khoản cấp tập đoàn', () {
+      expect(refusal(['admin', 'group'], group: true), 'higher_account');
+      expect(refusal(['hr', 'group'], group: true), 'higher_account');
+    });
+
+    test('văn phòng, quản trị nước chỉ quản trị tập đoàn vào được', () {
+      expect(refusal(['executive']), 'higher_account');
+      expect(refusal(['admin']), 'higher_account');
+      expect(refusal(['executive'], group: true), isNull);
+      expect(refusal(['admin'], group: true), isNull);
+    });
+
+    test('quản trị nước không thăng lên tập đoàn, không ai hạ từ tập đoàn', () {
+      expect(
+        accountChangeRefusal(
+          actor: _admin(),
+          target: _hrVn,
+          serviceRegion: 'vn',
+          add: {'group'},
+        ),
+        'role_not_allowed',
+      );
+      expect(
+        accountChangeRefusal(
+          actor: _admin(group: true),
+          target: _hrVn,
+          serviceRegion: 'vn',
+          add: {'group'},
+        ),
+        isNull,
+      );
+      expect(
+        accountChangeRefusal(
+          actor: _admin(group: true),
+          target: _hrVn,
+          serviceRegion: 'vn',
+          remove: {'group'},
+        ),
+        'group_demotion',
+      );
+    });
+  });
 }

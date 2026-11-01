@@ -432,6 +432,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get errTooLong => 'Mỗi đơn nghỉ tối đa 30 ngày';
 
   @override
+  String get errFieldTooLong => 'Nội dung nhập quá dài, hãy rút ngắn lại';
+
+  @override
   String get errInvalidDates => 'Ngày kết thúc phải sau ngày bắt đầu';
 
   @override
@@ -2784,6 +2787,162 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đã qua giờ kết thúc ca nên không chấm vào được nữa';
 
   @override
+  String get adminBackupUpload => 'Tải tệp lên';
+
+  @override
+  String get adminBackupUploaded =>
+      'Đã tải bản sao lưu lên, chọn Khôi phục ở bản đó';
+
+  @override
+  String get adminRestore => 'Khôi phục';
+
+  @override
+  String adminRestoreConfirm(String region, String name, String code) {
+    return 'Bản $name sẽ bổ sung vào $region những dòng đang thiếu. Dữ liệu đang có, kể cả mới hơn, được giữ nguyên, dòng đã xóa sau lúc sao lưu sẽ quay lại. Nhập $code để xác nhận.';
+  }
+
+  @override
+  String adminRestoreDone(int n) {
+    return 'Đã bổ sung $n dòng còn thiếu';
+  }
+
+  @override
+  String get errGroupAdminOnly => 'Chỉ quản trị tập đoàn làm được thao tác này';
+
+  @override
+  String get errInvalidBackup => 'Tệp này không phải bản sao lưu hợp lệ';
+
+  @override
+  String get errWrongRegion =>
+      'Bản sao lưu này của nước khác, chọn đúng nước ở nút Đang xem';
+
+  @override
+  String get errRestoreNotConfirmed => 'Mã xác nhận chưa đúng';
+
+  @override
+  String get evBackupRestored => 'Quản trị khôi phục dữ liệu từ bản sao lưu';
+
+  @override
+  String get errGroupDemotion =>
+      'Tài khoản đã lên cấp tập đoàn thì không hạ về khu vực được';
+
+  @override
+  String get adminImpersonate => 'Vào tài khoản này';
+
+  @override
+  String adminImpersonateConfirm(String name) {
+    return 'Vào tài khoản $name? Bạn làm việc như người đó trong tối đa 15 phút, mọi lần vào đều ghi sổ kiểm toán.';
+  }
+
+  @override
+  String impersonatingAs(String name) {
+    return 'Đang xem với tư cách $name';
+  }
+
+  @override
+  String get impersonationExit => 'Thoát';
+
+  @override
+  String get errHigherAccount =>
+      'Không vào được tài khoản cùng cấp hoặc cấp cao hơn';
+
+  @override
+  String get errAccountDisabled => 'Tài khoản này đang bị khóa';
+
+  @override
+  String get evAccountImpersonated => 'Quản trị vào tài khoản khác';
+
+  @override
+  String get regionAll => 'Tất cả';
+
+  @override
+  String get errPickRegion =>
+      'Chọn một nước ở nút Đang xem trước khi thao tác hoặc xem số liệu riêng';
+
+  @override
+  String get errPeerApproval =>
+      'Đơn này do cấp trên duyệt, bạn không duyệt được';
+
+  @override
+  String get errClockTooEarly =>
+      'Chưa tới giờ chấm vào, chỉ chấm được từ 30 phút trước giờ vào ca';
+
+  @override
+  String get errClockOutClosed =>
+      'Đã quá giờ chấm ra, chỉ chấm được tới 30 phút sau giờ hết ca';
+
+  @override
+  String get errInvalidEmployees => 'Chọn từ 1 đến 200 nhân viên';
+
+  @override
+  String get errInvalidWeekdays => 'Chọn ít nhất một thứ trong tuần';
+
+  @override
+  String clockOpensAt(String time) {
+    return 'Mở chấm vào lúc $time';
+  }
+
+  @override
+  String clockClosedAt(String time) {
+    return 'Đã đóng chấm ra lúc $time';
+  }
+
+  @override
+  String get scheduleManage => 'Xếp lịch làm việc';
+
+  @override
+  String get scheduleManageHint => 'Đặt lịch, giờ làm theo dự án';
+
+  @override
+  String get scheduleRange => 'Khoảng ngày';
+
+  @override
+  String get schedulePickRange => 'Chạm để chọn ngày bắt đầu và kết thúc';
+
+  @override
+  String get scheduleShiftName => 'Tên ca (không bắt buộc)';
+
+  @override
+  String get scheduleProject => 'Dự án';
+
+  @override
+  String scheduleAllMembers(int n) {
+    return 'Tất cả thành viên ($n)';
+  }
+
+  @override
+  String get scheduleViewDays => 'Xem lịch từng ngày';
+
+  @override
+  String get scheduleNoShift => 'Chưa có lịch';
+
+  @override
+  String get scheduleSave => 'Lưu lịch';
+
+  @override
+  String get scheduleClear => 'Bỏ lịch trong khoảng này';
+
+  @override
+  String get scheduleClearConfirm =>
+      'Bỏ lịch của những người đã chọn trong khoảng ngày này? Ngày đã chấm công vẫn giữ nguyên.';
+
+  @override
+  String scheduleSaved(int n) {
+    return 'Đã cập nhật $n ngày làm việc';
+  }
+
+  @override
+  String nScheduleChanged(String date) {
+    return 'Lịch làm việc của bạn từ $date vừa được cập nhật';
+  }
+
+  @override
+  String get evScheduleChanged => 'HR đặt lịch làm việc';
+
+  @override
+  String get evScheduleCleared => 'HR bỏ lịch làm việc';
+
+  @override
   String get errTooManyFiles => 'Mỗi đơn chỉ đính kèm tối đa 5 tệp';
 
   @override
@@ -3977,39 +4136,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get adminDeletePosition => 'Xóa chức vụ';
 
   @override
-  String get adminSql => 'Truy vấn SQL';
-
-  @override
-  String get adminSqlHint =>
-      'Mặc định chỉ đọc; mỗi lần chạy đều được ghi vào sổ kiểm toán';
-
-  @override
-  String get adminSqlWrite => 'Cho phép ghi (INSERT, UPDATE, DELETE)';
-
-  @override
-  String get adminSqlWriteConfirm =>
-      'Câu lệnh sẽ sửa dữ liệu thật và được ghi vào sổ kiểm toán. Chạy?';
-
-  @override
-  String get adminSqlRun => 'Chạy';
-
-  @override
-  String adminSqlRows(int n) {
-    return '$n dòng';
-  }
-
-  @override
-  String adminSqlAffected(int n) {
-    return 'Đã tác động $n dòng';
-  }
-
-  @override
-  String get adminSqlTruncated => 'Chỉ hiện 500 dòng đầu';
-
-  @override
-  String get adminTechnical => 'Chi tiết kỹ thuật';
-
-  @override
   String get adminBackups => 'Sao lưu';
 
   @override
@@ -4033,20 +4159,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get errInUse => 'Còn người giữ chức vụ này nên chưa xóa được';
-
-  @override
-  String get errReadOnly =>
-      'Câu lệnh có ghi dữ liệu; bật Cho phép ghi nếu thật sự muốn sửa';
-
-  @override
-  String get errSqlError =>
-      'Câu lệnh không chạy được, xem chi tiết kỹ thuật bên dưới';
-
-  @override
-  String get errUnknownDatabase => 'Chọn cơ sở dữ liệu trong danh sách';
-
-  @override
-  String get errEmptySql => 'Nhập câu lệnh SQL';
 
   @override
   String get errStorageUnavailable => 'Kho lưu trữ chưa sẵn sàng, thử lại sau';
@@ -4336,10 +4448,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String nPenaltyApplied(String amount, String reason) {
     return 'Bạn bị phạt $amount: $reason';
   }
-
-  @override
-  String get errProtectedDatabase =>
-      'Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây';
 
   @override
   String get errPastDate =>

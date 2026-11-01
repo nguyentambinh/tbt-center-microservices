@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/error/error_reporter.dart';
@@ -212,7 +213,7 @@ class _EmployeeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = [employee.position, employee.department].whereType<String>().join(' · ');
+    final subtitle = [if (employee.region case final r?) AppLocalizations.of(context).regionName(r), employee.position, employee.department].whereType<String>().join(' · ');
     return ListTile(
       leading: InitialsAvatar(initials: employee.initials, photoUrl: employee.photoUrl),
       title: Text(employee.fullName(familyFirst: familyFirst)),

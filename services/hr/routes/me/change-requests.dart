@@ -36,6 +36,7 @@ Future<Response> onRequest(RequestContext context) async {
           id,
           changes,
           reason: body['reason'] as String?,
+          requesterRoles: requesterRolesOf(context.read<Claims>()),
         );
         return Response.json(statusCode: HttpStatus.created, body: created);
       } on ChangeRequestViolation catch (e) {

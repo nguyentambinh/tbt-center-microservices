@@ -11,7 +11,7 @@ DIR=$(cd "$(dirname "$0")/../.." && pwd)
 REMOTE=/opt/tbt
 SSH="ssh -o BatchMode=yes $HOST"
 
-IMAGES=${IMAGES:-"hr attendance payroll finance project_contract currency notification integration recruitment bank_mock sync_worker audit report datastore knowledge geo eureka"}
+IMAGES=${IMAGES:-"hr attendance payroll finance project_contract currency notification integration recruitment bank_mock sync_worker audit report datastore knowledge geo eureka admin"}
 SECRETS="postgres.env internal.env sync.env rabbitmq.env gemini.env garage.env identity.env keycloak.env grafana.env datastore-hub.env datakey-vn.env datakey-de.env datakey-us.env datakey-br.env datakey-za.env datakey-au.env firebase-sa.json firestore-hub-writer.json firestore-region-reader.json"
 PLACEHOLDERS="anthropic.env payos-vn.env payos-de.env payos-us.env payos-br.env payos-za.env payos-au.env gmail-app-password.txt"
 

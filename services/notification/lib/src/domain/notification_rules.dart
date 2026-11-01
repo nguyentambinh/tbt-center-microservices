@@ -74,13 +74,17 @@ const adminLogEvents = {
   'AdminSqlWrite',
   'AdminSqlRead',
   'BackupCreated',
+  'BackupRestored',
   'AccountChanged',
+  'AccountImpersonated',
   'PositionCreated',
   'PositionUpdated',
   'PositionDeleted',
   'HolidayAdded',
   'HolidayRemoved',
   'ShiftChanged',
+  'ScheduleChanged',
+  'ScheduleCleared',
   'EmployeePromoted',
   'PositionChanged',
   'SalaryChanged',
@@ -111,6 +115,13 @@ List<NewNotification> _businessNotifications(HubEvent e) {
           e.eventType == 'LeaveApproved' ? 'leave_approved' : 'leave_rejected',
           {'fromDate': p['fromDate'], 'days': p['days']},
         ),
+      ];
+    case 'ScheduleChanged' || 'ScheduleCleared':
+      return [
+        for (final employee in p['employeeIds'] as List? ?? const [])
+          to(employeeRecipient('$employee'), 'schedule_changed', {
+            'fromDate': p['fromDate'],
+          }),
       ];
     case 'OvertimeRequested':
       return [

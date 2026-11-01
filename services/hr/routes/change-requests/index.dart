@@ -25,5 +25,16 @@ Future<Response> onRequest(RequestContext context) async {
   final items = await context.read<ChangeRequestRepository>().list(
     status: status,
   );
-  return Response.json(body: {'items': items});
+  // Danh sách duyệt không hiện đơn phải để cấp trên duyệt
+  final claims = context.read<Claims>();
+  return Response.json(
+    body: {
+      'items': [
+        for (final item in items)
+          if (status != 'pending' ||
+              !isPeerApprover(item['requesterRoles'] as String?, claims))
+            item,
+      ],
+    },
+  );
 }

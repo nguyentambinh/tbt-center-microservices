@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/attendance/presentation/pages/attendance_page.dart';
 import '../../features/attendance/presentation/pages/clock_stats_page.dart';
+import '../../features/attendance/presentation/pages/schedule_manage_page.dart';
 import '../../features/attendance/presentation/pages/work_calendar_page.dart';
 import '../../features/audit/presentation/pages/audit_page.dart';
 import '../../features/audit/presentation/providers/audit_providers.dart';
@@ -94,6 +95,7 @@ abstract final class Routes {
   static const orgTree = '/org-tree';
   static const workCalendar = '/attendance/calendar';
   static const clockStats = '/attendance/stats';
+  static const scheduleManage = '/attendance/schedules';
   static const projectNew = '/projects/new';
   static const projectCharts = '/projects/charts';
   static const projectProposals = '/project-proposals';
@@ -184,6 +186,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'calendar', builder: (_, _) => const WorkCalendarPage()),
           GoRoute(path: 'stats', builder: (_, _) => const ClockStatsPage()),
+          GoRoute(path: 'schedules', builder: (_, _) => const ScheduleManagePage()),
         ],
       ),
       GoRoute(path: Routes.myApplication, builder: (_, _) => const MyApplicationPage()),

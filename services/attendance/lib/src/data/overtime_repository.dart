@@ -27,6 +27,7 @@ abstract interface class OvertimeRepository {
     required DateTime workDate,
     required double hours,
     String? reason,
+    String? requesterRoles,
   });
 
   /// `null` nếu không có đơn; ném `already_decided`, `self_approval` như đơn
@@ -36,6 +37,7 @@ abstract interface class OvertimeRepository {
     required bool approve,
     required String decidedBy,
     String? deciderEmployeeId,
+    Claims? decider,
   });
 }
 
@@ -46,7 +48,7 @@ class PostgresOvertimeRepository implements OvertimeRepository {
 
   static const _columns =
       'id::text, employee_id, work_date, hours::float8 as hours, reason, '
-      'status, decided_by, created_at';
+      'status, decided_by, created_at, requester_roles';
 
   @override
   Future<List<Map<String, dynamic>>> requests({
@@ -69,6 +71,7 @@ class PostgresOvertimeRepository implements OvertimeRepository {
     required DateTime workDate,
     required double hours,
     String? reason,
+    String? requesterRoles,
   }) {
     return _db.transaction((tx) async {
       final List<Map<String, dynamic>> rows;
@@ -77,7 +80,8 @@ class PostgresOvertimeRepository implements OvertimeRepository {
           for (final r in await tx.execute(
             Sql.named(
               'insert into overtime_requests (employee_id, work_date, hours, '
-              'reason) values (@employee, @day, @hours, @reason) '
+              'reason, requester_roles) values (@employee, @day, @hours, '
+              '@reason, @roles) '
               'returning $_columns',
             ),
             parameters: {
@@ -85,6 +89,7 @@ class PostgresOvertimeRepository implements OvertimeRepository {
               'day': workDate,
               'hours': hours,
               'reason': reason,
+              'roles': TypedValue(Type.text, requesterRoles),
             },
           ))
             r.toColumnMap(),
@@ -116,11 +121,13 @@ class PostgresOvertimeRepository implements OvertimeRepository {
     required bool approve,
     required String decidedBy,
     String? deciderEmployeeId,
+    Claims? decider,
   }) {
     return _db.transaction((tx) async {
       final found = await tx.execute(
         Sql.named(
-          'select employee_id, status, work_date from overtime_requests '
+          'select employee_id, status, work_date, requester_roles '
+          'from overtime_requests '
           'where id = @id::uuid for update',
         ),
         parameters: {'id': id},
@@ -134,6 +141,13 @@ class PostgresOvertimeRepository implements OvertimeRepository {
         throw const LeaveRuleViolation(
           'self_approval',
           'You cannot decide your own request',
+        );
+      }
+      if (decider != null &&
+          isPeerApprover(current['requester_roles'] as String?, decider)) {
+        throw const LeaveRuleViolation(
+          'peer_approval',
+          'This request goes to a higher level',
         );
       }
       final day = current['work_date'] as DateTime;
@@ -172,5 +186,6 @@ class PostgresOvertimeRepository implements OvertimeRepository {
     'status': r['status'],
     'decidedBy': r['decided_by'],
     'createdAt': (r['created_at'] as DateTime?)?.toIso8601String(),
+    'requesterRoles': r['requester_roles'],
   };
 }

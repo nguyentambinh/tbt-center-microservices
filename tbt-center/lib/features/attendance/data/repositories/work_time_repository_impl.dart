@@ -43,6 +43,9 @@ class WorkTimeRepositoryImpl implements WorkTimeRepository {
       pendingOvertime: (d['pendingOvertime'] as num?)?.toDouble() ?? 0,
       shiftStart: shift?['start'] as String?,
       shiftEnd: shift?['end'] as String?,
+      now: d['now'] as String?,
+      clockInFrom: d['clockInFrom'] as String?,
+      clockOutUntil: d['clockOutUntil'] as String?,
     );
   }
 

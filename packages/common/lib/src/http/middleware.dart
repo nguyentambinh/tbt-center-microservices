@@ -31,7 +31,10 @@ Middleware correlationAndErrors() {
       // Đặt vào Zone: InternalClient gọi service khác tự gửi kèm id này
       return withCorrelationId(id, () async {
         try {
-          final response = await handler(context);
+          final tooLong = await _tooLongField(context.request);
+          final response = tooLong == null
+              ? await handler(context)
+              : apiError(422, 'field_too_long', 'Field too long: $tooLong');
           return response.copyWith(
             headers: {...response.headers, 'x-correlation-id': id},
           );
@@ -47,6 +50,41 @@ Middleware correlationAndErrors() {
     };
   };
 }
+
+/// Độ dài tối đa của trường JSON theo tên khóa, còn lại theo [_defaultMaxLength]
+const _maxLengths = {
+  'fullName': 100,
+  'firstName': 100,
+  'lastName': 100,
+  'name': 120,
+  'email': 120,
+  'phone': 20,
+};
+const _defaultMaxLength = 4000;
+
+/// Đường nhận nội dung dài hợp lệ: gọi nội bộ, sổ sự kiện, tệp base64, bài viết
+const _noLengthLimit = ['/internal', '/events', '/candidate-imports', '/articles'];
+
+/// Khóa của chuỗi đầu tiên vượt giới hạn trong body JSON, `null` nếu hợp lệ
+Future<String?> _tooLongField(Request request) async {
+  if (!const {HttpMethod.post, HttpMethod.put, HttpMethod.patch}.contains(request.method)) return null;
+  if (!(request.headers['content-type'] ?? '').contains('json')) return null;
+  if (_noLengthLimit.any(request.uri.path.startsWith)) return null;
+  final Object? body;
+  try {
+    body = await request.json();
+  } on Object {
+    return null;
+  }
+  return _findTooLong(body, null);
+}
+
+String? _findTooLong(Object? value, String? key) => switch (value) {
+  final String text => text.length > (_maxLengths[key] ?? _defaultMaxLength) ? key ?? 'value' : null,
+  final Map<String, dynamic> map => map.entries.map((e) => _findTooLong(e.value, e.key)).nonNulls.firstOrNull,
+  final List<dynamic> list => list.map((v) => _findTooLong(v, key)).nonNulls.firstOrNull,
+  _ => null,
+};
 
 const _correlationKey = #tbtCorrelationId;
 

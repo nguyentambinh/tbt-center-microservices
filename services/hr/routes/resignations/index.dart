@@ -28,9 +28,10 @@ Future<Response> onRequest(RequestContext context) async {
       if (!handler && claims.employeeId == null) {
         return apiError(403, 'no_employee', 'Account is not an employee');
       }
+      final status = context.request.uri.queryParameters['status'];
       final items = await repository.list(
         employeeId: handler ? null : claims.employeeId,
-        status: context.request.uri.queryParameters['status'],
+        status: status,
       );
       // Phân tích của AI chỉ dành cho cấp trên, người gửi không thấy
       return Response.json(
@@ -38,7 +39,11 @@ Future<Response> onRequest(RequestContext context) async {
           'items': [
             for (final r in items)
               if (handler && r['employeeId'] != claims.employeeId)
-                r
+                if (status != 'pending' ||
+                    !isPeerApprover(r['requesterRoles'] as String?, claims))
+                  r
+                else
+                  ...const <Map<String, dynamic>>[]
               else
                 {...r, 'aiAnalysis': null, 'aiSource': null},
           ],
@@ -91,6 +96,7 @@ Future<Response> onRequest(RequestContext context) async {
           lastDay: lastDay,
           reason: reason,
           letter: (key: key, name: name.trim(), mime: mime),
+          requesterRoles: requesterRolesOf(claims),
         );
         // AI đọc đơn sau khi trả kết quả, người gửi không phải chờ
         final analyst = context.read<ResignationAnalyst>();

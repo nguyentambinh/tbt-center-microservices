@@ -40,6 +40,7 @@ abstract interface class ChangeRequestRepository {
     String employeeId,
     Map<String, Object?> changes, {
     String? reason,
+    String? requesterRoles,
   });
 
   Future<List<Map<String, dynamic>>> mine(String employeeId);
@@ -54,6 +55,7 @@ abstract interface class ChangeRequestRepository {
     required bool approve,
     required String decidedBy,
     String? note,
+    Claims? decider,
   });
 }
 
@@ -97,13 +99,15 @@ class PostgresChangeRequestRepository implements ChangeRequestRepository {
 
   static const _columns = '''
 r.id, r.employee_id, r.changes, r.reason, r.status, r.requested_at,
-r.decided_by, r.decided_at, r.note, e.family_name, e.given_name''';
+r.decided_by, r.decided_at, r.note, e.family_name, e.given_name,
+r.requester_roles''';
 
   @override
   Future<Map<String, dynamic>> create(
     String employeeId,
     Map<String, Object?> changes, {
     String? reason,
+    String? requesterRoles,
   }) async {
     final valid = validateChanges(changes);
     return _db.transaction((tx) async {
@@ -122,13 +126,15 @@ r.decided_by, r.decided_at, r.note, e.family_name, e.given_name''';
       }
       final rows = await tx.execute(
         Sql.named(
-          'insert into employee_change_requests (employee_id, changes, reason) '
-          'values (@id, @changes::jsonb, @reason) returning id, requested_at',
+          'insert into employee_change_requests (employee_id, changes, reason, '
+          'requester_roles) values (@id, @changes::jsonb, @reason, @roles) '
+          'returning id, requested_at',
         ),
         parameters: {
           'id': employeeId,
           'changes': jsonEncode(valid),
           'reason': reason,
+          'roles': TypedValue(Type.text, requesterRoles),
         },
       );
       final id = rows.first[0]! as int;
@@ -183,11 +189,12 @@ r.decided_by, r.decided_at, r.note, e.family_name, e.given_name''';
     required bool approve,
     required String decidedBy,
     String? note,
+    Claims? decider,
   }) async {
     final done = await _db.transaction((tx) async {
       final rows = await tx.execute(
         Sql.named(
-          'select employee_id, changes, status '
+          'select employee_id, changes, status, requester_roles '
           'from employee_change_requests where id = @id for update',
         ),
         parameters: {'id': id},
@@ -205,6 +212,13 @@ r.decided_by, r.decided_at, r.note, e.family_name, e.given_name''';
         throw const ChangeRequestViolation(
           'self_approval',
           'Your own request goes to someone else',
+        );
+      }
+      if (decider != null &&
+          isPeerApprover(rows.first[3] as String?, decider)) {
+        throw const ChangeRequestViolation(
+          'peer_approval',
+          'This request goes to a higher level',
         );
       }
       if (approve) await _apply(tx, employeeId, changes);
@@ -299,5 +313,6 @@ r.decided_by, r.decided_at, r.note, e.family_name, e.given_name''';
     'decidedBy': r['decided_by'],
     'decidedAt': (r['decided_at'] as DateTime?)?.toIso8601String(),
     'note': r['note'],
+    'requesterRoles': r['requester_roles'],
   };
 }

@@ -22,6 +22,9 @@ String eventName(AppLocalizations l10n, String type) => switch (type) {
       'HolidayAdded' => l10n.evHolidayAdded,
       'HolidayRemoved' => l10n.evHolidayRemoved,
       'ShiftChanged' => l10n.evShiftChanged,
+      'AccountImpersonated' => l10n.evAccountImpersonated,
+      'ScheduleChanged' => l10n.evScheduleChanged,
+      'ScheduleCleared' => l10n.evScheduleCleared,
       'CandidateApplied' => l10n.evCandidateApplied,
       'CandidateAnalyzed' => l10n.evCandidateAnalyzed,
       'CandidateCvUploaded' => l10n.evCandidateCvUploaded,
@@ -88,6 +91,7 @@ String eventName(AppLocalizations l10n, String type) => switch (type) {
       'AdminSqlRead' => l10n.evAdminSqlRead,
       'AdminSqlWrite' => l10n.evAdminSqlWrite,
       'BackupCreated' => l10n.evBackupCreated,
+      'BackupRestored' => l10n.evBackupRestored,
       'AccountChanged' => l10n.evAccountChanged,
       _ => type.replaceAllMapped(RegExp('(?<=[a-z])(?=[A-Z])'), (_) => ' '),
     };

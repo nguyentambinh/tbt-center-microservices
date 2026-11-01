@@ -40,6 +40,7 @@ abstract interface class AttendanceRepository {
     required DateTime toDate,
     required String leaveType,
     String? reason,
+    String? requesterRoles,
   });
 
   /// `null` nếu không có đơn; ném `already_decided` nếu đơn không còn chờ,
@@ -49,6 +50,7 @@ abstract interface class AttendanceRepository {
     required bool approve,
     required String decidedBy,
     String? deciderEmployeeId,
+    Claims? decider,
   });
 }
 
@@ -59,7 +61,7 @@ class PostgresAttendanceRepository implements AttendanceRepository {
 
   static const _leaveColumns =
       'id::text, employee_id, from_date, to_date, leave_type, status, reason, '
-      'approved_by, created_at, ai_summary, ai_source, '
+      'approved_by, created_at, ai_summary, ai_source, requester_roles, '
       '(select count(*)::int from leave_attachments a '
       'where a.leave_id = leave_requests.id) as file_count';
 
@@ -153,6 +155,7 @@ class PostgresAttendanceRepository implements AttendanceRepository {
     required DateTime toDate,
     required String leaveType,
     String? reason,
+    String? requesterRoles,
   }) {
     return _db.transaction((tx) async {
       // Khóa các đơn của người này để hai request song song không cùng lọt qua.
@@ -174,8 +177,9 @@ class PostgresAttendanceRepository implements AttendanceRepository {
       final inserted = await tx.execute(
         Sql.named(
           'insert into leave_requests '
-          '(employee_id, from_date, to_date, leave_type, reason) '
-          'values (@employee, @from, @to, @type, @reason) '
+          '(employee_id, from_date, to_date, leave_type, reason, '
+          'requester_roles) values (@employee, @from, @to, @type, @reason, '
+          '@roles) '
           'returning $_leaveColumns',
         ),
         parameters: {
@@ -184,6 +188,7 @@ class PostgresAttendanceRepository implements AttendanceRepository {
           'to': toDate,
           'type': leaveType,
           'reason': reason,
+          'roles': TypedValue(Type.text, requesterRoles),
         },
       );
       final leave = _leave(inserted.first.toColumnMap());
@@ -204,11 +209,13 @@ class PostgresAttendanceRepository implements AttendanceRepository {
     required bool approve,
     required String decidedBy,
     String? deciderEmployeeId,
+    Claims? decider,
   }) {
     return _db.transaction((tx) async {
       final current = await tx.execute(
         Sql.named(
-          'select status, employee_id, from_date, to_date from leave_requests '
+          'select status, employee_id, from_date, to_date, requester_roles '
+          'from leave_requests '
           'where id::text = @id for update',
         ),
         parameters: {'id': id},
@@ -219,6 +226,13 @@ class PostgresAttendanceRepository implements AttendanceRepository {
         throw const LeaveRuleViolation(
           'self_approval',
           'You cannot decide your own leave request',
+        );
+      }
+      if (decider != null &&
+          isPeerApprover(row['requester_roles'] as String?, decider)) {
+        throw const LeaveRuleViolation(
+          'peer_approval',
+          'This request goes to a higher level',
         );
       }
       if (row['status'] != 'pending') {
@@ -272,6 +286,7 @@ class PostgresAttendanceRepository implements AttendanceRepository {
       _ => null,
     },
     aiSource: r['ai_source'] as String?,
+    requesterRoles: r['requester_roles'] as String?,
     fileCount: r['file_count'] as int? ?? 0,
   );
 

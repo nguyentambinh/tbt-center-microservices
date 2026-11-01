@@ -17,6 +17,7 @@ EmployeeSummary employeeSummaryFromJson(Map<String, dynamic> json) => EmployeeSu
       position: json['position'] as String?,
       department: json['department'] as String?,
       company: json['company'] as String?,
+      region: json['region'] as String?,
     );
 
 EmployeePage employeePageFromJson(Map<String, dynamic> json, {bool fromCache = false}) => EmployeePage(

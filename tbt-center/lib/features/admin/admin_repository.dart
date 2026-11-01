@@ -6,6 +6,8 @@
  * Ngày:   2026-10-26
  */
 
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,12 +21,11 @@ typedef DbActivity = ({String day, int events});
 typedef DbInfo = ({String name, int? sizeBytes, List<DbTable> tables, List<DbActivity> activity, bool available});
 typedef DataOverview = ({List<DbInfo> databases, Map<String, int>? accounts});
 typedef AdminUser = ({String id, String username, String name, String? email, bool enabled, String? region, String? employeeId, List<String> roles});
-typedef SqlResult = ({List<String> columns, List<List<Object?>> rows, int affected, bool truncated});
 typedef Backup = ({String name, int sizeBytes, DateTime createdAt, String downloadUrl});
 typedef Holiday = ({DateTime date, String name});
 typedef PositionItem = ({String id, String name, int level, double coefficient, int holders});
 
-/// Quản trị dữ liệu khu vực: thống kê, tài khoản, lịch làm việc, chức vụ, SQL, sao lưu
+/// Quản trị dữ liệu khu vực: thống kê, tài khoản, lịch làm việc, chức vụ, sao lưu
 class AdminRepository {
   AdminRepository(this._dio, {required this.baseUrl});
 
@@ -48,8 +49,8 @@ class AdminRepository {
     );
   }
 
-  Future<List<AdminUser>> users(String query) async {
-    final d = await _send(() => _dio.get<Map<String, dynamic>>('$baseUrl/admin/users', queryParameters: {if (query.isNotEmpty) 'q': query}));
+  Future<List<AdminUser>> users(String query, {String? role}) async {
+    final d = await _send(() => _dio.get<Map<String, dynamic>>('$baseUrl/admin/users', queryParameters: {if (query.isNotEmpty) 'q': query, 'role': ?role}));
     return [for (final u in d['items'] as List? ?? const []) _user(u as Map<String, dynamic>)];
   }
 
@@ -58,20 +59,35 @@ class AdminRepository {
             data: {'enabled': ?enabled, 'addRoles': add.toList(), 'removeRoles': remove.toList()})),
       );
 
-  Future<SqlResult> runSql(String database, String sql, {required bool write}) async {
-    final d = await _send(() => _dio.post<Map<String, dynamic>>('$baseUrl/admin/sql', data: {'database': database, 'sql': sql, 'write': write}));
-    return (
-      columns: [for (final c in d['columns'] as List? ?? const []) '$c'],
-      rows: [for (final r in d['rows'] as List? ?? const []) List<Object?>.from(r as List)],
-      affected: (d['affected'] as num? ?? 0).toInt(),
-      truncated: d['truncated'] == true,
-    );
+  Future<({String accessToken, int expiresIn, String by})> impersonate(String id) async {
+    final d = await _send(() => _dio.post<Map<String, dynamic>>('$baseUrl/admin/users/$id/impersonate'));
+    return (accessToken: d['accessToken'] as String, expiresIn: (d['expiresIn'] as num? ?? 300).toInt(), by: d['by'] as String? ?? '');
   }
 
   Future<List<Backup>> backups() async {
     final d = await _send(() => _dio.get<Map<String, dynamic>>('$baseUrl/admin/backups'));
     return [for (final b in d['items'] as List? ?? const []) _backup(b as Map<String, dynamic>)];
   }
+
+  /// Tải tệp sao lưu từ máy lên kho của khu vực, trả tên bản vừa tải
+  Future<void> uploadBackup(Uint8List bytes) async {
+    final target = await _send(() => _dio.post<Map<String, dynamic>>('$baseUrl/admin/backups/upload-url'));
+    try {
+      await _dio.put<void>(
+        target['uploadUrl'] as String,
+        data: Stream.fromIterable([bytes]),
+        options: Options(headers: {Headers.contentLengthHeader: bytes.length}, sendTimeout: const Duration(minutes: 5), extra: {noCache: true}),
+      );
+    } on DioException catch (e) {
+      throw e.error is AppFailure ? e.error! : AppFailure.fromDio(e);
+    }
+  }
+
+  Future<int> restoreBackup(String name, {required String confirm}) async => (await _send(() => _dio.post<Map<String, dynamic>>(
+        '$baseUrl/admin/backups/restore',
+        data: {'name': name, 'confirm': confirm},
+        options: Options(receiveTimeout: const Duration(minutes: 5)),
+      )))['addedRows'] as int? ?? 0;
 
   Future<void> createBackup() => _send(() => _dio.post<Map<String, dynamic>>('$baseUrl/admin/backups', options: Options(receiveTimeout: const Duration(minutes: 3))));
 
@@ -150,4 +166,4 @@ final adminOverviewProvider = FutureProvider.autoDispose<DataOverview>((ref) => 
 final adminBackupsProvider = FutureProvider.autoDispose<List<Backup>>((ref) => ref.watch(adminRepositoryProvider).backups());
 final adminPositionsProvider = FutureProvider.autoDispose<List<PositionItem>>((ref) => ref.watch(adminRepositoryProvider).positions());
 final adminHolidaysProvider = FutureProvider.autoDispose.family<List<Holiday>, int>((ref, year) => ref.watch(adminRepositoryProvider).holidays(year));
-final adminUsersProvider = FutureProvider.autoDispose.family<List<AdminUser>, String>((ref, q) => ref.watch(adminRepositoryProvider).users(q));
+final adminUsersProvider = FutureProvider.autoDispose.family<List<AdminUser>, ({String query, String? role})>((ref, q) => ref.watch(adminRepositoryProvider).users(q.query, role: q.role));

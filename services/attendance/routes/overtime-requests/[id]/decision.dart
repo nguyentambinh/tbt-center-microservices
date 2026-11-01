@@ -38,6 +38,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
       approve: approve,
       decidedBy: claims.username,
       deciderEmployeeId: claims.employeeId,
+      decider: claims,
     );
     if (request == null) {
       return apiError(404, 'not_found', 'Overtime request $id not found');

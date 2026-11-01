@@ -31,7 +31,8 @@ void main() {
     final roles = requesterRolesOf(_as(['finance']));
     expect(isPeerApprover(roles, _as(['finance'])), isTrue);
     expect(isPeerApprover(roles, _as(['finance', 'group'])), isFalse);
-    expect(isPeerApprover(roles, _as(['hr'])), isFalse);
+    expect(isPeerApprover(roles, _as(['hr'])), isTrue);
+    expect(isPeerApprover(roles, _as(['executive'])), isFalse);
   });
 
   test('văn phòng quản lý nước: HR hoặc văn phòng tập đoàn duyệt', () {

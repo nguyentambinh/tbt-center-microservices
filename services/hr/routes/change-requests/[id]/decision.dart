@@ -42,6 +42,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
       approve: approve,
       decidedBy: claims.employeeId ?? claims.subject,
       note: body['note'] as String?,
+      decider: claims,
     );
     if (decided == null) {
       return apiError(HttpStatus.notFound, 'not_found', 'No request $id');
@@ -50,6 +51,9 @@ Future<Response> onRequest(RequestContext context, String id) async {
     if (approve) await invalidateCache(cache, employeesCache);
     return Response.json(body: decided);
   } on ChangeRequestViolation catch (e) {
-    return apiError(HttpStatus.conflict, e.code, e.message);
+    final status = e.code == 'peer_approval'
+        ? HttpStatus.forbidden
+        : HttpStatus.conflict;
+    return apiError(status, e.code, e.message);
   }
 }

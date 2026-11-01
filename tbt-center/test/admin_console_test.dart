@@ -9,7 +9,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tbtcenter/core/error/app_failure.dart';
 import 'package:tbtcenter/features/admin/admin_repository.dart';
 
 import 'helpers.dart';
@@ -35,13 +34,6 @@ class FakeAdminRepository extends AdminRepository {
   @override
   Future<List<Backup>> backups() async => const [];
 
-  @override
-  Future<SqlResult> runSql(String database, String sql, {required bool write}) async {
-    if (sql.toLowerCase().startsWith('delete')) {
-      throw const AppFailure(FailureKind.validation, statusCode: 400, serverCode: 'read_only', serverMessage: 'cannot execute DELETE in a read-only transaction');
-    }
-    return (columns: ['id', 'name'], rows: [['E1', 'Lê Minh Thư']], affected: 1, truncated: false);
-  }
 }
 
 Future<void> _pump(WidgetTester tester) async {
@@ -65,26 +57,4 @@ void main() {
     expect(find.text('2 bảng · 100 dòng · 9.0 MB'), findsOneWidget);
   });
 
-  testWidgets('SQL chỉ đọc: câu ghi báo lỗi dễ hiểu, có chi tiết kỹ thuật', (tester) async {
-    await _pump(tester);
-    await tester.ensureVisible(find.widgetWithText(Tab, 'Dữ liệu'));
-    await tester.tap(find.widgetWithText(Tab, 'Dữ liệu'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('admin-sql')), 'delete from employees');
-    await tester.ensureVisible(find.text('Chạy'));
-    await tester.tap(find.text('Chạy'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('bật Cho phép ghi'), findsOneWidget);
-    await tester.ensureVisible(find.text('Chi tiết kỹ thuật'));
-    await tester.tap(find.text('Chi tiết kỹ thuật'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('read-only transaction'), findsOneWidget);
-
-    await tester.enterText(find.byKey(const Key('admin-sql')), 'select id, name from employees');
-    await tester.ensureVisible(find.text('Chạy'));
-    await tester.tap(find.text('Chạy'));
-    await tester.pumpAndSettle();
-    expect(find.text('1 dòng'), findsOneWidget);
-    expect(find.text('Lê Minh Thư'), findsOneWidget);
-  });
 }

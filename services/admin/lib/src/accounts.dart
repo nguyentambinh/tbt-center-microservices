@@ -31,5 +31,27 @@ String? accountChangeRefusal({
   if (!actor.isGroup && target.region != serviceRegion) return 'other_region';
   final allowed = actor.isGroup ? groupAssignableRoles : regionAssignableRoles;
   if (!{...add, ...remove}.every(allowed.contains)) return 'role_not_allowed';
+  // Thăng lên cấp tập đoàn là một chiều
+  if (remove.contains(groupRole)) return 'group_demotion';
+  return null;
+}
+
+/// Lý do không cho vào thay tài khoản; `null` là được. Chỉ vào được cấp dưới:
+/// quản trị nước vào nhân sự trong nước, quản trị tập đoàn vào thêm văn phòng
+/// và quản trị từng nước
+String? impersonationRefusal({
+  required Claims actor,
+  required KeycloakUser target,
+  required List<String> targetRoles,
+  required String serviceRegion,
+}) {
+  if (target.id == actor.subject) return 'self_change';
+  if (!target.enabled) return 'account_disabled';
+  if (!actor.isGroup && target.region != serviceRegion) return 'other_region';
+  if (targetRoles.contains(groupRole)) return 'higher_account';
+  if (!actor.isGroup &&
+      (targetRoles.contains('admin') || targetRoles.contains('executive'))) {
+    return 'higher_account';
+  }
   return null;
 }

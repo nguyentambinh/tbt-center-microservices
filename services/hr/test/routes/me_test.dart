@@ -37,6 +37,8 @@ Claims _claims({
 });
 
 void main() {
+  setUpAll(() => registerFallbackValue(Claims(const {})));
+
   late _MockContext context;
   late _MockEmployees employees;
   late _MockRequests requests;
@@ -86,7 +88,7 @@ void main() {
   });
 
   test('gửi đề xuất sửa số điện thoại thì 201', () async {
-    when(() => requests.create('E1', {'phone': '0901'}, reason: 'Đổi số'))
+    when(() => requests.create('E1', {'phone': '0901'}, reason: 'Đổi số', requesterRoles: any(named: 'requesterRoles')))
         .thenAnswer(
           (_) async => {'id': 1, 'status': 'pending'},
         );
@@ -103,7 +105,7 @@ void main() {
   });
 
   test('đã có đề xuất đang chờ thì 409', () async {
-    when(() => requests.create(any(), any(), reason: any(named: 'reason')))
+    when(() => requests.create(any(), any(), reason: any(named: 'reason'), requesterRoles: any(named: 'requesterRoles')))
         .thenThrow(
           const ChangeRequestViolation('pending_exists', 'waiting'),
         );
@@ -121,7 +123,7 @@ void main() {
   });
 
   test('HR duyệt đề xuất', () async {
-    when(() => requests.decide(7, approve: true, decidedBy: 'H1')).thenAnswer(
+    when(() => requests.decide(7, approve: true, decidedBy: 'H1', decider: any(named: 'decider'))).thenAnswer(
       (_) async => {'id': 7, 'status': 'approved'},
     );
     request(
@@ -136,7 +138,7 @@ void main() {
   });
 
   test('đề xuất đã xử lý thì 409, không có đề xuất thì 404', () async {
-    when(() => requests.decide(8, approve: false, decidedBy: 'H1', note: 'Sai'))
+    when(() => requests.decide(8, approve: false, decidedBy: 'H1', note: 'Sai', decider: any(named: 'decider')))
         .thenThrow(
           const ChangeRequestViolation('already_decided', 'done'),
         );
@@ -151,7 +153,7 @@ void main() {
       HttpStatus.conflict,
     );
 
-    when(() => requests.decide(9, approve: true, decidedBy: 'H1'))
+    when(() => requests.decide(9, approve: true, decidedBy: 'H1', decider: any(named: 'decider')))
         .thenAnswer((_) async => null);
     request(
       'POST',

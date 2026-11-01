@@ -24,7 +24,8 @@ Future<Response> onRequest(RequestContext context) {
 
 Future<Response> _list(RequestContext context) async {
   final query = context.request.uri.queryParameters;
-  final isManager = context.read<Claims>().hasAnyRole(managerRoles);
+  final claims = context.read<Claims>();
+  final isManager = claims.hasAnyRole(managerRoles);
 
   // Giống đơn nghỉ: quản lý không truyền employee thì xem tất cả để duyệt.
   String? employee;
@@ -37,7 +38,18 @@ Future<Response> _list(RequestContext context) async {
     employeeId: employee,
     status: query['status'],
   );
-  return Response.json(body: {'items': items});
+  // Danh sách duyệt không hiện đơn phải để cấp trên duyệt
+  final waiting = query['status'] == 'pending' && employee == null;
+  return Response.json(
+    body: {
+      'items': [
+        for (final item in items)
+          if (!waiting ||
+              !isPeerApprover(item['requesterRoles'] as String?, claims))
+            item,
+      ],
+    },
+  );
 }
 
 Future<Response> _create(RequestContext context) async {
@@ -71,6 +83,7 @@ Future<Response> _create(RequestContext context) async {
       workDate: workDate,
       hours: hours.toDouble(),
       reason: (body['reason'] as String?)?.trim(),
+      requesterRoles: requesterRolesOf(context.read<Claims>()),
     );
     return Response.json(statusCode: 201, body: request);
   } on LeaveRuleViolation catch (e) {

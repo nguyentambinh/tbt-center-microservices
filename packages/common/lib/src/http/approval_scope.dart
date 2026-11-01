@@ -23,11 +23,15 @@ String? requesterRolesOf(Claims claims) {
   return [...roles, if (claims.isGroup) groupRole].join(',');
 }
 
-/// Người duyệt cùng vai trò, cùng cấp (hoặc thấp hơn) với người gửi thì phải
-/// để cấp trên duyệt: cấp tập đoàn duyệt được đơn của cấp nước, không ngược lại
+/// `true` nếu [decider] không được duyệt đơn của người có [requesterRoles].
+/// Đơn của hr, finance do văn phòng quản lý hoặc cấp tập đoàn duyệt; đơn của
+/// executive do hr hoặc cấp tập đoàn duyệt; cấp tập đoàn chỉ cấp tập đoàn duyệt
 bool isPeerApprover(String? requesterRoles, Claims decider) {
   if (requesterRoles == null || requesterRoles.isEmpty) return false;
   final roles = requesterRoles.split(',');
-  if (decider.isGroup && !roles.contains(groupRole)) return false;
-  return roles.any((r) => r != groupRole && decider.hasAnyRole({r}));
+  final fromGroup = roles.contains(groupRole);
+  if (fromGroup && !decider.isGroup) return true;
+  if (!fromGroup && decider.isGroup) return false;
+  if (roles.contains('executive')) return decider.hasAnyRole({'executive'});
+  return !decider.hasAnyRole({'executive'});
 }

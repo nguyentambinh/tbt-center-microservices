@@ -34,6 +34,9 @@ Future<Response> onRequest(RequestContext context, String id) async {
   if (!hr && !mine) {
     return apiError(403, 'forbidden', 'Not your resignation');
   }
+  if (hr && isPeerApprover(found['requesterRoles'] as String?, claims)) {
+    return apiError(403, 'peer_approval', 'Goes to a higher level');
+  }
   final body = await jsonBody(context);
   final action = body['action'];
   if (action is! String) return apiError(400, 'invalid_action', 'action');

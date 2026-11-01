@@ -27,7 +27,7 @@ import '../providers/notification_providers.dart';
 
 /// Nhóm của từng loại thông báo, để lọc
 String notificationGroup(String kind) => switch (kind) {
-      'leave_requested' || 'leave_approved' || 'leave_rejected' || 'overtime_requested' || 'overtime_approved' || 'overtime_rejected' => 'attendance',
+      'leave_requested' || 'leave_approved' || 'leave_rejected' || 'overtime_requested' || 'overtime_approved' || 'overtime_rejected' || 'schedule_changed' => 'attendance',
       'candidate_applied' || 'candidate_status' || 'interview_scheduled' || 'interview_confirmed' || 'interview_confirmed_hr' || 'interview_proposed' => 'recruitment',
       'payroll_paid' || 'payroll_failed' || 'payslip_issued' || 'payroll_needs_attention' || 'salary_changed' || 'bonus_granted' || 'penalty_applied' => 'payroll',
       'finance_closed' => 'finance',
@@ -145,6 +145,7 @@ class _NotificationTile extends ConsumerWidget {
   static IconData _iconFor(String kind) => switch (kind) {
         'leave_requested' || 'leave_approved' || 'leave_rejected' => Icons.beach_access_outlined,
         'overtime_requested' || 'overtime_approved' || 'overtime_rejected' => Icons.more_time,
+        'schedule_changed' => Icons.edit_calendar_outlined,
         'candidate_applied' || 'candidate_status' => Icons.work_outline,
         'interview_scheduled' || 'interview_confirmed' || 'interview_confirmed_hr' || 'interview_proposed' => Icons.event,
         'payroll_paid' || 'payroll_failed' || 'payslip_issued' => Icons.payments_outlined,
@@ -194,6 +195,7 @@ String notificationText(AppLocalizations l10n, AppNotification n, String locale)
     'overtime_requested' => l10n.nOvertimeRequested('${p['employeeId']}', number(p['hours']), day(p['workDate'])),
     'overtime_approved' => l10n.nOvertimeApproved(day(p['workDate'])),
     'overtime_rejected' => l10n.nOvertimeRejected(day(p['workDate'])),
+    'schedule_changed' => l10n.nScheduleChanged(day(p['fromDate'])),
     'candidate_applied' => l10n.nCandidateApplied('${p['appliedPosition'] ?? '-'}'),
     'candidate_status' => l10n.nCandidateStatus(stageName(l10n, '${p['status']}')),
     'interview_scheduled' => l10n.nInterviewScheduled('${p['appliedPosition'] ?? '-'}', time(p['scheduledAt'])),

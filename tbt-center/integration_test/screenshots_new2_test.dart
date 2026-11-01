@@ -11,10 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tbtcenter/app.dart';
-import 'package:tbtcenter/core/auth/auth_controller.dart';
-import 'package:tbtcenter/core/locale/locale_providers.dart';
+import 'package:tbtcenter/core/auth/work_region.dart';
+import 'package:tbtcenter/core/config/env.dart';
 import 'package:tbtcenter/core/router/app_router.dart';
 
 import 'e2e_helpers.dart';
@@ -89,5 +87,41 @@ void main() {
   testWidgets('nhân viên bổ sung', (tester) async {
     await pumpAs(tester, 'employee.vn');
     await visit(tester, Routes.attendance, '41_cham_cong_nhan_vien');
+  });
+
+  testWidgets('ứng viên màn chính', (tester) async {
+    await pumpAs(tester, 'ungvien.cv');
+    await visit(tester, Routes.home, '34_man_chinh_ung_vien');
+  });
+
+  testWidgets('HR xếp lịch', (tester) async {
+    await pumpAs(tester, 'hr.vn');
+    await visit(tester, Routes.scheduleManage, '90_xep_lich');
+  });
+
+  testWidgets('tập đoàn xem tất cả', (tester) async {
+    await pumpAs(tester, 'anonymous1606');
+    ProviderScope.containerOf(tester.element(find.byType(MaterialApp))).read(workRegionProvider.notifier).select(Env.allRegions);
+    await visit(tester, Routes.home, '91_tat_ca_man_chinh');
+    await visit(tester, Routes.employees, '91_tat_ca_nhan_vien');
+    await visit(tester, Routes.projects, '91_tat_ca_du_an');
+  });
+
+  testWidgets('quản trị vào tài khoản', (tester) async {
+    await pumpAs(tester, 'admin.vn');
+    await visit(tester, Routes.adminConsole, '92_quan_tri_tong_quan', after: () async {
+      try {
+        await tapText(tester, 'Tài khoản');
+        await shot(tester, '92_tai_khoan');
+        await tester.tap(find.byIcon(Icons.arrow_forward).first);
+        await tester.pumpAndSettle();
+        await shot(tester, '92_xac_nhan_vao_tai_khoan');
+        await tapText(tester, 'Vào tài khoản này');
+        await waitLoaded(tester);
+        await shot(tester, '93_dang_xem_voi_tu_cach');
+      } on Object catch (e) {
+        debugPrint('BO QUA vao thay: $e');
+      }
+    });
   });
 }

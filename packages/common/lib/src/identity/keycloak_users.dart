@@ -8,6 +8,9 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+
+import 'package:crypto/crypto.dart';
 
 /// Lỗi gọi Keycloak Admin API (mất kết nối, sai quyền, không tìm thấy)
 class KeycloakException implements Exception {
@@ -67,6 +70,10 @@ class KeycloakUser {
   };
 }
 
+/// Client của app, phiên vào thay tài khoản đi qua đúng client này
+const impersonationClient = 'tbt-mobile';
+const impersonationRedirect = 'com.tbtcenter.tbtcenter:/oauthredirect';
+
 /// Quản lý tài khoản qua Keycloak Admin API bằng client có service account
 /// (client_credentials), dùng cho cấp vai trò tập đoàn và màn quản trị
 class KeycloakUsers {
@@ -114,6 +121,12 @@ class KeycloakUsers {
     return [for (final u in list) KeycloakUser.fromJson(u as Map<String, dynamic>)];
   }
 
+  /// Tài khoản mang vai trò realm [role]
+  Future<List<KeycloakUser>> withRole(String role, {int max = 200}) async {
+    final list = await _send('GET', 'roles/${Uri.encodeComponent(role)}/users', query: {'max': '$max', 'briefRepresentation': 'false'}) as List? ?? const [];
+    return [for (final u in list) KeycloakUser.fromJson(u as Map<String, dynamic>)];
+  }
+
   Future<KeycloakUser?> byEmployeeId(String employeeId) async =>
       (await search(attributes: {'employee_id': employeeId}, max: 2)).firstOrNull;
 
@@ -143,6 +156,74 @@ class KeycloakUsers {
     if (names.isEmpty) return;
     final roles = [for (final name in names) await _send('GET', 'roles/${Uri.encodeComponent(name)}')];
     await _send(method, 'users/$userId/role-mappings/realm', body: roles);
+  }
+
+  /// Phiên ngắn của [userId]: Admin API trả cookie phiên, dùng cookie đó đi hết
+  /// luồng PKCE của app để lấy access token. Không lấy refresh token
+  Future<({String accessToken, int expiresIn})> impersonate(String userId) async {
+    final token = await _token();
+    try {
+      final start = await _http.postUrl(baseUrl.resolve('/admin/realms/$realm/users/$userId/impersonation'));
+      start.headers
+        ..set(HttpHeaders.authorizationHeader, 'Bearer $token')
+        ..contentType = ContentType.json;
+      final started = await start.close().timeout(_timeout);
+      await started.drain<void>();
+      if (started.statusCode != 200) {
+        throw KeycloakException('impersonation HTTP ${started.statusCode}', status: started.statusCode);
+      }
+      final cookies = [for (final c in started.cookies) '${c.name}=${c.value}'].join('; ');
+
+      final random = Random.secure();
+      final verifier = base64Url.encode(List.generate(48, (_) => random.nextInt(256))).replaceAll('=', '');
+      final challenge = base64Url.encode(sha256.convert(ascii.encode(verifier)).bytes).replaceAll('=', '');
+      final authorize = await _http.getUrl(
+        baseUrl.resolve('/realms/$realm/protocol/openid-connect/auth').replace(
+          queryParameters: {
+            'client_id': impersonationClient,
+            'response_type': 'code',
+            'redirect_uri': impersonationRedirect,
+            'scope': 'openid',
+            'state': verifier.substring(0, 16),
+            'code_challenge': challenge,
+            'code_challenge_method': 'S256',
+          },
+        ),
+      );
+      authorize
+        ..followRedirects = false
+        ..headers.set(HttpHeaders.cookieHeader, cookies);
+      final authorized = await authorize.close().timeout(_timeout);
+      await authorized.drain<void>();
+      final location = authorized.headers.value(HttpHeaders.locationHeader);
+      final code = location == null ? null : Uri.parse(location).queryParameters['code'];
+      if (code == null) throw KeycloakException('impersonation no code HTTP ${authorized.statusCode}');
+
+      final exchange = await _http.postUrl(baseUrl.resolve('/realms/$realm/protocol/openid-connect/token'));
+      exchange.headers.contentType = ContentType('application', 'x-www-form-urlencoded');
+      exchange.write(
+        Uri(
+          queryParameters: {
+            'grant_type': 'authorization_code',
+            'client_id': impersonationClient,
+            'redirect_uri': impersonationRedirect,
+            'code': code,
+            'code_verifier': verifier,
+          },
+        ).query,
+      );
+      final exchanged = await exchange.close().timeout(_timeout);
+      final text = await utf8.decodeStream(exchanged);
+      if (exchanged.statusCode != 200) {
+        throw KeycloakException('impersonation token HTTP ${exchanged.statusCode}', status: exchanged.statusCode);
+      }
+      final json = jsonDecode(text) as Map<String, dynamic>;
+      return (accessToken: json['access_token']! as String, expiresIn: (json['expires_in'] as num? ?? 300).toInt());
+    } on KeycloakException {
+      rethrow;
+    } on Exception catch (e) {
+      throw KeycloakException(e.toString());
+    }
   }
 
   Future<String> _token() async {

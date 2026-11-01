@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../auth/auth_controller.dart';
 import '../config/env.dart';
 import '../error/app_failure.dart';
+import 'all_regions.dart';
 import 'connection_monitor.dart';
 import 'response_cache.dart';
 
@@ -42,17 +43,27 @@ class _TbtInterceptor extends Interceptor {
   _TbtInterceptor(Ref ref, this._dio)
       : _monitor = ref.read(connectionMonitorProvider.notifier),
         _auth = ref.read(authControllerProvider.notifier),
-        _cache = ref.read(responseCacheProvider);
+        _cache = ref.read(responseCacheProvider),
+        _homeRegion = ref.read(authControllerProvider).value?.region ?? 'vn';
 
   final Dio _dio;
   final ConnectionMonitor _monitor;
   final AuthController _auth;
   final ResponseCache _cache;
+  final String _homeRegion;
   static const _uuid = Uuid();
   static const _writeMethods = {'POST', 'PUT', 'PATCH', 'DELETE'};
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    if (isAllRegionsRequest(options)) {
+      try {
+        handler.resolve(await fetchAllRegions(_dio, options, homeRegion: _homeRegion));
+      } on DioException catch (e) {
+        handler.reject(e);
+      }
+      return;
+    }
     options.headers['X-Correlation-Id'] = _uuid.v4();
     if (Env.isKongUrl(options.uri)) {
       final token = await _auth.validAccessToken();

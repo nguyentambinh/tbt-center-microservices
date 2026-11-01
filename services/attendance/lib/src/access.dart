@@ -30,7 +30,7 @@ Object resolveEmployee(RequestContext context, String? requested) {
 Response ruleError(LeaveRuleViolation e) {
   final status = switch (e.code) {
     'overlap' || 'already_decided' || 'period_locked' => 409,
-    'self_approval' => 403,
+    'self_approval' || 'peer_approval' => 403,
     _ => 400,
   };
   return apiError(status, e.code, e.message);

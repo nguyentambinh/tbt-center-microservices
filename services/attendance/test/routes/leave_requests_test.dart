@@ -39,6 +39,8 @@ final _leave = LeaveRequest(
 );
 
 void main() {
+  setUpAll(() => registerFallbackValue(Claims(const {})));
+
   late _MockContext context;
   late _MockRepository repository;
 
@@ -132,6 +134,7 @@ void main() {
           toDate: any(named: 'toDate'),
           leaveType: 'Nghỉ phép năm',
           reason: any(named: 'reason'),
+          requesterRoles: any(named: 'requesterRoles'),
         ),
       ).thenAnswer((_) async => _leave);
 
@@ -157,6 +160,7 @@ void main() {
           toDate: any(named: 'toDate'),
           leaveType: any(named: 'leaveType'),
           reason: any(named: 'reason'),
+          requesterRoles: any(named: 'requesterRoles'),
         ),
       ).thenThrow(const LeaveRuleViolation('overlap', 'x'));
 
@@ -221,6 +225,7 @@ void main() {
           approve: true,
           decidedBy: 'tester',
           deciderEmployeeId: 'HR9',
+          decider: any(named: 'decider'),
         ),
       ).thenAnswer((_) async => _leave);
       final response = await decision_route.onRequest(context, 'L1');
@@ -240,6 +245,7 @@ void main() {
           approve: any(named: 'approve'),
           decidedBy: any(named: 'decidedBy'),
           deciderEmployeeId: any(named: 'deciderEmployeeId'),
+          decider: any(named: 'decider'),
         ),
       ).thenThrow(const LeaveRuleViolation('self_approval', 'x'));
       final response = await decision_route.onRequest(context, 'L1');

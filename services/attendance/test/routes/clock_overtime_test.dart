@@ -34,6 +34,8 @@ Claims _claims(List<String> roles, {String? employeeId = 'E1'}) => Claims({
 });
 
 void main() {
+  setUpAll(() => registerFallbackValue(Claims(const {})));
+
   late _MockContext context;
   late _MockClock clockRepository;
   late _MockOvertime overtimeRepository;
@@ -130,6 +132,7 @@ void main() {
         workDate: DateTime(2026, 10, 20),
         hours: 2,
         reason: 'Đổ bê tông',
+        requesterRoles: any(named: 'requesterRoles'),
       ),
     ).thenAnswer((_) async => {'id': 'O1', 'status': 'pending'});
     request('POST', '/overtime-requests', _claims(['employee']), {
@@ -154,6 +157,7 @@ void main() {
         approve: true,
         decidedBy: 'nv1',
         deciderEmployeeId: 'E1',
+        decider: any(named: 'decider'),
       ),
     ).thenThrow(const LeaveRuleViolation('self_approval', 'own request'));
     request('POST', '/overtime-requests/O1/decision', _claims(['hr']), {

@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/error/error_reporter.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -87,7 +88,7 @@ class _CandidatesPageState extends ConsumerState<CandidatesPage> {
                         ListTile(
                           title: Text(c.fullName),
                           subtitle: Text.rich(TextSpan(children: [
-                            TextSpan(text: c.appliedPosition ?? ''),
+                            TextSpan(text: [if (c.region case final r?) l10n.regionName(r), ?c.appliedPosition].join(' · ')),
                             if (c.bestScore case final s?) TextSpan(text: '  ·  ${l10n.bestMatch(s)}', style: TextStyle(color: matchColor(context, s), fontWeight: FontWeight.bold)),
                           ])),
                           trailing: StageChip(c.status),

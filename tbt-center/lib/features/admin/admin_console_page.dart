@@ -6,15 +6,18 @@
  * Ngày:   2026-10-26
  */
 
+import 'package:file_picker/file_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/auth/auth_controller.dart';
-import '../../core/error/app_failure.dart';
+import '../../core/auth/work_region.dart';
 import '../../core/error/error_reporter.dart';
+import '../../core/router/app_router.dart';
 import '../../core/locale/l10n_names.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/async_states.dart';
@@ -29,8 +32,8 @@ import '../../core/widgets/input_rules.dart';
 const _regionRoles = ['employee', 'hr', 'finance', 'auditor'];
 const _groupRoles = [..._regionRoles, 'executive', 'admin', 'group'];
 
-/// Cơ sở dữ liệu mở trong ô SQL (không có admin_db: nhật ký quản trị không sửa được)
-const _databases = ['hr_db', 'attendance_db', 'payroll_db', 'finance_db', 'project_contract_db', 'recruitment_db', 'notification_db', 'currency_db'];
+/// Loại tài khoản trong bộ lọc của tab Tài khoản
+const _accountTypes = ['group', 'executive', 'admin', 'hr', 'finance', 'employee', 'auditor', 'candidate'];
 
 String _bytes(int? b) => switch (b) {
       null => '-',
@@ -39,7 +42,7 @@ String _bytes(int? b) => switch (b) {
       _ => '${(b / 1024 / 1024 / 1024).toStringAsFixed(2)} GB',
     };
 
-/// Quản trị dữ liệu: tổng quan, tài khoản, lịch làm việc, chức vụ, SQL và sao lưu
+/// Quản trị dữ liệu: tổng quan, tài khoản, lịch làm việc, chức vụ và sao lưu
 class AdminConsolePage extends StatelessWidget {
   const AdminConsolePage({super.key});
 
@@ -208,11 +211,14 @@ class _AccountsTab extends ConsumerStatefulWidget {
 
 class _AccountsTabState extends ConsumerState<_AccountsTab> {
   String _query = '';
+  String? _role;
+
+  ({String query, String? role}) get _filter => (query: _query, role: _role);
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final users = ref.watch(adminUsersProvider(_query));
+    final users = ref.watch(adminUsersProvider(_filter));
     return Column(children: [
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -221,6 +227,25 @@ class _AccountsTabState extends ConsumerState<_AccountsTab> {
           decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.adminSearchAccounts, isDense: true),
           onSubmitted: (v) => setState(() => _query = v.trim()),
         ),
+      ),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(children: [
+          for (final r in [null, ..._accountTypes])
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                label: Text(switch (r) {
+                  null => l10n.regionAll,
+                  'group' => l10n.roleGroup,
+                  _ => l10n.roleName(r),
+                }),
+                selected: _role == r,
+                onSelected: (_) => setState(() => _role = r),
+              ),
+            ),
+        ]),
       ),
       Expanded(
         child: switch (users) {
@@ -237,17 +262,46 @@ class _AccountsTabState extends ConsumerState<_AccountsTab> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      trailing: const Icon(Icons.edit_outlined),
+                      trailing: _canOpen(u) ? IconButton(tooltip: l10n.adminImpersonate, icon: const Icon(Icons.arrow_forward), onPressed: () => _impersonate(u)) : null,
                       onTap: () => _edit(u),
                     ),
                   ),
               ],
             ),
-          AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(adminUsersProvider(_query))),
+          AsyncValue(:final error?) => ErrorView(error: error, onRetry: () => ref.invalidate(adminUsersProvider(_filter))),
           _ => const SkeletonList(),
         },
       ),
     ]);
+  }
+
+  /// Chỉ vào được tài khoản cấp dưới, server kiểm lại lần nữa
+  bool _canOpen(AdminUser user) {
+    final group = ref.read(authControllerProvider).value?.isGroup ?? false;
+    if (!user.enabled || user.roles.contains('group')) return false;
+    return group || !(user.roles.contains('admin') || user.roles.contains('executive'));
+  }
+
+  Future<void> _impersonate(AdminUser user) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(l10n.adminImpersonateConfirm(user.name.isEmpty ? user.username : user.name)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.adminImpersonate)),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      final session = await ref.read(adminRepositoryProvider).impersonate(user.id);
+      ref.read(authControllerProvider.notifier).startImpersonation(accessToken: session.accessToken, expiresIn: session.expiresIn, by: session.by);
+      if (mounted) context.go(Routes.home);
+    } on Object catch (e) {
+      reportFailure(e);
+    }
   }
 
   Future<void> _edit(AdminUser user) async {
@@ -271,7 +325,8 @@ class _AccountsTabState extends ConsumerState<_AccountsTab> {
                   FilterChip(
                     label: Text(r == 'group' ? l10n.roleGroup : l10n.roleName(r)),
                     selected: roles.contains(r),
-                    onSelected: (on) => setState(() => on ? roles.add(r) : roles.remove(r)),
+                    // Lên cấp tập đoàn là một chiều
+                    onSelected: r == 'group' && user.roles.contains('group') ? null : (on) => setState(() => on ? roles.add(r) : roles.remove(r)),
                   ),
               ]),
             ]),
@@ -288,7 +343,7 @@ class _AccountsTabState extends ConsumerState<_AccountsTab> {
     final remove = {for (final r in user.roles) if (assignable.contains(r) && !roles.contains(r)) r};
     try {
       await ref.read(adminRepositoryProvider).updateUser(user.id, enabled: enabled == user.enabled ? null : enabled, add: add, remove: remove);
-      ref.invalidate(adminUsersProvider(_query));
+      ref.invalidate(adminUsersProvider(_filter));
       showDone(l10n.adminSaved);
     } on Object catch (e) {
       reportFailure(e);
@@ -517,48 +572,55 @@ class _DataTab extends ConsumerStatefulWidget {
 }
 
 class _DataTabState extends ConsumerState<_DataTab> {
-  final _sql = TextEditingController(text: 'select * from employees limit 20');
-  String _database = _databases.first;
-  bool _write = false;
-  bool _running = false;
   bool _backingUp = false;
-  SqlResult? _result;
-  AppFailure? _failure;
 
-  @override
-  void dispose() {
-    _sql.dispose();
-    super.dispose();
-  }
-
-  Future<void> _run() async {
+  Future<void> _upload() async {
     final l10n = AppLocalizations.of(context);
-    if (_write) {
-      final ok = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: Text(l10n.adminSqlWriteConfirm),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
-            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.adminSqlRun)),
-          ],
-        ),
-      );
-      if (ok != true) return;
-    }
-    setState(() {
-      _running = true;
-      _failure = null;
-    });
+    final picked = await FilePicker.pickFile(type: FileType.any);
+    if (picked == null) return;
+    setState(() => _backingUp = true);
     try {
-      final result = await ref.read(adminRepositoryProvider).runSql(_database, _sql.text, write: _write);
-      if (mounted) setState(() => _result = result);
-    } on AppFailure catch (e) {
-      if (mounted) setState(() => _failure = e);
+      final bytes = await picked.readAsBytes();
+      await ref.read(adminRepositoryProvider).uploadBackup(bytes);
+      ref.invalidate(adminBackupsProvider);
+      showDone(l10n.adminBackupUploaded);
     } on Object catch (e) {
       reportFailure(e);
     } finally {
-      if (mounted) setState(() => _running = false);
+      if (mounted) setState(() => _backingUp = false);
+    }
+  }
+
+  Future<void> _restore(Backup backup) async {
+    final l10n = AppLocalizations.of(context);
+    final region = ref.read(workRegionProvider);
+    final typed = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.adminRestore),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(l10n.adminRestoreConfirm(l10n.regionName(region), backup.name, region)),
+          const SizedBox(height: 12),
+          TextField(controller: typed, inputFormatters: InputRules.country, autofocus: true),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.adminRestore)),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    setState(() => _backingUp = true);
+    try {
+      final added = await ref.read(adminRepositoryProvider).restoreBackup(backup.name, confirm: typed.text.trim().toLowerCase());
+      ref.invalidate(adminBackupsProvider);
+      showDone(l10n.adminRestoreDone(added));
+    } on Object catch (e) {
+      reportFailure(e);
+    } finally {
+      typed.dispose();
+      if (mounted) setState(() => _backingUp = false);
     }
   }
 
@@ -581,65 +643,16 @@ class _DataTabState extends ConsumerState<_DataTab> {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final backups = ref.watch(adminBackupsProvider);
-    final mono = TextStyle(fontFamily: 'monospace', fontSize: 13, color: context.tbt.textMain);
+    final group = ref.watch(authControllerProvider).value?.isGroup ?? false;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Text(l10n.adminSql, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(l10n.adminSqlHint, style: TextStyle(fontSize: 12, color: context.tbt.textSecondary)),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _database,
-                decoration: InputDecoration(labelText: l10n.adminDatabases, isDense: true),
-                items: [for (final d in _databases) DropdownMenuItem(value: d, child: Text(d))],
-                onChanged: (v) => setState(() => _database = v ?? _database),
-              ),
-              const SizedBox(height: 12),
-              TextField(inputFormatters: InputRules.sql, key: const Key('admin-sql'), controller: _sql, minLines: 3, maxLines: 8, style: mono, decoration: const InputDecoration(alignLabelWithHint: true)),
-              SwitchListTile(contentPadding: EdgeInsets.zero, title: Text(l10n.adminSqlWrite), value: _write, onChanged: (v) => setState(() => _write = v)),
-              FilledButton.icon(
-                onPressed: _running ? null : _run,
-                icon: _running ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.play_arrow),
-                label: Text(l10n.adminSqlRun),
-              ),
-              if (_failure case final f?) ...[
-                const SizedBox(height: 12),
-                Text(f.message(l10n), style: TextStyle(color: context.tbt.danger)),
-                if (f.serverMessage case final detail?)
-                  ExpansionTile(tilePadding: EdgeInsets.zero, title: Text(l10n.adminTechnical, style: const TextStyle(fontSize: 13)), children: [SelectableText(detail, style: mono)]),
-              ],
-              if (_result case final r? when _failure == null) ...[
-                const SizedBox(height: 12),
-                Text(r.columns.isEmpty ? l10n.adminSqlAffected(r.affected) : l10n.adminSqlRows(r.rows.length), style: const TextStyle(fontWeight: FontWeight.bold)),
-                if (r.truncated) Text(l10n.adminSqlTruncated, style: TextStyle(fontSize: 12, color: context.tbt.caution)),
-                if (r.columns.isNotEmpty)
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      headingRowHeight: 36,
-                      dataRowMinHeight: 32,
-                      dataRowMaxHeight: 48,
-                      columns: [for (final c in r.columns) DataColumn(label: Text(c, style: mono.copyWith(fontWeight: FontWeight.bold)))],
-                      rows: [
-                        for (final row in r.rows)
-                          DataRow(cells: [
-                            for (final v in row)
-                              DataCell(ConstrainedBox(constraints: const BoxConstraints(maxWidth: 260), child: Text('${v ?? 'null'}', style: mono, overflow: TextOverflow.ellipsis))),
-                          ]),
-                      ],
-                    ),
-                  ),
-              ],
-            ]),
-          ),
-        ),
-        const SizedBox(height: 8),
         Row(children: [
           Expanded(child: Text(l10n.adminBackups, style: const TextStyle(fontWeight: FontWeight.bold))),
+          if (group) ...[
+            OutlinedButton.icon(onPressed: _backingUp ? null : _upload, icon: const Icon(Icons.upload_file), label: Text(l10n.adminBackupUpload)),
+            const SizedBox(width: 8),
+          ],
           FilledButton.icon(
             onPressed: _backingUp ? null : _backup,
             icon: _backingUp ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.backup_outlined),
@@ -655,11 +668,14 @@ class _DataTabState extends ConsumerState<_DataTab> {
                     leading: const Icon(Icons.inventory_2_outlined),
                     title: Text(DateFormat.yMMMd(locale).add_Hm().format(b.createdAt.toLocal())),
                     subtitle: Text('${b.name} · ${_bytes(b.sizeBytes)}'),
-                    trailing: IconButton(
-                      tooltip: l10n.adminDownload,
-                      icon: const Icon(Icons.download_outlined),
-                      onPressed: b.downloadUrl.isEmpty ? null : () => launchUrl(Uri.parse(b.downloadUrl), mode: LaunchMode.externalApplication),
-                    ),
+                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                      if (group) IconButton(tooltip: l10n.adminRestore, icon: Icon(Icons.settings_backup_restore, color: context.tbt.danger), onPressed: _backingUp ? null : () => _restore(b)),
+                      IconButton(
+                        tooltip: l10n.adminDownload,
+                        icon: const Icon(Icons.download_outlined),
+                        onPressed: b.downloadUrl.isEmpty ? null : () => launchUrl(Uri.parse(b.downloadUrl), mode: LaunchMode.externalApplication),
+                      ),
+                    ]),
                   ),
               ]),
             ),

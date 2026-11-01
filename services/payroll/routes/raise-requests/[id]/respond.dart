@@ -51,6 +51,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
       employeeId: claims.employeeId,
       amount: (body['amount'] as num?)?.toDouble(),
       note: (body['note'] as String?)?.trim(),
+      decider: claims,
     );
     if (updated == null) {
       return apiError(404, 'not_found', 'No raise request $id');
@@ -61,6 +62,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
       switch (e.code) {
         'not_found' => 404,
         'amount_lowered' => 400,
+        'self_approval' || 'peer_approval' => 403,
         _ => 409,
       },
       e.code,

@@ -207,6 +207,7 @@
   "leaveDecided": "Đã cập nhật đơn",
   "errOverlap": "Khoảng thời gian này trùng với một đơn nghỉ khác",
   "errTooLong": "Mỗi đơn nghỉ tối đa 30 ngày",
+  "errFieldTooLong": "Nội dung nhập quá dài, hãy rút ngắn lại",
   "errInvalidDates": "Ngày kết thúc phải sau ngày bắt đầu",
   "errAlreadyDecided": "Đơn này đã được xử lý trước đó",
   "errSelfApproval": "Bạn không thể tự duyệt đơn của mình",
@@ -1907,6 +1908,118 @@
     }
   },
   "errShiftEnded": "Đã qua giờ kết thúc ca nên không chấm vào được nữa",
+  "adminBackupUpload": "Tải tệp lên",
+  "adminBackupUploaded": "Đã tải bản sao lưu lên, chọn Khôi phục ở bản đó",
+  "adminRestore": "Khôi phục",
+  "adminRestoreConfirm": "Bản {name} sẽ bổ sung vào {region} những dòng đang thiếu. Dữ liệu đang có, kể cả mới hơn, được giữ nguyên, dòng đã xóa sau lúc sao lưu sẽ quay lại. Nhập {code} để xác nhận.",
+  "@adminRestoreConfirm": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "adminRestoreDone": "Đã bổ sung {n} dòng còn thiếu",
+  "@adminRestoreDone": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "errGroupAdminOnly": "Chỉ quản trị tập đoàn làm được thao tác này",
+  "errInvalidBackup": "Tệp này không phải bản sao lưu hợp lệ",
+  "errWrongRegion": "Bản sao lưu này của nước khác, chọn đúng nước ở nút Đang xem",
+  "errRestoreNotConfirmed": "Mã xác nhận chưa đúng",
+  "evBackupRestored": "Quản trị khôi phục dữ liệu từ bản sao lưu",
+  "errGroupDemotion": "Tài khoản đã lên cấp tập đoàn thì không hạ về khu vực được",
+  "adminImpersonate": "Vào tài khoản này",
+  "adminImpersonateConfirm": "Vào tài khoản {name}? Bạn làm việc như người đó trong tối đa 15 phút, mọi lần vào đều ghi sổ kiểm toán.",
+  "@adminImpersonateConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonatingAs": "Đang xem với tư cách {name}",
+  "@impersonatingAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonationExit": "Thoát",
+  "errHigherAccount": "Không vào được tài khoản cùng cấp hoặc cấp cao hơn",
+  "errAccountDisabled": "Tài khoản này đang bị khóa",
+  "evAccountImpersonated": "Quản trị vào tài khoản khác",
+  "regionAll": "Tất cả",
+  "errPickRegion": "Chọn một nước ở nút Đang xem trước khi thao tác hoặc xem số liệu riêng",
+  "errPeerApproval": "Đơn này do cấp trên duyệt, bạn không duyệt được",
+  "errClockTooEarly": "Chưa tới giờ chấm vào, chỉ chấm được từ 30 phút trước giờ vào ca",
+  "errClockOutClosed": "Đã quá giờ chấm ra, chỉ chấm được tới 30 phút sau giờ hết ca",
+  "errInvalidEmployees": "Chọn từ 1 đến 200 nhân viên",
+  "errInvalidWeekdays": "Chọn ít nhất một thứ trong tuần",
+  "clockOpensAt": "Mở chấm vào lúc {time}",
+  "@clockOpensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "clockClosedAt": "Đã đóng chấm ra lúc {time}",
+  "@clockClosedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleManage": "Xếp lịch làm việc",
+  "scheduleManageHint": "Đặt lịch, giờ làm theo dự án",
+  "scheduleRange": "Khoảng ngày",
+  "schedulePickRange": "Chạm để chọn ngày bắt đầu và kết thúc",
+  "scheduleShiftName": "Tên ca (không bắt buộc)",
+  "scheduleProject": "Dự án",
+  "scheduleAllMembers": "Tất cả thành viên ({n})",
+  "@scheduleAllMembers": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "scheduleViewDays": "Xem lịch từng ngày",
+  "scheduleNoShift": "Chưa có lịch",
+  "scheduleSave": "Lưu lịch",
+  "scheduleClear": "Bỏ lịch trong khoảng này",
+  "scheduleClearConfirm": "Bỏ lịch của những người đã chọn trong khoảng ngày này? Ngày đã chấm công vẫn giữ nguyên.",
+  "scheduleSaved": "Đã cập nhật {n} ngày làm việc",
+  "@scheduleSaved": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "nScheduleChanged": "Lịch làm việc của bạn từ {date} vừa được cập nhật",
+  "@nScheduleChanged": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "evScheduleChanged": "HR đặt lịch làm việc",
+  "evScheduleCleared": "HR bỏ lịch làm việc",
   "errTooManyFiles": "Mỗi đơn chỉ đính kèm tối đa 5 tệp",
   "errFileType": "Loại tệp không được nhận, hãy chọn đúng loại tệp yêu cầu",
   "addEvidence": "Thêm minh chứng",
@@ -2689,29 +2802,6 @@
     }
   },
   "adminDeletePosition": "Xóa chức vụ",
-  "adminSql": "Truy vấn SQL",
-  "adminSqlHint": "Mặc định chỉ đọc; mỗi lần chạy đều được ghi vào sổ kiểm toán",
-  "adminSqlWrite": "Cho phép ghi (INSERT, UPDATE, DELETE)",
-  "adminSqlWriteConfirm": "Câu lệnh sẽ sửa dữ liệu thật và được ghi vào sổ kiểm toán. Chạy?",
-  "adminSqlRun": "Chạy",
-  "adminSqlRows": "{n} dòng",
-  "@adminSqlRows": {
-    "placeholders": {
-      "n": {
-        "type": "int"
-      }
-    }
-  },
-  "adminSqlAffected": "Đã tác động {n} dòng",
-  "@adminSqlAffected": {
-    "placeholders": {
-      "n": {
-        "type": "int"
-      }
-    }
-  },
-  "adminSqlTruncated": "Chỉ hiện 500 dòng đầu",
-  "adminTechnical": "Chi tiết kỹ thuật",
   "adminBackups": "Sao lưu",
   "adminBackupNow": "Sao lưu ngay",
   "adminBackupDone": "Đã sao lưu toàn bộ dữ liệu khu vực",
@@ -2720,10 +2810,6 @@
   "errGroupOnly": "Chỉ văn phòng quản lý tập đoàn duyệt được đề cử này",
   "errSamePosition": "Nhân viên đang giữ chức vụ này rồi",
   "errInUse": "Còn người giữ chức vụ này nên chưa xóa được",
-  "errReadOnly": "Câu lệnh có ghi dữ liệu; bật Cho phép ghi nếu thật sự muốn sửa",
-  "errSqlError": "Câu lệnh không chạy được, xem chi tiết kỹ thuật bên dưới",
-  "errUnknownDatabase": "Chọn cơ sở dữ liệu trong danh sách",
-  "errEmptySql": "Nhập câu lệnh SQL",
   "errStorageUnavailable": "Kho lưu trữ chưa sẵn sàng, thử lại sau",
   "errIdentityUnavailable": "Chưa kết nối được dịch vụ tài khoản, thử lại sau",
   "errOtherRegion": "Tài khoản này thuộc khu vực khác",
@@ -2867,7 +2953,6 @@
       }
     }
   },
-  "errProtectedDatabase": "Cơ sở dữ liệu nhật ký quản trị không được truy vấn ở đây",
   "errPastDate": "Chỉ xin nghỉ cho ngày tương lai (từ ngày mai trở đi)",
   "leaveAttach": "Đính kèm minh chứng (Word, PDF, ảnh)",
   "approvalsOthers": "Đơn của nhân viên chờ bạn duyệt ({n})",

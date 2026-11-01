@@ -4,13 +4,15 @@
 # Các bước: dump mọi database trên máy chủ → sao lưu database local đang có →
 # xóa, tạo lại, nạp bản của máy chủ. Chỉ bật Postgres primary của khu vực đó.
 # Cách dùng: bash deploy/scripts/pull-vps.sh root@<máy chủ> <vn|us|de|br|za|au|hub>
-# Tệp nằm ở deploy/backups/<khu vực>/vps-<thời điểm>/ và local-<thời điểm>/, không lên git.
+# Tệp nằm ở $BACKUPS/<khu vực>/vps-<thời điểm>/ và local-<thời điểm>/, không lên git.
 set -euo pipefail
 
 HOST=${1:?Cách dùng: pull-vps.sh root@<máy chủ> <khu vực|hub>}
 TARGET=${2:?Cách dùng: pull-vps.sh root@<máy chủ> <khu vực|hub>}
 DIR=$(cd "$(dirname "$0")/../.." && (pwd -W 2>/dev/null || pwd))
 export MSYS_NO_PATHCONV=1
+# Nơi lưu bản kéo về, mặc định deploy/backups
+BACKUPS=${BACKUPS:-$DIR/deploy/backups}
 STAMP=$(date +%Y%m%d-%H%M%S)
 
 if [ "$TARGET" = hub ]; then
@@ -30,8 +32,8 @@ remote() { ssh "$HOST" "$REMOTE sh -c '$1'"; }
 remote_sql() { printf '%s' "$1" | ssh "$HOST" "$REMOTE sh -c 'psql -tA -U \"\$POSTGRES_USER\" -d postgres'"; }
 local_psql() { docker exec -i "$LOCAL" sh -c "$1"; }
 
-VPS_DIR="$DIR/deploy/backups/$TARGET/vps-$STAMP"
-LOCAL_DIR="$DIR/deploy/backups/$TARGET/local-$STAMP"
+VPS_DIR="$BACKUPS/$TARGET/vps-$STAMP"
+LOCAL_DIR="$BACKUPS/$TARGET/local-$STAMP"
 mkdir -p "$VPS_DIR" "$LOCAL_DIR"
 
 DATABASES=$(remote_sql "select datname from pg_database where datname like '%\_db' order by 1")
@@ -56,4 +58,4 @@ done
 
 docker stop "$LOCAL" >/dev/null
 (cd "$VPS_DIR" && sha256sum *.dump > SHA256SUMS)
-echo "Xong $TARGET. Bản local cũ: deploy/backups/$TARGET/local-$STAMP"
+echo "Xong $TARGET. Bản local cũ: $LOCAL_DIR"

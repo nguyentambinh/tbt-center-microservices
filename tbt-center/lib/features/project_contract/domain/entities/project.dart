@@ -24,6 +24,7 @@ class ProjectSummary {
     this.startDate,
     this.endDate,
     this.valueUsd,
+    this.region,
   });
 
   final String id;
@@ -54,6 +55,9 @@ class ProjectSummary {
   final DateTime? startDate;
   final DateTime? endDate;
   final double? valueUsd;
+
+  /// Có khi xem gộp mọi nước
+  final String? region;
 
   bool get accepted => status == 'accepted';
 

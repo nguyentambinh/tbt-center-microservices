@@ -43,7 +43,7 @@ if [ -n "$KEYCLOAK_IDENTITY_SECRET" ]; then
       -s "secret=$KEYCLOAK_IDENTITY_SECRET"
   fi
   $KC add-roles -r tbt --uusername service-account-tbt-identity --cclientid realm-management \
-    --rolename manage-users --rolename view-users --rolename query-users --rolename view-realm
+    --rolename manage-users --rolename view-users --rolename query-users --rolename view-realm --rolename impersonation
 fi
 
 # Vai trò kiểm toán (R88), thêm sau khi realm đã import.

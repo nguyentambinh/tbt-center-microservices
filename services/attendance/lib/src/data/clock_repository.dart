@@ -16,7 +16,8 @@ abstract interface class ClockRepository {
 
   /// Chấm công một lượt; tự biết là vào ca hay ra ca (R31–R33).
   /// Ném [ClockRuleViolation] `no_shift` nếu hôm nay không có ca,
-  /// `shift_ended` nếu chưa vào ca mà đã qua giờ kết thúc ca,
+  /// `clock_too_early` nếu chưa tới giờ chấm vào, `shift_ended` nếu chưa vào
+  /// ca mà đã qua giờ kết thúc ca, `clock_out_closed` nếu đã quá giờ chấm ra,
   /// `already_clocked_out` nếu đã ra ca, `too_soon` nếu vừa vào ca chưa đủ
   /// [minShift].
   Future<Map<String, dynamic>> clock(String employeeId);
@@ -57,6 +58,7 @@ class PostgresClockRepository implements ClockRepository {
       fromPrimary: true,
     );
     final r = rows.first;
+    final approved = r['approved_overtime'] as double;
     return {
       'workDate': (r['work_date'] as DateTime).toIso8601String().substring(
         0,
@@ -81,6 +83,10 @@ class PostgresClockRepository implements ClockRepository {
       'totalHours': r['total_hours'],
       'approvedOvertime': r['approved_overtime'],
       'pendingOvertime': r['pending_overtime'],
+      if (r['has_shift'] == true) ...{
+        'clockInFrom': clockInFrom(r['shift_start'] as String),
+        'clockOutUntil': clockOutUntil(r['shift_end'] as String, approved),
+      },
     };
   }
 
@@ -101,7 +107,7 @@ class PostgresClockRepository implements ClockRepository {
       // Khóa ca hôm nay: hai lượt bấm cùng lúc không cùng thành "vào ca".
       final shift = await tx.execute(
         Sql.named(
-          'select shift_end::text from work_schedules '
+          'select shift_start::text, shift_end::text from work_schedules '
           'where employee_id = @id and work_date = @day for update',
         ),
         parameters: key,
@@ -126,7 +132,13 @@ class PostgresClockRepository implements ClockRepository {
 
       final Map<String, dynamic> result;
       if (checkIn == null) {
-        if (!canCheckIn(time, shift.first[0]! as String)) {
+        if (isBefore(time, clockInFrom(shift.first[0]! as String))) {
+          throw const ClockRuleViolation(
+            'clock_too_early',
+            'Clock-in opens 30 minutes before the shift',
+          );
+        }
+        if (!canCheckIn(time, shift.first[1]! as String)) {
           throw const ClockRuleViolation(
             'shift_ended',
             'The shift is over, clock-in is closed',
@@ -158,10 +170,14 @@ class PostgresClockRepository implements ClockRepository {
             'Clock out at least 5 minutes after clocking in',
           );
         }
-        final hours = splitHours(
-          span,
-          approvedOvertime: await approvedOvertimeHours(tx, employeeId, day),
-        );
+        final approved = await approvedOvertimeHours(tx, employeeId, day);
+        if (isAfter(time, clockOutUntil(shift.first[1]! as String, approved))) {
+          throw const ClockRuleViolation(
+            'clock_out_closed',
+            'Clock-out closed 30 minutes after the shift',
+          );
+        }
+        final hours = splitHours(span, approvedOvertime: approved);
         await tx.execute(
           Sql.named(
             'update timesheets set check_out = @time::time, '

@@ -23,6 +23,7 @@ import 'core/theme/role_gem.dart';
 import 'core/widgets/back_gestures.dart';
 import 'core/widgets/connection_banner.dart';
 import 'core/widgets/floating_notice.dart';
+import 'core/widgets/impersonation_banner.dart';
 import 'features/notification/presentation/providers/notification_providers.dart';
 import 'l10n/app_localizations.dart';
 
@@ -96,7 +97,7 @@ class _TbtAppState extends ConsumerState<TbtApp> {
       routerConfig: router,
       builder: (context, child) => BackGestures(
         navigatorKey: router.routerDelegate.navigatorKey,
-        child: FloatingNoticeHost(child: ConnectionShell(child: child!)),
+        child: FloatingNoticeHost(child: ImpersonationBanner(child: ConnectionShell(child: child!))),
       ),
     );
   }

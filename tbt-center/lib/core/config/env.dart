@@ -19,7 +19,11 @@ abstract final class Env {
   /// Mẫu địa chỉ Kong khi chạy máy chủ thật, ví dụ `https://{region}.tbt.example`
   static const _kongTemplate = String.fromEnvironment('KONG_URL');
 
-  static String kongUrl(String region) => _kongTemplate.isEmpty ? 'http://localhost:${_kongPorts[region] ?? 8000}' : _kongTemplate.replaceAll('{region}', region);
+  /// Chế độ xem mọi khu vực của cấp tập đoàn: không phải địa chỉ thật, ApiClient gọi song song 6 nước
+  static const allRegions = 'all';
+  static const allRegionsUrl = 'https://all-regions.invalid';
+
+  static String kongUrl(String region) => region == allRegions ? allRegionsUrl : _kongTemplate.isEmpty ? 'http://localhost:${_kongPorts[region] ?? 8000}' : _kongTemplate.replaceAll('{region}', region);
 
   /// Tiền tệ mặc định của khu vực
   static String currencyOf(String? region) => const {'vn': 'VND', 'de': 'EUR', 'us': 'USD', 'br': 'BRL', 'za': 'ZAR', 'au': 'AUD'}[region] ?? 'USD';

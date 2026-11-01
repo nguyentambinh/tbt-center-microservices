@@ -26,6 +26,7 @@ class LeaveRequest {
     this.aiSummary,
     this.aiSource,
     this.fileCount = 0,
+    this.requesterRoles,
   });
 
   final String id;
@@ -42,6 +43,9 @@ class LeaveRequest {
   final Map<String, dynamic>? aiSummary;
   final String? aiSource;
   final int fileCount;
+
+  /// Vai trò người gửi lúc tạo đơn, quyết định ai được duyệt
+  final String? requesterRoles;
 
   int get days => toDate.difference(fromDate).inDays + 1;
 

@@ -19,6 +19,9 @@ final sessionStoreProvider = Provider<SessionStore>((ref) => SecureSessionStore(
 class AuthController extends AsyncNotifier<Session?> {
   Future<Session?>? _refreshing;
 
+  /// Phiên thật của quản trị trong lúc vào thay tài khoản khác
+  Session? _realSession;
+
   AuthGateway get _gateway => ref.read(authGatewayProvider);
   SessionStore get _store => ref.read(sessionStoreProvider);
 
@@ -49,7 +52,24 @@ class AuthController extends AsyncNotifier<Session?> {
     state = AsyncData(session);
   }
 
+  /// Vào thay tài khoản khác bằng phiên ngắn, không lưu xuống máy
+  void startImpersonation({required String accessToken, required int expiresIn, required String by}) {
+    _realSession = state.value;
+    ref.read(responseCacheProvider).clear();
+    state = AsyncData(Session(accessToken: accessToken, expiresAt: DateTime.now().add(Duration(seconds: expiresIn)), impersonatedBy: by));
+  }
+
+  /// Về lại phiên của quản trị, xóa dữ liệu vừa xem
+  void stopImpersonation() {
+    final real = _realSession;
+    if (real == null) return;
+    _realSession = null;
+    ref.read(responseCacheProvider).clear();
+    state = AsyncData(real);
+  }
+
   Future<void> signOut() async {
+    if (_realSession != null) return stopImpersonation();
     final session = state.value;
     await _clearLocalData();
     state = const AsyncData(null);
@@ -62,6 +82,10 @@ class AuthController extends AsyncNotifier<Session?> {
     final session = state.value;
     if (session == null) return null;
     if (!forceRefresh && !session.isExpired) return session.accessToken;
+    if (_realSession != null) {
+      stopImpersonation();
+      return validAccessToken();
+    }
     try {
       return (await (_refreshing ??= _renew(session).whenComplete(() => _refreshing = null)))?.accessToken;
     } on SessionExpired {
@@ -72,6 +96,7 @@ class AuthController extends AsyncNotifier<Session?> {
 
   /// Server từ chối phiên: xóa phiên, router tự đưa về màn đăng nhập.
   Future<void> expire() async {
+    if (_realSession != null) return stopImpersonation();
     await _clearLocalData();
     state = const AsyncData(null);
   }

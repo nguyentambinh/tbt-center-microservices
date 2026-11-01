@@ -20,7 +20,7 @@ const staffRoles = {'executive', 'admin', 'finance', 'hr', 'employee'};
 /// Phiên đăng nhập Keycloak. Thông tin người dùng đọc từ access token (JWT),
 /// chữ ký token do Kong và service kiểm, app chỉ đọc để hiển thị.
 class Session {
-  Session({required this.accessToken, this.refreshToken, this.idToken, required this.expiresAt})
+  Session({required this.accessToken, this.refreshToken, this.idToken, required this.expiresAt, this.impersonatedBy})
       : claims = _decodePayload(accessToken);
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
@@ -35,6 +35,9 @@ class Session {
   final String? idToken;
   final DateTime expiresAt;
   final Map<String, dynamic> claims;
+
+  /// Quản trị đang vào thay tài khoản này; phiên loại này chỉ giữ trong bộ nhớ
+  final String? impersonatedBy;
 
   String get subject => claims['sub'] as String? ?? '';
   String get username => claims['preferred_username'] as String? ?? subject;

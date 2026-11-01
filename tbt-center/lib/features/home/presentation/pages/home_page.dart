@@ -91,6 +91,7 @@ class HomePage extends ConsumerWidget {
           ],
           if (hr) ...[
             (icon: Icons.groups_outlined, title: l10n.candidates, hint: l10n.candidatesHint, route: Routes.candidates),
+            (icon: Icons.edit_calendar_outlined, title: l10n.scheduleManage, hint: l10n.scheduleManageHint, route: Routes.scheduleManage),
             (icon: Icons.work_outline, title: l10n.jobPositions, hint: l10n.jobPositionsHint, route: Routes.jobPositions),
           ],
           if (executive || hr) ...[
@@ -277,7 +278,7 @@ class RegionPicker extends ConsumerWidget {
       alignment: Alignment.centerLeft,
       child: MenuAnchor(
         menuChildren: [
-          for (final r in Env.regions)
+          for (final r in [Env.allRegions, ...Env.regions])
             MenuItemButton(
               leadingIcon: Icon(r == region ? Icons.radio_button_checked : Icons.radio_button_unchecked, size: 18),
               onPressed: () => ref.read(workRegionProvider.notifier).select(r),

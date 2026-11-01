@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/locale/l10n_names.dart';
 import '../../../../core/auth/auth_controller.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -112,7 +113,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
                               ListTile(
                                 title: Text(p.name ?? p.id, style: text.titleMedium),
                                 subtitle: Text(
-                                  '${p.id} · ${p.customerName ?? '-'}\n'
+                                  '${[if (p.region case final r?) l10n.regionName(r), p.id, p.customerName ?? '-'].join(' · ')}\n'
                                   '${l10n.startDate}: ${day(p.startDate)} · ${l10n.endDate}: ${day(p.endDate)}\n'
                                   '${l10n.expectedAcceptance}: ${p.expectedAcceptance == null ? '-' : money.format(p.expectedAcceptance)}',
                                   style: TextStyle(color: context.tbt.textSecondary),

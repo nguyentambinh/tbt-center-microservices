@@ -432,6 +432,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errTooLong => 'A request can cover at most 30 days';
 
   @override
+  String get errFieldTooLong => 'That entry is too long, please shorten it';
+
+  @override
   String get errInvalidDates => 'The end date must be after the start date';
 
   @override
@@ -2783,6 +2786,159 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errShiftEnded => 'The shift has ended, you can no longer clock in';
 
   @override
+  String get adminBackupUpload => 'Upload file';
+
+  @override
+  String get adminBackupUploaded => 'Backup uploaded, choose Restore on it';
+
+  @override
+  String get adminRestore => 'Restore';
+
+  @override
+  String adminRestoreConfirm(String region, String name, String code) {
+    return 'Backup $name adds the rows $region is missing. Existing data, including newer data, stays as it is; rows deleted after the backup come back. Type $code to confirm.';
+  }
+
+  @override
+  String adminRestoreDone(int n) {
+    return 'Added $n missing rows';
+  }
+
+  @override
+  String get errGroupAdminOnly => 'Only a group admin can do this';
+
+  @override
+  String get errInvalidBackup => 'This is not a valid backup file';
+
+  @override
+  String get errWrongRegion => 'This backup belongs to another country';
+
+  @override
+  String get errRestoreNotConfirmed => 'The confirmation code is wrong';
+
+  @override
+  String get evBackupRestored => 'Admin restored data from a backup';
+
+  @override
+  String get errGroupDemotion =>
+      'An account at group level cannot go back to regional level';
+
+  @override
+  String get adminImpersonate => 'Open this account';
+
+  @override
+  String adminImpersonateConfirm(String name) {
+    return 'Open the account of $name? You act as this person for up to 15 minutes; every entry is recorded in the audit log.';
+  }
+
+  @override
+  String impersonatingAs(String name) {
+    return 'Viewing as $name';
+  }
+
+  @override
+  String get impersonationExit => 'Exit';
+
+  @override
+  String get errHigherAccount =>
+      'You cannot open an account at the same or a higher level';
+
+  @override
+  String get errAccountDisabled => 'This account is disabled';
+
+  @override
+  String get evAccountImpersonated => 'Admin opened another account';
+
+  @override
+  String get regionAll => 'All';
+
+  @override
+  String get errPickRegion => 'Pick one country under Viewing first';
+
+  @override
+  String get errPeerApproval =>
+      'This request goes to a higher level, you cannot decide it';
+
+  @override
+  String get errClockTooEarly =>
+      'Too early to clock in, it opens 30 minutes before the shift';
+
+  @override
+  String get errClockOutClosed =>
+      'Clock-out has closed, it ends 30 minutes after the shift';
+
+  @override
+  String get errInvalidEmployees => 'Pick 1 to 200 employees';
+
+  @override
+  String get errInvalidWeekdays => 'Pick at least one weekday';
+
+  @override
+  String clockOpensAt(String time) {
+    return 'Clock-in opens at $time';
+  }
+
+  @override
+  String clockClosedAt(String time) {
+    return 'Clock-out closed at $time';
+  }
+
+  @override
+  String get scheduleManage => 'Work schedules';
+
+  @override
+  String get scheduleManageHint => 'Set schedules and hours by project';
+
+  @override
+  String get scheduleRange => 'Date range';
+
+  @override
+  String get schedulePickRange => 'Tap to pick start and end dates';
+
+  @override
+  String get scheduleShiftName => 'Shift name (optional)';
+
+  @override
+  String get scheduleProject => 'Project';
+
+  @override
+  String scheduleAllMembers(int n) {
+    return 'All members ($n)';
+  }
+
+  @override
+  String get scheduleViewDays => 'View each day';
+
+  @override
+  String get scheduleNoShift => 'No shift';
+
+  @override
+  String get scheduleSave => 'Save schedule';
+
+  @override
+  String get scheduleClear => 'Remove schedule in this range';
+
+  @override
+  String get scheduleClearConfirm =>
+      'Remove the schedule of the selected people in this range? Days already clocked stay as they are.';
+
+  @override
+  String scheduleSaved(int n) {
+    return 'Updated $n work days';
+  }
+
+  @override
+  String nScheduleChanged(String date) {
+    return 'Your work schedule from $date was updated';
+  }
+
+  @override
+  String get evScheduleChanged => 'HR set work schedules';
+
+  @override
+  String get evScheduleCleared => 'HR removed work schedules';
+
+  @override
   String get errTooManyFiles => 'At most 5 files per request';
 
   @override
@@ -3976,39 +4132,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDeletePosition => 'Delete position';
 
   @override
-  String get adminSql => 'SQL query';
-
-  @override
-  String get adminSqlHint =>
-      'Read-only by default; every run is recorded in the audit log';
-
-  @override
-  String get adminSqlWrite => 'Allow writes (INSERT, UPDATE, DELETE)';
-
-  @override
-  String get adminSqlWriteConfirm =>
-      'This changes real data and is recorded in the audit log. Run it?';
-
-  @override
-  String get adminSqlRun => 'Run';
-
-  @override
-  String adminSqlRows(int n) {
-    return '$n rows';
-  }
-
-  @override
-  String adminSqlAffected(int n) {
-    return '$n rows affected';
-  }
-
-  @override
-  String get adminSqlTruncated => 'Showing the first 500 rows';
-
-  @override
-  String get adminTechnical => 'Technical details';
-
-  @override
   String get adminBackups => 'Backups';
 
   @override
@@ -4033,20 +4156,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errInUse =>
       'Someone still holds this position, so it cannot be deleted';
-
-  @override
-  String get errReadOnly =>
-      'The statement writes data; turn on Allow writes if you really mean it';
-
-  @override
-  String get errSqlError =>
-      'The statement failed, see the technical details below';
-
-  @override
-  String get errUnknownDatabase => 'Pick a database from the list';
-
-  @override
-  String get errEmptySql => 'Enter an SQL statement';
 
   @override
   String get errStorageUnavailable =>
@@ -4338,10 +4447,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String nPenaltyApplied(String amount, String reason) {
     return 'A penalty of $amount was applied: $reason';
   }
-
-  @override
-  String get errProtectedDatabase =>
-      'The admin log database cannot be queried here';
 
   @override
   String get errPastDate => 'Leave can only start from tomorrow';

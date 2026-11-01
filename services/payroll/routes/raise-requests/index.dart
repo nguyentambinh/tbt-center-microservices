@@ -21,12 +21,18 @@ Future<Response> onRequest(RequestContext context) async {
       if (!reviewer && claims.employeeId == null) {
         return apiError(403, 'no_employee', 'Account is not an employee');
       }
+      final items = await repository.list(
+        employeeId: reviewer ? null : claims.employeeId,
+        status: context.request.uri.queryParameters['status'],
+      );
       return Response.json(
         body: {
-          'items': await repository.list(
-            employeeId: reviewer ? null : claims.employeeId,
-            status: context.request.uri.queryParameters['status'],
-          ),
+          'items': [
+            for (final item in items)
+              if (item['employeeId'] == claims.employeeId ||
+                  !isPeerApprover(item['requesterRoles'] as String?, claims))
+                item,
+          ],
         },
       );
     case HttpMethod.post:
@@ -52,7 +58,8 @@ Future<Response> onRequest(RequestContext context) async {
             employee,
             requested: requested,
             reason: reason,
-            skipHr: claims.hasAnyRole(const {'hr'}),
+            skipHr: claims.hasAnyRole(const {'hr', 'finance'}),
+            requesterRoles: requesterRolesOf(claims),
           ),
         );
       } on RaiseRuleViolation catch (e) {

@@ -79,6 +79,7 @@ abstract interface class RaiseRequestRepository {
     required double requested,
     required String reason,
     bool skipHr = false,
+    String? requesterRoles,
   });
 
   /// Duyệt thì tăng lương cơ bản ngay trong cùng giao dịch
@@ -90,6 +91,7 @@ abstract interface class RaiseRequestRepository {
     String? employeeId,
     double? amount,
     String? note,
+    Claims? decider,
   });
 }
 
@@ -101,7 +103,7 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
   static const _columns =
       'id, employee_id, current_salary::float8 as current_salary, currency, '
       'requested::float8 as requested, proposed::float8 as proposed, reason, '
-      'status, decided_by, skip_hr, created_at, updated_at';
+      'status, decided_by, skip_hr, created_at, updated_at, requester_roles';
 
   @override
   Future<List<Map<String, dynamic>>> list({
@@ -177,6 +179,7 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
     required double requested,
     required String reason,
     bool skipHr = false,
+    String? requesterRoles,
   }) => _db.transaction((tx) async {
     final salary = await tx.execute(
       Sql.named(
@@ -211,9 +214,9 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
     final rows = await tx.execute(
       Sql.named(
         'insert into raise_requests (employee_id, current_salary, currency, '
-        'requested, proposed, reason, status, skip_hr) values (@id, '
-        '@current, @currency, @requested, @requested, @reason, @status, '
-        '@skip) returning $_columns',
+        'requested, proposed, reason, status, skip_hr, requester_roles) '
+        'values (@id, @current, @currency, @requested, @requested, @reason, '
+        '@status, @skip, @roles) returning $_columns',
       ),
       parameters: {
         'id': employeeId,
@@ -223,6 +226,7 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
         'reason': reason,
         'status': skipHr ? 'awaiting_approver' : 'awaiting_hr',
         'skip': skipHr,
+        'roles': TypedValue(Type.text, requesterRoles),
       },
     );
     final request = _json(rows.first.toColumnMap());
@@ -240,6 +244,7 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
     String? employeeId,
     double? amount,
     String? note,
+    Claims? decider,
   }) async {
     final done = await _db.transaction((tx) async {
       final rows = await tx.execute(
@@ -257,6 +262,14 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
         throw const RaiseRuleViolation(
           'self_approval',
           'Your own request goes to someone else',
+        );
+      }
+      if (side != RaiseSide.employee &&
+          decider != null &&
+          isPeerApprover(current['requesterRoles'] as String?, decider)) {
+        throw const RaiseRuleViolation(
+          'peer_approval',
+          'This request goes to a higher level',
         );
       }
       final next = nextRaiseStatus(
@@ -363,6 +376,7 @@ class PostgresRaiseRequestRepository implements RaiseRequestRepository {
     'status': r['status'],
     'decidedBy': r['decided_by'],
     'skipHr': r['skip_hr'] == true,
+    'requesterRoles': r['requester_roles'],
     'createdAt': (r['created_at'] as DateTime).toUtc().toIso8601String(),
     'updatedAt': (r['updated_at'] as DateTime).toUtc().toIso8601String(),
   };

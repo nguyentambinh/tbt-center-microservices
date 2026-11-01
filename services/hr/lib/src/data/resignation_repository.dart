@@ -80,6 +80,7 @@ abstract interface class ResignationRepository {
     required DateTime lastDay,
     required String reason,
     ResignationLetter? letter,
+    String? requesterRoles,
   });
 
   /// Khóa object của bản đơn; `null` nếu không có đơn hay chưa đính kèm
@@ -107,7 +108,8 @@ class PostgresResignationRepository implements ResignationRepository {
   static const _columns =
       'r.id, r.employee_id, r.last_day, r.reason, r.status, r.decided_by, '
       "r.note, r.created_at, r.updated_at, e.family_name || ' ' || "
-      'e.given_name as name, r.letter_name, r.ai_analysis, r.ai_source';
+      'e.given_name as name, r.letter_name, r.ai_analysis, r.ai_source, '
+      'r.requester_roles';
 
   @override
   Future<List<Map<String, dynamic>>> list({
@@ -143,6 +145,7 @@ class PostgresResignationRepository implements ResignationRepository {
     required DateTime lastDay,
     required String reason,
     ResignationLetter? letter,
+    String? requesterRoles,
   }) async {
     checkNotice(lastDay, DateTime.now());
     final id = await _db.transaction((tx) async {
@@ -169,8 +172,8 @@ class PostgresResignationRepository implements ResignationRepository {
       final rows = await tx.execute(
         Sql.named(
           'insert into resignations (employee_id, last_day, reason, '
-          'letter_key, letter_name, letter_mime) values (@id, @day, @reason, '
-          '@key, @name, @mime) returning id',
+          'letter_key, letter_name, letter_mime, requester_roles) values '
+          '(@id, @day, @reason, @key, @name, @mime, @roles) returning id',
         ),
         parameters: {
           'id': employeeId,
@@ -179,6 +182,7 @@ class PostgresResignationRepository implements ResignationRepository {
           'key': letter?.key,
           'name': letter?.name,
           'mime': letter?.mime,
+          'roles': TypedValue(Type.text, requesterRoles),
         },
       );
       final id = rows.first[0]! as int;
@@ -273,5 +277,6 @@ class PostgresResignationRepository implements ResignationRepository {
     'letterName': r['letter_name'],
     'aiAnalysis': r['ai_analysis'],
     'aiSource': r['ai_source'],
+    'requesterRoles': r['requester_roles'],
   };
 }
