@@ -135,7 +135,7 @@ class _OrgTreePageState extends ConsumerState<OrgTreePage> {
                       ),
                     ]),
                   ),
-                  _LevelLegend(),
+                  const LevelLegend(),
                   Expanded(
                     child: TabBarView(
                       physics: const NeverScrollableScrollPhysics(),
@@ -157,7 +157,7 @@ class _OrgTreePageState extends ConsumerState<OrgTreePage> {
 }
 
 /// Thông tin một người: ảnh, chức vụ, cấp, phòng ban, nút mở hồ sơ
-void showPersonInfo(BuildContext context, TreePerson p) {
+void showPersonInfo(BuildContext context, TreePerson p, {VoidCallback? onChangePosition}) {
   final l10n = AppLocalizations.of(context);
   showModalBottomSheet<void>(
     context: context,
@@ -186,6 +186,17 @@ void showPersonInfo(BuildContext context, TreePerson p) {
               if (p.departmentName case final d?) Chip(avatar: const Icon(Icons.account_tree_outlined, size: 16), label: Text(d)),
             ]),
             const SizedBox(height: 12),
+            if (onChangePosition != null) ...[
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pop(sheet);
+                  onChangePosition();
+                },
+                icon: const Icon(Icons.trending_up),
+                label: Text(l10n.execChangePosition),
+              ),
+              const SizedBox(height: 8),
+            ],
             FilledButton.icon(
               onPressed: () {
                 Navigator.pop(sheet);
@@ -201,7 +212,9 @@ void showPersonInfo(BuildContext context, TreePerson p) {
   );
 }
 
-class _LevelLegend extends StatelessWidget {
+class LevelLegend extends StatelessWidget {
+  const LevelLegend({super.key});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

@@ -19,6 +19,14 @@ import '../../../organization/presentation/widgets/org_actions.dart';
 import '../../data/direct_actions_repository.dart';
 import '../../../../core/widgets/input_rules.dart';
 
+/// Đổi chức vụ một người; true khi đã áp dụng
+Future<bool> showChangePositionDialog(BuildContext context, {required String employeeId, required String name}) async =>
+    await showDialog<bool>(context: context, builder: (_) => _PositionDialog(employeeId: employeeId, name: name)) ?? false;
+
+/// Thưởng, phạt một người; true khi đã áp dụng
+Future<bool> showBonusDialog(BuildContext context, {required String employeeId, required String name}) async =>
+    await showDialog<bool>(context: context, builder: (_) => _BonusDialog(employeeId: employeeId, name: name)) ?? false;
+
 /// Menu làm thẳng của văn phòng quản lý trên hồ sơ nhân viên
 class ExecutiveActionsMenu extends ConsumerWidget {
   const ExecutiveActionsMenu({super.key, required this.employeeId, required this.name, required this.onDone});

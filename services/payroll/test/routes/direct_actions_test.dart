@@ -95,5 +95,14 @@ void main() {
     final response = await bonus_route.onRequest(context);
     expect(response.statusCode, 201);
     expect((await response.json() as Map)['kind'], 'penalty');
+
+    request('POST', '/bonuses-penalties', {'employeeId': 'E2', 'kind': 'penalty', 'amount': 500000, 'reason': 'Đi trễ nhiều lần'}, ['hr']);
+    expect((await bonus_route.onRequest(context)).statusCode, 201);
+
+    request('POST', '/bonuses-penalties', {'employeeId': 'E2', 'kind': 'bonus', 'amount': 1000}, ['finance']);
+    expect((await bonus_route.onRequest(context)).statusCode, 403);
+
+    request('POST', '/bonuses-penalties', {'employeeId': 'EX1', 'kind': 'bonus', 'amount': 1000}, ['hr']);
+    expect(((await (await bonus_route.onRequest(context)).json()) as Map)['code'], 'self_approval');
   });
 }

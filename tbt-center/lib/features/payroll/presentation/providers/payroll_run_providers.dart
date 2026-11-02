@@ -11,6 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/auth/work_region.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../hr/data/repositories/employee_repository_impl.dart';
+import '../../../hr/domain/entities/employee.dart';
 import '../../data/repositories/payroll_run_repository_impl.dart';
 import '../../domain/entities/payout.dart';
 import '../../domain/entities/payroll_run.dart';
@@ -36,6 +38,13 @@ class PayrollRegion extends Notifier<String> {
 
   void select(String region) => state = region;
 }
+
+/// Tên, phòng ban của công ty đang xem theo mã nhân viên
+final payrollPeopleProvider = FutureProvider<Map<String, EmployeeSummary>>((ref) async {
+  final repository = EmployeeRepositoryImpl(ref.watch(apiClientProvider), baseUrl: Env.kongUrl(ref.watch(payrollRegionProvider)));
+  final groups = await Future.wait([repository.all(status: 'active'), repository.all(status: 'archived')]);
+  return {for (final group in groups) for (final person in group) person.id: person};
+});
 
 final payrollRunRepositoryProvider = Provider<PayrollRunRepository>(
   (ref) => ref.watch(payrollRunRepositoryForRegionProvider)(ref.watch(payrollRegionProvider)),

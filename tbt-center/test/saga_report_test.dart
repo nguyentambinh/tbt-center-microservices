@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tbtcenter/app.dart';
 import 'package:tbtcenter/core/error/app_failure.dart';
+import 'package:tbtcenter/features/hr/domain/entities/employee.dart';
 import 'package:tbtcenter/features/payroll/domain/entities/payout.dart';
 import 'package:tbtcenter/features/payroll/domain/entities/payroll_run.dart';
 import 'package:tbtcenter/features/payroll/domain/repositories/payroll_run_repository.dart';
@@ -99,6 +100,10 @@ Future<FakeRunRepository> pumpFinance(WidgetTester tester, List<String> roles) a
     overrides: [
       ...overrides,
       payrollRunRepositoryForRegionProvider.overrideWithValue((_) => runs),
+      payrollPeopleProvider.overrideWith((ref) async => const {
+            'E1': EmployeeSummary(id: 'E1', familyName: 'Nguyễn', givenName: 'Bình', department: 'Kế toán', email: 'binh@tbt.vn'),
+            'E2': EmployeeSummary(id: 'E2', familyName: 'Trần', givenName: 'An', department: 'Nhân sự'),
+          }),
       reportRepositoryProvider.overrideWithValue(FakeReportRepository()),
     ],
     child: const TbtApp(),
@@ -108,6 +113,35 @@ Future<FakeRunRepository> pumpFinance(WidgetTester tester, List<String> roles) a
 }
 
 void main() {
+  testWidgets('danh sách chốt lương hiện tên, phòng ban và lọc được', (tester) async {
+    await pumpFinance(tester, ['finance']);
+    await openHomeCard(tester, 'Chốt lương');
+    expect(find.text('Nguyễn Bình'), findsOneWidget);
+    expect(find.text('Kế toán'), findsOneWidget);
+    expect(find.text('Trần An'), findsOneWidget);
+    expect(find.text('E1'), findsNothing);
+
+    await tester.enterText(find.widgetWithIcon(TextField, Icons.search), 'binh');
+    await tester.pump();
+    expect(find.text('Nguyễn Bình'), findsOneWidget);
+    expect(find.text('Trần An'), findsNothing);
+
+    await tester.enterText(find.widgetWithIcon(TextField, Icons.search), '');
+    await tester.pump();
+    await tester.tap(find.byType(DropdownButtonFormField<String?>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Nhân sự').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Trần An'), findsOneWidget);
+    expect(find.text('Nguyễn Bình'), findsNothing);
+
+    await tester.enterText(find.widgetWithIcon(TextField, Icons.search), 'không có ai');
+    await tester.pump();
+    expect(find.text('Không tìm thấy nhân viên nào'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('tài chính xem đợt chốt lỗi, thấy bước bù trừ và chạy lại', (tester) async {
     final runs = await pumpFinance(tester, ['finance']);
     await openHomeCard(tester, 'Chốt lương');
@@ -152,7 +186,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Nhật ký'));
     await tester.pumpAndSettle();
-    expect(find.text('Đã chuyển · E1'), findsOneWidget);
+    expect(find.text('Đã chuyển · Nguyễn Bình'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -160,7 +194,7 @@ void main() {
     final runs = await pumpFinance(tester, ['finance', 'group']);
     await openHomeCard(tester, 'Chốt lương');
     expect(find.text('Chuyển cả tập đoàn'), findsOneWidget);
-    await tester.tap(find.text('E1'));
+    await tester.tap(find.text('Nguyễn Bình'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Chuyển cho 1 người'));
     await tester.pumpAndSettle();

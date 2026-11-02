@@ -83,6 +83,7 @@ class HomePage extends ConsumerWidget {
             (icon: Icons.inbox_outlined, title: l10n.approvalInbox, hint: l10n.approvalInboxHint, route: Routes.approvals),
             (icon: Icons.trending_up, title: l10n.raiseRequests, hint: l10n.raiseRequestsHint, route: Routes.raiseRequests),
             (icon: Icons.workspace_premium_outlined, title: l10n.nominations, hint: l10n.nominationsHint, route: Routes.nominations),
+            (icon: Icons.schema_outlined, title: l10n.positionTree, hint: l10n.positionTreeCardHint, route: Routes.positionTree),
             (icon: Icons.logout, title: l10n.resignations, hint: l10n.resignationsHint, route: Routes.resignations),
           ],
           if (executive || hr || finance) ...[

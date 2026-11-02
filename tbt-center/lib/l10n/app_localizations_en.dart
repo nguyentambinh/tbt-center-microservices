@@ -1707,6 +1707,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payoutTabPeople => 'Employees';
 
   @override
+  String get payoutAllDepartments => 'All departments';
+
+  @override
   String get payoutTabRuns => 'Runs';
 
   @override
@@ -3809,6 +3812,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgTreeToggle => 'Collapse or expand all';
+
+  @override
+  String get positionTree => 'Position tree';
+
+  @override
+  String get positionTreeCardHint =>
+      'See position tiers and change positions right on the tree';
+
+  @override
+  String get positionTreeTabPositions => 'Positions';
+
+  @override
+  String get positionTreeTabPeople => 'Position holders';
+
+  @override
+  String get positionTreeHint =>
+      'Drag to rotate, pinch to zoom, tap a position or person to edit';
+
+  @override
+  String get positionTreeNoHolder => 'No one holds this position yet';
+
+  @override
+  String get positionTreeNoPosition => 'No position';
 
   @override
   String get level1 => 'Staff';

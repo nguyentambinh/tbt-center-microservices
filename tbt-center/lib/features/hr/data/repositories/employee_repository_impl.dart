@@ -19,6 +19,7 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   EmployeeRepositoryImpl(this._dio, {required this.baseUrl});
 
   static const pageSize = 30;
+  static const fullPageSize = 100;
 
   final Dio _dio;
   final String baseUrl;
@@ -35,6 +36,19 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
       'size': pageSize,
     });
     return employeePageFromJson(response.data!, fromCache: response.extra[fromCache] == true);
+  }
+
+  /// Toàn bộ nhân viên theo trạng thái: lấy trang đầu để biết tổng rồi tải song song phần còn lại
+  Future<List<EmployeeSummary>> all({required String status}) async {
+    Future<EmployeePage> fetch(int page) async {
+      final response = await _get('/hr/employees', {'status': status, 'page': page, 'size': fullPageSize});
+      return employeePageFromJson(response.data!, fromCache: response.extra[fromCache] == true);
+    }
+
+    final first = await fetch(1);
+    final pages = (first.total / fullPageSize).ceil();
+    final rest = await Future.wait([for (var page = 2; page <= pages; page++) fetch(page)]);
+    return [...first.items, for (final page in rest) ...page.items];
   }
 
   @override

@@ -110,6 +110,8 @@ class _ManageMenu extends ConsumerWidget {
             if (await transferEmployee(context, ref, s.id, fromDepartment: employee.departmentId)) refresh();
           case 'nominate':
             await nominateEmployee(context, ref, employeeId: s.id, name: name);
+          case 'bonus':
+            if (await showBonusDialog(context, employeeId: s.id, name: name)) showDone(l10n.execApplied);
           case 'archive':
             if (await archiveEmployee(context, ref, employeeId: s.id, name: name)) refresh();
           case 'restore':
@@ -120,6 +122,8 @@ class _ManageMenu extends ConsumerWidget {
         if (!employee.archived) ...[
           PopupMenuItem(value: 'move', child: ListTile(leading: const Icon(Icons.drive_file_move_outline), title: Text(l10n.moveToDepartment))),
           PopupMenuItem(value: 'nominate', child: ListTile(leading: const Icon(Icons.workspace_premium_outlined), title: Text(l10n.nominatePromotion))),
+          if (!(ref.read(authControllerProvider).value?.roles.contains('executive') ?? false))
+            PopupMenuItem(value: 'bonus', child: ListTile(leading: const Icon(Icons.card_giftcard_outlined), title: Text(l10n.execBonus))),
           PopupMenuItem(
             value: 'archive',
             child: ListTile(

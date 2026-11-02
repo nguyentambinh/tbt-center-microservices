@@ -45,6 +45,7 @@ __pycache__/
 *.ppt
 *.pptx
 ~$*
+BaoCao/
 
 deploy/vps/vps.env
 deploy/k8s/de-vps/

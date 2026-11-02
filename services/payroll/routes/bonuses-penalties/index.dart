@@ -15,7 +15,7 @@ import 'package:tbt_common/tbt_common.dart';
 
 /// GET  /bonuses-penalties?employee=  thưởng phạt của một nhân viên
 /// POST /bonuses-penalties  {employeeId, kind: bonus|penalty, amount, reason}
-/// Văn phòng quản lý ghi thẳng vào kỳ lương hiện tại, ghi sổ kiểm toán
+/// Văn phòng quản lý, nhân sự ghi thẳng vào kỳ lương hiện tại, ghi sổ kiểm toán
 Future<Response> onRequest(RequestContext context) async {
   final claims = context.read<Claims>();
   final repository = context.read<PayrollRepository>();
@@ -35,8 +35,8 @@ Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.post) {
     return apiError(HttpStatus.methodNotAllowed, 'method_not_allowed', 'GET');
   }
-  if (!claims.hasAnyRole(const {'executive'})) {
-    return apiError(HttpStatus.forbidden, 'forbidden', 'Executives only');
+  if (!claims.hasAnyRole(const {'executive', 'hr'})) {
+    return apiError(HttpStatus.forbidden, 'forbidden', 'Executives, HR only');
   }
   final Map<String, dynamic> body;
   try {

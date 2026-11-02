@@ -21,10 +21,16 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/async_states.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../hr/domain/entities/employee.dart';
+import '../../../organization/presentation/pages/org_tree_page.dart' show foldText;
 import '../../domain/entities/payout.dart';
 import '../../domain/entities/payroll_run.dart';
 import '../providers/payroll_run_providers.dart';
 
+
+/// Tên hiện cho một mã nhân viên; chưa có hồ sơ thì giữ mã
+String payrollPersonName(Map<String, EmployeeSummary> people, String employeeId, String region) =>
+    people[employeeId]?.fullName(familyFirst: region == 'vn') ?? employeeId;
 
 /// Kết quả một lượt chuyển ở một công ty
 class _RegionOutcome {
@@ -182,10 +188,11 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
 
   Future<DuplicateMode?> _askDuplicates(List<_RegionOutcome> found, {required bool perPerson}) {
     final l10n = _l10n;
+    final people = ref.read(payrollPeopleProvider).value ?? const <String, EmployeeSummary>{};
     final lines = [
       for (final o in found)
         if (perPerson)
-          for (final d in o.result!.duplicates) l10n.payoutDuplicatePerson(d.employeeId, d.transfers)
+          for (final d in o.result!.duplicates) l10n.payoutDuplicatePerson(payrollPersonName(people, d.employeeId, o.region), d.transfers)
         else
           l10n.payoutDuplicateRegion(l10n.regionName(o.region), o.result!.duplicates.length),
     ];
@@ -297,6 +304,8 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        // Phần đầu màn cao, co lại theo bàn phím sẽ tràn trên máy nhỏ
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text(l10n.payrollRuns),
           bottom: _busy ? const PreferredSize(preferredSize: Size.fromHeight(2), child: LinearProgressIndicator()) : null,
@@ -409,7 +418,7 @@ class _PayrollRunsPageState extends ConsumerState<PayrollRunsPage> {
   }
 }
 
-class _PeopleTab extends ConsumerWidget {
+class _PeopleTab extends ConsumerStatefulWidget {
   const _PeopleTab({required this.period, required this.selected, required this.onToggle});
 
   final String period;
@@ -417,42 +426,124 @@ class _PeopleTab extends ConsumerWidget {
   final ValueChanged<String> onToggle;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_PeopleTab> createState() => _PeopleTabState();
+}
+
+class _PeopleTabState extends ConsumerState<_PeopleTab> {
+  var _query = '';
+  String? _department;
+
+  bool _matches(PayoutLine line, Map<String, EmployeeSummary> people, String region) {
+    final person = people[line.employeeId];
+    if (_department != null && person?.department != _department) return false;
+    final query = foldText(_query);
+    if (query.isEmpty) return true;
+    final name = payrollPersonName(people, line.employeeId, region);
+    return foldText('$name ${line.employeeId} ${person?.email ?? ''}').contains(query);
+  }
+
+  Widget _filters(BuildContext context, List<String> departments) {
+    final l10n = AppLocalizations.of(context);
+    final department = departments.contains(_department) ? _department : null;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        children: [
+          TextField(
+            onChanged: (value) => setState(() => _query = value),
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(isDense: true, prefixIcon: const Icon(Icons.search), hintText: l10n.searchEmployees),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String?>(
+            key: ValueKey(department),
+            initialValue: department,
+            isExpanded: true,
+            isDense: true,
+            decoration: InputDecoration(isDense: true, labelText: l10n.departments),
+            items: [
+              DropdownMenuItem(child: Text(l10n.payoutAllDepartments)),
+              for (final name in departments)
+                DropdownMenuItem(value: name, child: Text(name, overflow: TextOverflow.ellipsis)),
+            ],
+            onChanged: (value) => setState(() => _department = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
+    final period = widget.period;
+    final region = ref.watch(payrollRegionProvider);
+    final people = ref.watch(payrollPeopleProvider).value ?? const <String, EmployeeSummary>{};
     return switch (ref.watch(payoutBoardProvider(period))) {
       AsyncValue(:final value?) when value.lines.isEmpty =>
         EmptyView(message: l10n.payoutNotCalculated, icon: Icons.payments_outlined),
-      AsyncValue(:final value?) => RefreshIndicator(
-          onRefresh: () => ref.refresh(payoutBoardProvider(period).future),
-          child: ListView(
-            children: [
-              if (value.lines.any((l) => l.net == null))
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Text(l10n.payoutAmountHidden, style: TextStyle(color: context.tbt.textSecondary)),
-                ),
-              for (final line in value.lines)
-                CheckboxListTile(
-                  value: selected.contains(line.employeeId),
-                  onChanged: (_) => onToggle(line.employeeId),
-                  title: Text(line.employeeId),
-                  subtitle: Text(
-                    [
-                      if (line.paid) l10n.payoutPaidTimes(line.transfers) else l10n.payoutUnpaid,
-                      if (line.net case final net?)
-                        NumberFormat.simpleCurrency(locale: locale, name: line.currency).format(net),
-                    ].join(' · '),
-                    style: TextStyle(color: line.paid ? context.tbt.success : context.tbt.warning),
-                  ),
-                ),
-            ],
-          ),
-        ),
+      AsyncValue(:final value?) => _board(context, value, people, region, locale),
       AsyncValue(:final error?) =>
         ErrorView(error: error, onRetry: () => ref.invalidate(payoutBoardProvider(period))),
       _ => const SkeletonList(),
     };
+  }
+
+  Widget _board(BuildContext context, PayoutBoard board, Map<String, EmployeeSummary> people, String region, String locale) {
+    final l10n = AppLocalizations.of(context);
+    final departments = {for (final line in board.lines) ?people[line.employeeId]?.department}.toList()..sort();
+    final lines = board.lines.where((line) => _matches(line, people, region)).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _filters(context, departments),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () {
+              ref.invalidate(payrollPeopleProvider);
+              return ref.refresh(payoutBoardProvider(widget.period).future);
+            },
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [
+                if (board.lines.any((l) => l.net == null))
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Text(l10n.payoutAmountHidden, style: TextStyle(color: context.tbt.textSecondary)),
+                  ),
+                if (lines.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Text(l10n.noEmployees, textAlign: TextAlign.center, style: TextStyle(color: context.tbt.textSecondary)),
+                  ),
+                for (final line in lines)
+                  CheckboxListTile(
+                    value: widget.selected.contains(line.employeeId),
+                    onChanged: (_) => widget.onToggle(line.employeeId),
+                    title: Text(payrollPersonName(people, line.employeeId, region)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (people[line.employeeId]?.department case final department?)
+                          Text(department, style: TextStyle(color: context.tbt.textSecondary)),
+                        Text(
+                          [
+                            if (line.paid) l10n.payoutPaidTimes(line.transfers) else l10n.payoutUnpaid,
+                            if (line.net case final net?)
+                              NumberFormat.simpleCurrency(locale: locale, name: line.currency).format(net),
+                          ].join(' · '),
+                          style: TextStyle(color: line.paid ? context.tbt.success : context.tbt.warning),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -495,6 +586,8 @@ class _LogTab extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final time = DateFormat.yMd(locale).add_Hm();
+    final region = ref.watch(payrollRegionProvider);
+    final people = ref.watch(payrollPeopleProvider).value ?? const <String, EmployeeSummary>{};
     return switch (ref.watch(payoutLogProvider(period))) {
       AsyncValue(:final value?) when value.isEmpty => EmptyView(message: l10n.noPayoutLog, icon: Icons.receipt_long),
       AsyncValue(:final value?) => RefreshIndicator(
@@ -518,7 +611,7 @@ class _LogTab extends ConsumerWidget {
                       _ => context.tbt.textSecondary,
                     },
                   ),
-                  title: Text('${_actionName(l10n, item.action)} · ${item.employeeId}'),
+                  title: Text('${_actionName(l10n, item.action)} · ${payrollPersonName(people, item.employeeId, region)}'),
                   subtitle: Text(
                     l10n.payoutLogLine(item.source == 'saga' ? l10n.payoutLogSaga : item.actor, time.format(item.at)),
                   ),

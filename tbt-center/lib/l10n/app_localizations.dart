@@ -3108,6 +3108,12 @@ abstract class AppLocalizations {
   /// **'Nhân viên'**
   String get payoutTabPeople;
 
+  /// No description provided for @payoutAllDepartments.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tất cả phòng ban'**
+  String get payoutAllDepartments;
+
   /// No description provided for @payoutTabRuns.
   ///
   /// In vi, this message translates to:
@@ -6761,6 +6767,48 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Thu gọn hoặc mở tất cả'**
   String get orgTreeToggle;
+
+  /// No description provided for @positionTree.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cây chức vụ'**
+  String get positionTree;
+
+  /// No description provided for @positionTreeCardHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem các tầng chức vụ, đổi chức vụ ngay trên cây'**
+  String get positionTreeCardHint;
+
+  /// No description provided for @positionTreeTabPositions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chức vụ'**
+  String get positionTreeTabPositions;
+
+  /// No description provided for @positionTreeTabPeople.
+  ///
+  /// In vi, this message translates to:
+  /// **'Người giữ chức vụ'**
+  String get positionTreeTabPeople;
+
+  /// No description provided for @positionTreeHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kéo để xoay, chụm hai ngón để phóng to, bấm vào chức vụ hoặc người để chỉnh'**
+  String get positionTreeHint;
+
+  /// No description provided for @positionTreeNoHolder.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có người giữ chức vụ này'**
+  String get positionTreeNoHolder;
+
+  /// No description provided for @positionTreeNoPosition.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có chức vụ'**
+  String get positionTreeNoPosition;
 
   /// No description provided for @level1.
   ///

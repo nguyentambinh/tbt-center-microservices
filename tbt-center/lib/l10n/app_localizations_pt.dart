@@ -1711,6 +1711,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get payoutTabPeople => 'Funcionários';
 
   @override
+  String get payoutAllDepartments => 'Todos os departamentos';
+
+  @override
   String get payoutTabRuns => 'Execuções';
 
   @override
@@ -3808,6 +3811,29 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get orgTreeToggle => 'Recolher ou expandir tudo';
+
+  @override
+  String get positionTree => 'Árvore de cargos';
+
+  @override
+  String get positionTreeCardHint =>
+      'Veja os níveis de cargos e altere cargos direto na árvore';
+
+  @override
+  String get positionTreeTabPositions => 'Cargos';
+
+  @override
+  String get positionTreeTabPeople => 'Ocupantes dos cargos';
+
+  @override
+  String get positionTreeHint =>
+      'Arraste para girar, use dois dedos para ampliar, toque em um cargo ou pessoa para editar';
+
+  @override
+  String get positionTreeNoHolder => 'Ninguém ocupa este cargo ainda';
+
+  @override
+  String get positionTreeNoPosition => 'Sem cargo';
 
   @override
   String get level1 => 'Colaborador';

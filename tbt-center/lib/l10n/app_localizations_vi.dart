@@ -1704,6 +1704,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get payoutTabPeople => 'Nhân viên';
 
   @override
+  String get payoutAllDepartments => 'Tất cả phòng ban';
+
+  @override
   String get payoutTabRuns => 'Các đợt';
 
   @override
@@ -3811,6 +3814,29 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get orgTreeToggle => 'Thu gọn hoặc mở tất cả';
+
+  @override
+  String get positionTree => 'Cây chức vụ';
+
+  @override
+  String get positionTreeCardHint =>
+      'Xem các tầng chức vụ, đổi chức vụ ngay trên cây';
+
+  @override
+  String get positionTreeTabPositions => 'Chức vụ';
+
+  @override
+  String get positionTreeTabPeople => 'Người giữ chức vụ';
+
+  @override
+  String get positionTreeHint =>
+      'Kéo để xoay, chụm hai ngón để phóng to, bấm vào chức vụ hoặc người để chỉnh';
+
+  @override
+  String get positionTreeNoHolder => 'Chưa có người giữ chức vụ này';
+
+  @override
+  String get positionTreeNoPosition => 'Chưa có chức vụ';
 
   @override
   String get level1 => 'Nhân viên';

@@ -7,6 +7,7 @@
  */
 
 import '../../features/organization/presentation/pages/org_tree_page.dart';
+import '../../features/organization/presentation/pages/position_tree_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -93,6 +94,7 @@ abstract final class Routes {
   static const approvals = '/approvals';
   static const jobPositions = '/job-positions';
   static const orgTree = '/org-tree';
+  static const positionTree = '/position-tree';
   static const workCalendar = '/attendance/calendar';
   static const clockStats = '/attendance/stats';
   static const scheduleManage = '/attendance/schedules';
@@ -163,6 +165,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (location.startsWith(Routes.approvals) && !roles.contains('executive')) return Routes.home;
       if (location.startsWith(Routes.jobPositions) && !roles.any(peopleManagerRoles.contains)) return Routes.home;
       if (location.startsWith(Routes.orgTree) && !roles.any({'hr', 'finance', 'admin', 'executive'}.contains)) return Routes.home;
+      if (location.startsWith(Routes.positionTree) && !roles.contains('executive')) return Routes.home;
       final financeOnly = location.startsWith(Routes.finance) || location.startsWith(Routes.suppliers);
       if (financeOnly && !roles.any(financeViewerRoles.contains)) return Routes.home;
       if (location.startsWith(Routes.changeRequests) && !roles.any(peopleManagerRoles.contains)) return Routes.home;
@@ -251,6 +254,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.adminConsole, builder: (_, _) => const AdminConsolePage()),
       GoRoute(path: Routes.jobPositions, builder: (_, _) => const JobPositionsPage()),
       GoRoute(path: Routes.orgTree, builder: (_, _) => const OrgTreePage()),
+      GoRoute(path: Routes.positionTree, builder: (_, _) => const PositionTreePage()),
       GoRoute(
         path: Routes.employees,
         builder: (_, _) => const EmployeeListPage(),
